@@ -478,7 +478,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        totalRfPerTick = tagCompound.getInteger("rfPerTick");
+        totalRfPerTick = tagCompound.getInt("rfPerTick");
         active = tagCompound.getBoolean("active");
     }
 
@@ -486,9 +486,9 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        radius = tagCompound.getInteger("radius");
-        miny = tagCompound.getInteger("miny");
-        maxy = tagCompound.getInteger("maxy");
+        radius = tagCompound.getInt("radius");
+        miny = tagCompound.getInt("miny");
+        maxy = tagCompound.getInt("maxy");
         volume = -1;
 
         // Compatibility
@@ -496,7 +496,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
             boolean wl = tagCompound.getBoolean("whitelist");
             mode = wl ? EnvironmentalMode.MODE_WHITELIST : EnvironmentalMode.MODE_BLACKLIST;
         } else {
-            int m = tagCompound.getInteger("mode");
+            int m = tagCompound.getInt("mode");
             mode = EnvironmentalMode.values()[m];
         }
 

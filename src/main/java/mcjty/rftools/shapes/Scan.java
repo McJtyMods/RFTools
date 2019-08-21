@@ -64,7 +64,7 @@ public class Scan {
     }
 
     public void writeToNBT(CompoundNBT tagCompound) {
-        tagCompound.setInteger("dirty", dirtyCounter);
+        tagCompound.putInt("dirty", dirtyCounter);
     }
 
     public void writeToNBTExternal(CompoundNBT tagCompound) {
@@ -84,19 +84,19 @@ public class Scan {
         }
         tagCompound.setTag("scanpal", pal);
         if (dataDim != null) {
-            tagCompound.setInteger("scandimx", dataDim.getX());
-            tagCompound.setInteger("scandimy", dataDim.getY());
-            tagCompound.setInteger("scandimz", dataDim.getZ());
+            tagCompound.putInt("scandimx", dataDim.getX());
+            tagCompound.putInt("scandimy", dataDim.getY());
+            tagCompound.putInt("scandimz", dataDim.getZ());
         }
         if (dataOffset != null) {
-            tagCompound.setInteger("scanoffx", dataOffset.getX());
-            tagCompound.setInteger("scanoffy", dataOffset.getY());
-            tagCompound.setInteger("scanoffz", dataOffset.getZ());
+            tagCompound.putInt("scanoffx", dataOffset.getX());
+            tagCompound.putInt("scanoffy", dataOffset.getY());
+            tagCompound.putInt("scanoffz", dataOffset.getZ());
         }
     }
 
     public void readFromNBT(CompoundNBT tagCompound) {
-        dirtyCounter = tagCompound.getInteger("dirty");
+        dirtyCounter = tagCompound.getInt("dirty");
     }
 
     public void readFromNBTExternal(CompoundNBT tagCompound) {
@@ -110,7 +110,7 @@ public class Scan {
             materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
         }
         rledata = tagCompound.getByteArray("data");
-        dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
-        dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
+        dataDim = new BlockPos(tagCompound.getInt("scandimx"), tagCompound.getInt("scandimy"), tagCompound.getInt("scandimz"));
+        dataOffset = new BlockPos(tagCompound.getInt("scanoffx"), tagCompound.getInt("scanoffy"), tagCompound.getInt("scanoffz"));
     }
 }

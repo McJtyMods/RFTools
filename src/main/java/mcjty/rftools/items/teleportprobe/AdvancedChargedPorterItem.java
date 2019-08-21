@@ -25,7 +25,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     @Override
     protected void selectOnReceiver(PlayerEntity player, World world, CompoundNBT tagCompound, int id) {
         for (int i = 0 ; i < MAXTARGETS ; i++) {
-            if (tagCompound.hasKey("target"+i) && tagCompound.getInteger("target"+i) == id) {
+            if (tagCompound.hasKey("target"+i) && tagCompound.getInt("target"+i) == id) {
                 // Id is already there.
                 Logging.message(player, TextFormatting.YELLOW + "Receiver " + id + " was already added to the charged porter.");
                 return;
@@ -34,12 +34,12 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
 
         for (int i = 0 ; i < MAXTARGETS ; i++) {
             if (!tagCompound.hasKey("target"+i)) {
-                tagCompound.setInteger("target"+i, id);
+                tagCompound.putInt("target"+i, id);
                 if (world.isRemote) {
                     Logging.message(player, "Receiver " + id + " is added to the charged porter.");
                 }
                 if (!tagCompound.hasKey("target")) {
-                    tagCompound.setInteger("target", id);
+                    tagCompound.putInt("target", id);
                 }
                 return;
             }

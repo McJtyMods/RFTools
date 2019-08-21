@@ -61,7 +61,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("color")) {
-                color = tagCompound.getInteger("color");
+                color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
@@ -69,7 +69,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
             int mbcolor;
             int mbcolorNeg = 0xffffff;
             if (tagCompound.hasKey("mbcolor")) {
-                mbcolor = tagCompound.getInteger("mbcolor");
+                mbcolor = tagCompound.getInt("mbcolor");
             } else {
                 mbcolor = 0xffffff;
             }
@@ -88,7 +88,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
             boolean showpct = tagCompound.getBoolean("showpct");
             mbRenderer.settings(hidebar, hidetext, showpct, showdiff);
 
-            mbRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
+            mbRenderer.format(FormatStyle.values()[tagCompound.getInt("format")]);
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }
@@ -98,13 +98,13 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
-                this.dim = tagCompound.getInteger("monitordim");
+                this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons
-                this.dim = tagCompound.getInteger("dim");
+                this.dim = tagCompound.getInt("dim");
             }
             if (dim == this.dim) {
-                BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                BlockPos c = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());
                 int dy = Math.abs(c.getY() - pos.getY());
                 int dz = Math.abs(c.getZ() - pos.getZ());

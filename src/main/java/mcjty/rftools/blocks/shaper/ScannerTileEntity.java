@@ -228,10 +228,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack = ItemStack.EMPTY;
         }
 
-        scanId = tagCompound.getInteger("scanid");
-        dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
-        dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
-        progressBusy = tagCompound.getInteger("progress");
+        scanId = tagCompound.getInt("scanid");
+        dataDim = new BlockPos(tagCompound.getInt("scandimx"), tagCompound.getInt("scandimy"), tagCompound.getInt("scandimz"));
+        dataOffset = new BlockPos(tagCompound.getInt("scanoffx"), tagCompound.getInt("scanoffy"), tagCompound.getInt("scanoffz"));
+        progressBusy = tagCompound.getInt("progress");
     }
 
 
@@ -244,21 +244,21 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack.writeToNBT(tc);
             tagCompound.setTag("render", tc);
         }
-        tagCompound.setInteger("scanid", getScanId());
+        tagCompound.putInt("scanid", getScanId());
         if (dataDim != null) {
-            tagCompound.setInteger("scandimx", dataDim.getX());
-            tagCompound.setInteger("scandimy", dataDim.getY());
-            tagCompound.setInteger("scandimz", dataDim.getZ());
+            tagCompound.putInt("scandimx", dataDim.getX());
+            tagCompound.putInt("scandimy", dataDim.getY());
+            tagCompound.putInt("scandimz", dataDim.getZ());
         }
         if (dataOffset != null) {
-            tagCompound.setInteger("scanoffx", dataOffset.getX());
-            tagCompound.setInteger("scanoffy", dataOffset.getY());
-            tagCompound.setInteger("scanoffz", dataOffset.getZ());
+            tagCompound.putInt("scanoffx", dataOffset.getX());
+            tagCompound.putInt("scanoffy", dataOffset.getY());
+            tagCompound.putInt("scanoffz", dataOffset.getZ());
         }
         if (progress == null || progress.dimX == 0) {
-            tagCompound.setInteger("progress", -1);
+            tagCompound.putInt("progress", -1);
         } else {
-            tagCompound.setInteger("progress", (progress.x-progress.tl.getX()) * 100 / progress.dimX);
+            tagCompound.putInt("progress", (progress.x-progress.tl.getX()) * 100 / progress.dimX);
         }
     }
 

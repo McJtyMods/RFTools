@@ -113,12 +113,12 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
             channel = ((RedstoneChannelTileEntity) te).getChannel(true);
         } else {
             // We selected a random block.
-            tagCompound.setInteger("channel", -1);
-            tagCompound.setInteger("monitordim", world.provider.getDimension());
-            tagCompound.setInteger("monitorx", pos.getX());
-            tagCompound.setInteger("monitory", pos.getY());
-            tagCompound.setInteger("monitorz", pos.getZ());
-            tagCompound.setInteger("monitorside", facing.ordinal());
+            tagCompound.putInt("channel", -1);
+            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitorx", pos.getX());
+            tagCompound.putInt("monitory", pos.getY());
+            tagCompound.putInt("monitorz", pos.getZ());
+            tagCompound.putInt("monitorside", facing.ordinal());
             Logging.message(player, "Redstone module is set to " + pos);
 
             return ActionResultType.SUCCESS;
@@ -131,7 +131,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
         tagCompound.removeTag("monitorside");
 
         if (channel != -1) {
-            tagCompound.setInteger("channel", channel);
+            tagCompound.putInt("channel", channel);
             Logging.message(player, "Redstone module is set to channel '" + channel + "'");
         } else {
             tagCompound.removeTag("channel");

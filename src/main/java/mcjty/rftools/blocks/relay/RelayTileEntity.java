@@ -215,8 +215,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("rfOn")) {
             // Old block
-            int on = tagCompound.getInteger("rfOn");
-            int off = tagCompound.getInteger("rfOff");
+            int on = tagCompound.getInt("rfOn");
+            int off = tagCompound.getInt("rfOff");
             for (int i = 0 ; i < 7 ; i++) {
                 rfOn[i] = on;
                 rfOff[i] = off;

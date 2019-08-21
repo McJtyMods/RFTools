@@ -61,7 +61,7 @@ public class ClockClientScreenModule implements IClientScreenModule<IModuleData>
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("color")) {
-                color = tagCompound.getInteger("color");
+                color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }

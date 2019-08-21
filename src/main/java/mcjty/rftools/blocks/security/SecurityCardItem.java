@@ -45,7 +45,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
         CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
         if (tagCompound != null && tagCompound.hasKey("channel")) {
-            channel = tagCompound.getInteger("channel");
+            channel = tagCompound.getInt("channel");
         }
         if (channel != -1) {
             if (System.currentTimeMillis() - lastTime > 250) {
@@ -89,11 +89,11 @@ public class SecurityCardItem extends GenericRFToolsItem {
                                     tagCompound = new CompoundNBT();
                                     stack.setTagCompound(tagCompound);
                                 }
-                                tagCompound.setInteger("channel", blockSecurity);
+                                tagCompound.putInt("channel", blockSecurity);
                                 Logging.message(player, TextFormatting.RED + "Copied security channel from block to card!");
                             }
                         } else {
-                            int channel = tagCompound.getInteger("channel");
+                            int channel = tagCompound.getInt("channel");
                             toggleSecuritySettings(player, genericTileEntity, channel);
                         }
                     } else {

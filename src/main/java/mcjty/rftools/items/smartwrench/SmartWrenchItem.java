@@ -209,20 +209,20 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             tagCompound.removeTag("selectedZ");
             tagCompound.removeTag("selectedDim");
         } else {
-            tagCompound.setInteger("selectedX", c.getCoordinate().getX());
-            tagCompound.setInteger("selectedY", c.getCoordinate().getY());
-            tagCompound.setInteger("selectedZ", c.getCoordinate().getZ());
-            tagCompound.setInteger("selectedDim", c.getDimension());
+            tagCompound.putInt("selectedX", c.getCoordinate().getX());
+            tagCompound.putInt("selectedY", c.getCoordinate().getY());
+            tagCompound.putInt("selectedZ", c.getCoordinate().getZ());
+            tagCompound.putInt("selectedDim", c.getDimension());
         }
     }
 
     public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null && tagCompound.hasKey("selectedX")) {
-            int x = tagCompound.getInteger("selectedX");
-            int y = tagCompound.getInteger("selectedY");
-            int z = tagCompound.getInteger("selectedZ");
-            int dim = tagCompound.getInteger("selectedDim");
+            int x = tagCompound.getInt("selectedX");
+            int y = tagCompound.getInt("selectedY");
+            int z = tagCompound.getInt("selectedZ");
+            int dim = tagCompound.getInt("selectedDim");
             return new GlobalCoordinate(new BlockPos(x, y, z), dim);
         }
         return null;

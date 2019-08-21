@@ -27,13 +27,13 @@ public abstract class AbstractShieldFilter implements ShieldFilter {
 
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
-        action = tagCompound.getInteger("action");
+        action = tagCompound.getInt("action");
     }
 
     @Override
     public void writeToNBT(CompoundNBT tagCompound) {
         tagCompound.setString("type", getFilterName());
-        tagCompound.setInteger("action", action);
+        tagCompound.putInt("action", action);
     }
 
     public static ShieldFilter createFilter(ByteBuf buf) {

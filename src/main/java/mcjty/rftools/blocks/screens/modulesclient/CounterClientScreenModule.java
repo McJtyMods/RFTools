@@ -68,12 +68,12 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("color")) {
-                color = tagCompound.getInteger("color");
+                color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
             if (tagCompound.hasKey("cntcolor")) {
-                cntcolor = tagCompound.getInteger("cntcolor");
+                cntcolor = tagCompound.getInt("cntcolor");
             } else {
                 cntcolor = 0xffffff;
             }
@@ -84,7 +84,7 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
                 labelCache.align(TextAlign.ALIGN_LEFT);
             }
 
-            format = FormatStyle.values()[tagCompound.getInteger("format")];
+            format = FormatStyle.values()[tagCompound.getInt("format")];
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }
@@ -94,13 +94,13 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
-                this.dim = tagCompound.getInteger("monitordim");
+                this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons
-                this.dim = tagCompound.getInteger("dim");
+                this.dim = tagCompound.getInt("dim");
             }
             if (dim == this.dim) {
-                BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                BlockPos c = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());
                 int dy = Math.abs(c.getY() - pos.getY());
                 int dz = Math.abs(c.getZ() - pos.getZ());

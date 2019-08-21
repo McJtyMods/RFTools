@@ -38,7 +38,7 @@ public class SyringeItem extends GenericRFToolsItem {
     @Override
     public boolean hasContainerItem(ItemStack stack) {
         CompoundNBT tagCompound = stack.getTag();
-        return tagCompound != null && tagCompound.getInteger("level") > 0;
+        return tagCompound != null && tagCompound.getInt("level") > 0;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SyringeItem extends GenericRFToolsItem {
             CompoundNBT tagCompound = stack.getTag();
             int level = 0;
             if (tagCompound != null) {
-                level = tagCompound.getInteger("level");
+                level = tagCompound.getInt("level");
             }
             if (level <= 0) {
                 level = 0;
@@ -97,7 +97,7 @@ public class SyringeItem extends GenericRFToolsItem {
                 if (mobName != null) {
                     Logging.message(player, TextFormatting.BLUE + "Mob: " + mobName);
                 }
-                int level = tagCompound.getInteger("level");
+                int level = tagCompound.getInt("level");
                 level = level * 100 / GeneralConfiguration.maxMobInjections.get();
                 Logging.message(player, TextFormatting.BLUE + "Essence level: " + level + "%");
             }
@@ -123,9 +123,9 @@ public class SyringeItem extends GenericRFToolsItem {
                 if (!id.equals(prevMobId)) {
                     tagCompound.setString("mobName", entityLiving.getName());
                     tagCompound.setString("mobId", id);
-                    tagCompound.setInteger("level", 1);
+                    tagCompound.putInt("level", 1);
                 } else {
-                    tagCompound.setInteger("level", Math.min(tagCompound.getInteger("level") + 1, GeneralConfiguration.maxMobInjections.get()));
+                    tagCompound.putInt("level", Math.min(tagCompound.getInt("level") + 1, GeneralConfiguration.maxMobInjections.get()));
                 }
             }
         }
@@ -160,7 +160,7 @@ public class SyringeItem extends GenericRFToolsItem {
             if (mobName != null) {
                 list.add(TextFormatting.BLUE + "Mob: " + mobName);
             }
-            int level = tagCompound.getInteger("level");
+            int level = tagCompound.getInt("level");
             level = level * 100 / GeneralConfiguration.maxMobInjections.get();
             list.add(TextFormatting.BLUE + "Essence level: " + level + "%");
         }
@@ -186,7 +186,7 @@ public class SyringeItem extends GenericRFToolsItem {
             name = id;
         }
         tagCompound.setString("mobName", name);
-        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections.get());
+        tagCompound.putInt("level", GeneralConfiguration.maxMobInjections.get());
         syringe.setTagCompound(tagCompound);
         return syringe;
     }

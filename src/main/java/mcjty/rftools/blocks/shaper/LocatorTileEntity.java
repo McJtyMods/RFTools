@@ -311,7 +311,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        counter = tagCompound.getInteger("counter");
+        counter = tagCompound.getInt("counter");
         hostileType = BeaconType.getTypeByCode(tagCompound.getString("hostile"));
         passiveType = BeaconType.getTypeByCode(tagCompound.getString("passive"));
         playerType = BeaconType.getTypeByCode(tagCompound.getString("player"));
@@ -322,12 +322,12 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         energyBeacon = tagCompound.getBoolean("energyBeacon");
         filter = tagCompound.getString("filter");
         if (tagCompound.hasKey("minEnergy")) {
-            minEnergy = tagCompound.getInteger("minEnergy");
+            minEnergy = tagCompound.getInt("minEnergy");
         } else {
             minEnergy = null;
         }
         if (tagCompound.hasKey("maxEnergy")) {
-            maxEnergy = tagCompound.getInteger("maxEnergy");
+            maxEnergy = tagCompound.getInt("maxEnergy");
         } else {
             maxEnergy = null;
         }
@@ -337,21 +337,21 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("counter", counter);
+        tagCompound.putInt("counter", counter);
         tagCompound.setString("hostile", hostileType.getCode());
         tagCompound.setString("passive", passiveType.getCode());
         tagCompound.setString("player", playerType.getCode());
         tagCompound.setString("energylow", energyType.getCode());
-        tagCompound.setBoolean("hostileBeacon", hostileBeacon);
-        tagCompound.setBoolean("passiveBeacon", passiveBeacon);
-        tagCompound.setBoolean("playerBeacon", playerBeacon);
-        tagCompound.setBoolean("energyBeacon", energyBeacon);
+        tagCompound.putBoolean("hostileBeacon", hostileBeacon);
+        tagCompound.putBoolean("passiveBeacon", passiveBeacon);
+        tagCompound.putBoolean("playerBeacon", playerBeacon);
+        tagCompound.putBoolean("energyBeacon", energyBeacon);
         tagCompound.setString("filter", filter);
         if (minEnergy != null) {
-            tagCompound.setInteger("minEnergy", minEnergy);
+            tagCompound.putInt("minEnergy", minEnergy);
         }
         if (maxEnergy != null) {
-            tagCompound.setInteger("maxEnergy", maxEnergy);
+            tagCompound.putInt("maxEnergy", maxEnergy);
         }
     }
 

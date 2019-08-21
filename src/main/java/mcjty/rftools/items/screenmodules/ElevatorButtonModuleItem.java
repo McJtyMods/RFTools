@@ -96,10 +96,10 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
             tagCompound = new CompoundNBT();
         }
         if (te instanceof ElevatorTileEntity) {
-            tagCompound.setInteger("elevatordim", world.provider.getDimension());
-            tagCompound.setInteger("elevatorx", pos.getX());
-            tagCompound.setInteger("elevatory", pos.getY());
-            tagCompound.setInteger("elevatorz", pos.getZ());
+            tagCompound.putInt("elevatordim", world.provider.getDimension());
+            tagCompound.putInt("elevatorx", pos.getX());
+            tagCompound.putInt("elevatory", pos.getY());
+            tagCompound.putInt("elevatorz", pos.getZ());
             BlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";

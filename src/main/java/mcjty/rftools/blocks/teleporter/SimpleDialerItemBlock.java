@@ -38,10 +38,10 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                     return ActionResultType.FAIL;
                 }
 
-                tagCompound.setInteger("transX", matterTransmitterTileEntity.getPos().getX());
-                tagCompound.setInteger("transY", matterTransmitterTileEntity.getPos().getY());
-                tagCompound.setInteger("transZ", matterTransmitterTileEntity.getPos().getZ());
-                tagCompound.setInteger("transDim", world.provider.getDimension());
+                tagCompound.putInt("transX", matterTransmitterTileEntity.getPos().getX());
+                tagCompound.putInt("transY", matterTransmitterTileEntity.getPos().getY());
+                tagCompound.putInt("transZ", matterTransmitterTileEntity.getPos().getZ());
+                tagCompound.putInt("transDim", world.provider.getDimension());
 
                 if (matterTransmitterTileEntity.isDialed()) {
                     Integer id = matterTransmitterTileEntity.getTeleportId();
@@ -51,7 +51,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                         return ActionResultType.FAIL;
                     }
 
-                    tagCompound.setInteger("receiver", id);
+                    tagCompound.putInt("receiver", id);
                     Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
                 }
 
@@ -68,7 +68,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                     return ActionResultType.FAIL;
                 }
 
-                tagCompound.setInteger("receiver", id);
+                tagCompound.putInt("receiver", id);
                 Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
             }
         } else {

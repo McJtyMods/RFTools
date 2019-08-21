@@ -115,7 +115,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     public void readFromNBT(CompoundNBT tagCompound) {
         protectorById.clear();
         protectorIdByCoordinate.clear();
-        lastId = tagCompound.getInteger("lastId");
+        lastId = tagCompound.getInt("lastId");
         readDestinationsFromNBT(tagCompound);
     }
 
@@ -148,7 +148,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
             lst.appendTag(tc);
         }
         tagCompound.setTag("blocks", lst);
-        tagCompound.setInteger("lastId", lastId);
+        tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }
 

@@ -176,17 +176,17 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        teleportTimer = tagCompound.getInteger("tpTimer");
-        cooldownTimer = tagCompound.getInteger("cooldownTimer");
-        totalTicks = tagCompound.getInteger("totalTicks");
-        goodTicks = tagCompound.getInteger("goodTicks");
-        badTicks = tagCompound.getInteger("badTicks");
+        teleportTimer = tagCompound.getInt("tpTimer");
+        cooldownTimer = tagCompound.getInt("cooldownTimer");
+        totalTicks = tagCompound.getInt("totalTicks");
+        goodTicks = tagCompound.getInt("goodTicks");
+        badTicks = tagCompound.getInt("badTicks");
         teleportingPlayer = tagCompound.getString("tpPlayer");
         if (teleportingPlayer.isEmpty()) {
             teleportingPlayer = null;
         }
-        status = tagCompound.getInteger("status");
-        rfPerTick = tagCompound.getInteger("rfPerTick");
+        status = tagCompound.getInt("status");
+        rfPerTick = tagCompound.getInt("rfPerTick");
     }
 
     @Override
@@ -197,11 +197,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (c == null) {
             teleportDestination = null;
         } else {
-            int dim = tagCompound.getInteger("dim");
+            int dim = tagCompound.getInt("dim");
             teleportDestination = new TeleportDestination(c, dim);
         }
         if (tagCompound.hasKey("destId")) {
-            teleportId = tagCompound.getInteger("destId");
+            teleportId = tagCompound.getInt("destId");
         } else {
             teleportId = null;
         }
@@ -222,16 +222,16 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("tpTimer", teleportTimer);
-        tagCompound.setInteger("cooldownTimer", cooldownTimer);
-        tagCompound.setInteger("totalTicks", totalTicks);
-        tagCompound.setInteger("goodTicks", goodTicks);
-        tagCompound.setInteger("badTicks", badTicks);
+        tagCompound.putInt("tpTimer", teleportTimer);
+        tagCompound.putInt("cooldownTimer", cooldownTimer);
+        tagCompound.putInt("totalTicks", totalTicks);
+        tagCompound.putInt("goodTicks", goodTicks);
+        tagCompound.putInt("badTicks", badTicks);
         if (teleportingPlayer != null) {
             tagCompound.setString("tpPlayer", teleportingPlayer);
         }
-        tagCompound.setInteger("status", status);
-        tagCompound.setInteger("rfPerTick", rfPerTick);
+        tagCompound.putInt("status", status);
+        tagCompound.putInt("rfPerTick", rfPerTick);
         return tagCompound;
     }
 
@@ -245,16 +245,16 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             BlockPos c = teleportDestination.getCoordinate();
             if (c != null) {
                 BlockPosTools.writeToNBT(tagCompound, "dest", c);
-                tagCompound.setInteger("dim", teleportDestination.getDimension());
+                tagCompound.putInt("dim", teleportDestination.getDimension());
             }
         }
         if (teleportId != null) {
-            tagCompound.setInteger("destId", teleportId);
+            tagCompound.putInt("destId", teleportId);
         }
 
-        tagCompound.setBoolean("private", privateAccess);
-        tagCompound.setBoolean("hideBeam", beamHidden);
-        tagCompound.setBoolean("once", once);
+        tagCompound.putBoolean("private", privateAccess);
+        tagCompound.putBoolean("hideBeam", beamHidden);
+        tagCompound.putBoolean("once", once);
 
         ListNBT playerTagList = new ListNBT();
         for (String player : allowedPlayers) {

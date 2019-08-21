@@ -90,15 +90,15 @@ public class FindBlockAction implements IWheelAction {
                 return;
             }
 
-            int moduleDamage = tagCompound.getInteger("childDamage");
+            int moduleDamage = tagCompound.getInt("childDamage");
             ItemStack extracted = ItemStack.EMPTY;
 
             if (moduleDamage == META_FOR_SCANNER) {
                 if (tagCompound.hasKey("monitorx")) {
-                    int monitordim = tagCompound.getInteger("monitordim");
-                    int monitorx = tagCompound.getInteger("monitorx");
-                    int monitory = tagCompound.getInteger("monitory");
-                    int monitorz = tagCompound.getInteger("monitorz");
+                    int monitordim = tagCompound.getInt("monitordim");
+                    int monitorx = tagCompound.getInt("monitorx");
+                    int monitory = tagCompound.getInt("monitory");
+                    int monitorz = tagCompound.getInt("monitorz");
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
                     ServerWorld w = DimensionManager.getWorld(monitordim);
                     if (w == null || !WorldTools.chunkLoaded(w, mpos)) {

@@ -194,7 +194,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        cachedPos = new BlockPos(tagCompound.getInteger("cachedX"), tagCompound.getInteger("cachedY"), tagCompound.getInteger("cachedZ"));
+        cachedPos = new BlockPos(tagCompound.getInt("cachedX"), tagCompound.getInt("cachedY"), tagCompound.getInt("cachedZ"));
     }
 
     @Override
@@ -213,7 +213,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
             }
         }
         if (tagCompound.hasKey("destinationId")) {
-            id = tagCompound.getInteger("destinationId");
+            id = tagCompound.getInt("destinationId");
         } else {
             id = -1;
         }
@@ -223,9 +223,9 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         if (cachedPos != null) {
-            tagCompound.setInteger("cachedX", cachedPos.getX());
-            tagCompound.setInteger("cachedY", cachedPos.getY());
-            tagCompound.setInteger("cachedZ", cachedPos.getZ());
+            tagCompound.putInt("cachedX", cachedPos.getX());
+            tagCompound.putInt("cachedY", cachedPos.getY());
+            tagCompound.putInt("cachedZ", cachedPos.getZ());
         }
         return tagCompound;
     }
@@ -237,14 +237,14 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
             tagCompound.setString("tpName", name);
         }
 
-        tagCompound.setBoolean("private", privateAccess);
+        tagCompound.putBoolean("private", privateAccess);
 
         ListNBT playerTagList = new ListNBT();
         for (String player : allowedPlayers) {
             playerTagList.appendTag(new StringNBT(player));
         }
         tagCompound.setTag("players", playerTagList);
-        tagCompound.setInteger("destinationId", id);
+        tagCompound.putInt("destinationId", id);
     }
 
     @Override

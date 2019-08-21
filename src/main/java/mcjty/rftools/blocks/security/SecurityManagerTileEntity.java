@@ -66,7 +66,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         if (!tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = securityChannels.newChannel();
-            tagCompound.setInteger("channel", id);
+            tagCompound.putInt("channel", id);
             securityChannels.save();
             markDirtyClient();
         }
@@ -101,7 +101,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInteger("channel");
+            int id = tagCompound.getInt("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.addPlayer(player);
             securityChannels.save();
@@ -116,7 +116,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInteger("channel");
+            int id = tagCompound.getInt("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.delPlayer(player);
             securityChannels.save();
@@ -131,7 +131,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInteger("channel");
+            int id = tagCompound.getInt("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setWhitelist(whitelist);
             securityChannels.save();
@@ -146,7 +146,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInteger("channel");
+            int id = tagCompound.getInt("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setName(name);
             securityChannels.save();

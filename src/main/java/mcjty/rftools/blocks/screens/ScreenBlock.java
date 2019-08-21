@@ -539,7 +539,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             if (tagCompound.hasKey("large")) {
                 size = tagCompound.getBoolean("large") ? ScreenTileEntity.SIZE_LARGE : ScreenTileEntity.SIZE_NORMAL;
             } else {
-                size = tagCompound.getInteger("size");
+                size = tagCompound.getInt("size");
             }
             boolean transparent = tagCompound.getBoolean("transparent");
             if (size == ScreenTileEntity.SIZE_HUGE) {

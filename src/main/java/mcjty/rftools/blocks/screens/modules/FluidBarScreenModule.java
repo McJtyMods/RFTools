@@ -58,13 +58,13 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.hasKey("monitorx")) {
                 if (tagCompound.hasKey("monitordim")) {
-                    this.dim = tagCompound.getInteger("monitordim");
+                    this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons
-                    this.dim = tagCompound.getInteger("dim");
+                    this.dim = tagCompound.getInt("dim");
                 }
                 if (dim == this.dim) {
-                    BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                    BlockPos c = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                     int dx = Math.abs(c.getX() - pos.getX());
                     int dy = Math.abs(c.getY() - pos.getY());
                     int dz = Math.abs(c.getZ() - pos.getZ());

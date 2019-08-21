@@ -299,7 +299,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("protectorId")) {
-            id = tagCompound.getInteger("protectorId");
+            id = tagCompound.getInt("protectorId");
         } else {
             id = -1;
         }
@@ -313,7 +313,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             list.appendTag(BlockPosTools.writeToNBT(block));
         }
         tagCompound.setTag("coordinates", list);
-        tagCompound.setBoolean("active", active);
+        tagCompound.putBoolean("active", active);
         return tagCompound;
     }
 
@@ -321,7 +321,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("protectorId", id);
+        tagCompound.putInt("protectorId", id);
     }
 
     @Override

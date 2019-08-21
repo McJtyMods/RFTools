@@ -99,11 +99,11 @@ public class EnergyModuleItem extends Item implements IModuleProvider, INBTPrese
             tagCompound = new CompoundNBT();
         }
         if (EnergyTools.isEnergyTE(te, facing)) {
-            tagCompound.setInteger("monitordim", world.provider.getDimension());
-            tagCompound.setInteger("monitorx", pos.getX());
-            tagCompound.setInteger("monitory", pos.getY());
-            tagCompound.setInteger("monitorz", pos.getZ());
-            tagCompound.setInteger("monitorside", facing.getIndex());
+            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitorx", pos.getX());
+            tagCompound.putInt("monitory", pos.getY());
+            tagCompound.putInt("monitorz", pos.getZ());
+            tagCompound.putInt("monitorside", facing.getIndex());
             BlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";

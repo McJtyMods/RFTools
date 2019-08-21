@@ -101,16 +101,16 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("camoId", camoId);
-        tagCompound.setInteger("camoMeta", camoMeta);
-        tagCompound.setInteger("damageBits", damageBits);
-        tagCompound.setInteger("collisionData", collisionData);
-        tagCompound.setInteger("shieldColor", shieldColor);
-        tagCompound.setInteger("stt", shieldRenderingMode.ordinal());
+        tagCompound.putInt("camoId", camoId);
+        tagCompound.putInt("camoMeta", camoMeta);
+        tagCompound.putInt("damageBits", damageBits);
+        tagCompound.putInt("collisionData", collisionData);
+        tagCompound.putInt("shieldColor", shieldColor);
+        tagCompound.putInt("stt", shieldRenderingMode.ordinal());
         if (shieldBlock != null) {
-            tagCompound.setInteger("shieldX", shieldBlock.getX());
-            tagCompound.setInteger("shieldY", shieldBlock.getY());
-            tagCompound.setInteger("shieldZ", shieldBlock.getZ());
+            tagCompound.putInt("shieldX", shieldBlock.getX());
+            tagCompound.putInt("shieldY", shieldBlock.getY());
+            tagCompound.putInt("shieldZ", shieldBlock.getZ());
         }
         return tagCompound;
     }
@@ -125,24 +125,24 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        camoId = tagCompound.getInteger("camoId");
-        camoMeta = tagCompound.getInteger("camoMeta");
+        camoId = tagCompound.getInt("camoId");
+        camoMeta = tagCompound.getInt("camoMeta");
         if (camoId == -1) {
             mimic = null;
         } else {
             mimic = Block.getBlockById(camoId).getStateFromMeta(camoMeta);
         }
-        damageBits = tagCompound.getInteger("damageBits");
-        collisionData = tagCompound.getInteger("collisionData");
-        shieldColor = tagCompound.getInteger("shieldColor");
+        damageBits = tagCompound.getInt("damageBits");
+        collisionData = tagCompound.getInt("collisionData");
+        shieldColor = tagCompound.getInt("shieldColor");
         if (shieldColor == 0) {
             shieldColor = 0x96ffc8;
         }
-        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("stt")];
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("stt")];
 
-        int sx = tagCompound.getInteger("shieldX");
-        int sy = tagCompound.getInteger("shieldY");
-        int sz = tagCompound.getInteger("shieldZ");
+        int sx = tagCompound.getInt("shieldX");
+        int sy = tagCompound.getInt("shieldY");
+        int sz = tagCompound.getInt("shieldZ");
         shieldBlock = new BlockPos(sx, sy, sz);
 
         if (getWorld() != null && getWorld().isRemote) {

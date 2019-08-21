@@ -95,7 +95,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
 
-            int moduleDamage = tagCompound.getInteger("childDamage");
+            int moduleDamage = tagCompound.getInt("childDamage");
             int rfNeeded;
             if (moduleDamage == META_FOR_SCANNER) {
                 rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE_SCANNER.get();
@@ -106,21 +106,21 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 }
             }
 
-            int energy = tagCompound.getInteger("Energy");
+            int energy = tagCompound.getInt("Energy");
             if (energy < rfNeeded) {
                 Logging.message(player, TextFormatting.YELLOW + "Not enough energy to open the contents!");
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
 
             energy -= rfNeeded;
-            tagCompound.setInteger("Energy", energy);
+            tagCompound.putInt("Energy", energy);
 
             if (moduleDamage == META_FOR_SCANNER) {
                 if (tagCompound.hasKey("monitorx")) {
-                    int monitordim = tagCompound.getInteger("monitordim");
-                    int monitorx = tagCompound.getInteger("monitorx");
-                    int monitory = tagCompound.getInteger("monitory");
-                    int monitorz = tagCompound.getInteger("monitorz");
+                    int monitordim = tagCompound.getInt("monitordim");
+                    int monitorx = tagCompound.getInt("monitorx");
+                    int monitory = tagCompound.getInt("monitory");
+                    int monitorz = tagCompound.getInt("monitorz");
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     ServerWorld w = DimensionManager.getWorld(monitordim);
                     if (w == null || !WorldTools.chunkLoaded(w, pos)) {
@@ -176,8 +176,8 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 //        }
 //        CompoundNBT tagCompound = new CompoundNBT();
 //        CompoundNBT tc = stack.getTag();
-//        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
-//        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
+//        tagCompound.putInt("Energy", tc.getInteger("Energy"));
+//        tagCompound.putInt("childDamage", tc.getInteger("childDamage"));
 //        if (tc.hasKey("grid")) {
 //            tagCompound.setTag("grid", tc.getTag("grid"));
 //        }
@@ -188,7 +188,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     public ItemStack getContainerItem(ItemStack stack) {
         if (hasContainerItem(stack) && stack.hasTagCompound()) {
             CompoundNBT tagCompound = new CompoundNBT();
-            tagCompound.setInteger("Energy", stack.getTag().getInteger("Energy"));
+            tagCompound.putInt("Energy", stack.getTag().getInteger("Energy"));
             if (stack.getTag().hasKey("grid")) {
                 tagCompound.setTag("grid", stack.getTag().getTag("grid"));
             }
@@ -204,9 +204,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
+            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInt("Energy") + " RF");
             if (itemStack.getItemDamage() == DAMAGE_FULL) {
-                int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("childDamage")];
+                int max = StorageModuleItem.MAXSIZE[tagCompound.getInt("childDamage")];
                 StorageModuleItem.addModuleInformation(list, max, tagCompound);
             } else if (itemStack.getItemDamage() == DAMAGE_SCANNER) {
                 list.add(TextFormatting.YELLOW + "Storage scanner module installed!");

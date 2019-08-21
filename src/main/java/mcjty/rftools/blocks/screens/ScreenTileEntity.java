@@ -450,7 +450,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
         super.readFromNBT(tagCompound);
         powerOn = tagCompound.getBoolean("powerOn");
         connected = tagCompound.getBoolean("connected");
-        totalRfPerTick = tagCompound.getInteger("rfPerTick");
+        totalRfPerTick = tagCompound.getInt("rfPerTick");
         controllerNeededInCreative = tagCompound.getBoolean("controllerNeededInCreative");
     }
 
@@ -462,21 +462,21 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
         if (tagCompound.hasKey("large")) {
             size = tagCompound.getBoolean("large") ? 1 : 0;
         } else {
-            size = tagCompound.getInteger("size");
+            size = tagCompound.getInt("size");
         }
         transparent = tagCompound.getBoolean("transparent");
-        color = tagCompound.getInteger("color");
+        color = tagCompound.getInt("color");
         bright = tagCompound.getBoolean("bright");
-        trueTypeMode = tagCompound.getInteger("truetype");
+        trueTypeMode = tagCompound.getInt("truetype");
     }
 
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powerOn", powerOn);
-        tagCompound.setBoolean("connected", connected);
-        tagCompound.setInteger("rfPerTick", totalRfPerTick);
-        tagCompound.setBoolean("controllerNeededInCreative", controllerNeededInCreative);
+        tagCompound.putBoolean("powerOn", powerOn);
+        tagCompound.putBoolean("connected", connected);
+        tagCompound.putInt("rfPerTick", totalRfPerTick);
+        tagCompound.putBoolean("controllerNeededInCreative", controllerNeededInCreative);
         return tagCompound;
     }
 
@@ -484,11 +484,11 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setInteger("size", size);
-        tagCompound.setBoolean("transparent", transparent);
-        tagCompound.setInteger("color", color);
-        tagCompound.setBoolean("bright", bright);
-        tagCompound.setInteger("truetype", trueTypeMode);
+        tagCompound.putInt("size", size);
+        tagCompound.putBoolean("transparent", transparent);
+        tagCompound.putInt("color", color);
+        tagCompound.putBoolean("bright", bright);
+        tagCompound.putInt("truetype", trueTypeMode);
     }
 
     public int getColor() {

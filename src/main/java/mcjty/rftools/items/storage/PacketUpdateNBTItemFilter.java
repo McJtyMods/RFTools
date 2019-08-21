@@ -64,13 +64,13 @@ public class PacketUpdateNBTItemFilter implements IMessage {
                 if (Type.STRING.equals(akey.getType())) {
                     tagCompound.setString(key, (String) args.get(akey));
                 } else if (Type.INTEGER.equals(akey.getType())) {
-                    tagCompound.setInteger(key, (Integer) args.get(akey));
+                    tagCompound.putInt(key, (Integer) args.get(akey));
                 } else if (Type.LONG.equals(akey.getType())) {
                     tagCompound.setLong(key, (Long) args.get(akey));
                 } else if (Type.DOUBLE.equals(akey.getType())) {
                     tagCompound.setDouble(key, (Double) args.get(akey));
                 } else if (Type.BOOLEAN.equals(akey.getType())) {
-                    tagCompound.setBoolean(key, (Boolean) args.get(akey));
+                    tagCompound.putBoolean(key, (Boolean) args.get(akey));
                 } else if (Type.BLOCKPOS.equals(akey.getType())) {
                     throw new RuntimeException("BlockPos not supported for PacketUpdateNBTItem!");
                 } else if (Type.ITEMSTACK.equals(akey.getType())) {

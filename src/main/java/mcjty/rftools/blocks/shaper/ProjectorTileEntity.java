@@ -327,7 +327,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         }
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
-        counter = tagCompound.getInteger("counter");
+        counter = tagCompound.getInt("counter");
         for (Direction facing : Direction.HORIZONTALS) {
             if (tagCompound.hasKey("op_"+facing.getName())) {
                 int index = facing.ordinal() - 2;
@@ -358,13 +358,13 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         tagCompound.setFloat("offs", verticalOffset);
         tagCompound.setFloat("scale", scale);
         tagCompound.setFloat("angle", angle);
-        tagCompound.setBoolean("rot", autoRotate);
-        tagCompound.setBoolean("scan", scanline);
-        tagCompound.setBoolean("sound", sound);
-        tagCompound.setBoolean("grayscale", grayscale);
-        tagCompound.setBoolean("projecting", projecting);
-        tagCompound.setBoolean("active", active);
-        tagCompound.setInteger("counter", counter);
+        tagCompound.putBoolean("rot", autoRotate);
+        tagCompound.putBoolean("scan", scanline);
+        tagCompound.putBoolean("sound", sound);
+        tagCompound.putBoolean("grayscale", grayscale);
+        tagCompound.putBoolean("projecting", projecting);
+        tagCompound.putBoolean("active", active);
+        tagCompound.putInt("counter", counter);
         for (Direction facing : Direction.HORIZONTALS) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];

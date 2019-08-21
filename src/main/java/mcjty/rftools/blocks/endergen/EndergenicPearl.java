@@ -19,9 +19,9 @@ public class EndergenicPearl {
     }
 
     public EndergenicPearl(CompoundNBT tagCompound) {
-        ticksLeft = tagCompound.getInteger("t");
+        ticksLeft = tagCompound.getInt("t");
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
-        age = tagCompound.getInteger("age");
+        age = tagCompound.getInt("age");
     }
 
     public int getTicksLeft() {
@@ -55,9 +55,9 @@ public class EndergenicPearl {
 
     public CompoundNBT getTagCompound() {
         CompoundNBT tagCompound = new CompoundNBT();
-        tagCompound.setInteger("t", ticksLeft);
+        tagCompound.putInt("t", ticksLeft);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
-        tagCompound.setInteger("age", age);
+        tagCompound.putInt("age", age);
         return tagCompound;
     }
 }

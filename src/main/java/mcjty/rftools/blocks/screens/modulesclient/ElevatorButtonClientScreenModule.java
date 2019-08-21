@@ -165,12 +165,12 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             if (tagCompound.hasKey("buttonColor")) {
-                buttonColor = tagCompound.getInteger("buttonColor");
+                buttonColor = tagCompound.getInt("buttonColor");
             } else {
                 buttonColor = 0xffffff;
             }
             if (tagCompound.hasKey("curColor")) {
-                currentLevelButtonColor = tagCompound.getInteger("curColor");
+                currentLevelButtonColor = tagCompound.getInt("curColor");
             } else {
                 currentLevelButtonColor = 0xffff00;
             }

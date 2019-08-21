@@ -202,7 +202,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         if (tagCompound.hasKey("monitorX")) {
-            monitor = new BlockPos(tagCompound.getInteger("monitorX"), tagCompound.getInteger("monitorY"), tagCompound.getInteger("monitorZ"));
+            monitor = new BlockPos(tagCompound.getInt("monitorX"), tagCompound.getInt("monitorY"), tagCompound.getInt("monitorZ"));
         } else {
             monitor = null;
         }
@@ -212,7 +212,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        fluidlevel = tagCompound.getInteger("fluidlevel");
+        fluidlevel = tagCompound.getInt("fluidlevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
     }
@@ -221,18 +221,18 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         if (monitor != null) {
-            tagCompound.setInteger("monitorX", monitor.getX());
-            tagCompound.setInteger("monitorY", monitor.getY());
-            tagCompound.setInteger("monitorZ", monitor.getZ());
+            tagCompound.putInt("monitorX", monitor.getX());
+            tagCompound.putInt("monitorY", monitor.getY());
+            tagCompound.putInt("monitorZ", monitor.getZ());
         }
-        tagCompound.setBoolean("inAlarm", inAlarm);
+        tagCompound.putBoolean("inAlarm", inAlarm);
         return tagCompound;
     }
 
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("fluidlevel", getFluidLevel());
+        tagCompound.putInt("fluidlevel", getFluidLevel());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
     }

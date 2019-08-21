@@ -176,7 +176,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
                 return -1;
             }
             if (tagCompound.hasKey("channel")) {
-                return tagCompound.getInteger("channel");
+                return tagCompound.getInt("channel");
             }
         }
         return -1;

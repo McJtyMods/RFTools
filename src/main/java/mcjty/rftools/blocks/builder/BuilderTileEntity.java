@@ -2243,9 +2243,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         } else {
             lastError = null;
         }
-        mode = tagCompound.getInteger("mode");
-        anchor = tagCompound.getInteger("anchor");
-        rotate = tagCompound.getInteger("rotate");
+        mode = tagCompound.getInt("mode");
+        anchor = tagCompound.getInt("anchor");
+        rotate = tagCompound.getInt("rotate");
         silent = tagCompound.getBoolean("silent");
         supportMode = tagCompound.getBoolean("support");
         entityMode = tagCompound.getBoolean("entityMode");
@@ -2268,15 +2268,15 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         if (lastError != null) {
             tagCompound.setString("lastError", lastError);
         }
-        tagCompound.setInteger("mode", mode);
-        tagCompound.setInteger("anchor", anchor);
-        tagCompound.setInteger("rotate", rotate);
-        tagCompound.setBoolean("silent", silent);
-        tagCompound.setBoolean("support", supportMode);
-        tagCompound.setBoolean("entityMode", entityMode);
-        tagCompound.setBoolean("loopMode", loopMode);
-        tagCompound.setBoolean("waitMode", waitMode);
-        tagCompound.setBoolean("hilightMode", hilightMode);
+        tagCompound.putInt("mode", mode);
+        tagCompound.putInt("anchor", anchor);
+        tagCompound.putInt("rotate", rotate);
+        tagCompound.putBoolean("silent", silent);
+        tagCompound.putBoolean("support", supportMode);
+        tagCompound.putBoolean("entityMode", entityMode);
+        tagCompound.putBoolean("loopMode", loopMode);
+        tagCompound.putBoolean("waitMode", waitMode);
+        tagCompound.putBoolean("hilightMode", hilightMode);
         BlockPosTools.writeToNBT(tagCompound, "scan", scan);
         BlockPosTools.writeToNBT(tagCompound, "minBox", minBox);
         BlockPosTools.writeToNBT(tagCompound, "maxBox", maxBox);

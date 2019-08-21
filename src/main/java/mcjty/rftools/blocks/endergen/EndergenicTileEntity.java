@@ -660,10 +660,10 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
 
-        chargingMode = tagCompound.getInteger("charging");
-        currentAge = tagCompound.getInteger("age");
+        chargingMode = tagCompound.getInt("charging");
+        currentAge = tagCompound.getInt("age");
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
-        distance = tagCompound.getInteger("distance");
+        distance = tagCompound.getInt("distance");
         prevIn = tagCompound.getBoolean("prevIn");
         badCounter = tagCompound.getByte("bad");
         goodCounter = tagCompound.getByte("good");
@@ -680,11 +680,11 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setInteger("charging", chargingMode);
-        tagCompound.setInteger("age", currentAge);
+        tagCompound.putInt("charging", chargingMode);
+        tagCompound.putInt("age", currentAge);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
-        tagCompound.setInteger("distance", distance);
-        tagCompound.setBoolean("prevIn", prevIn);
+        tagCompound.putInt("distance", distance);
+        tagCompound.putBoolean("prevIn", prevIn);
         tagCompound.setByte("bad", (byte) badCounter);
         tagCompound.setByte("good", (byte) goodCounter);
 

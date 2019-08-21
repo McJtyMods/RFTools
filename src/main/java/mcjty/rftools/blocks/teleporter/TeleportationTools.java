@@ -25,7 +25,7 @@ public class TeleportationTools {
 
     public static Effect confusion;
     public static Effect harm;
-    public static Potion wither;
+    public static Effect wither;
 
     public static void getPotions() {
         if (confusion == null) {

@@ -64,7 +64,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            int id = tagCompound.getInteger("protectorId");
+            int id = tagCompound.getInt("protectorId");
             list.add(TextFormatting.GREEN + "Id: " + id);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

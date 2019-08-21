@@ -753,8 +753,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
         movingY = tagCompound.getDouble("movingY");
-        startY = tagCompound.getInteger("startY");
-        stopY = tagCompound.getInteger("stopY");
+        startY = tagCompound.getInt("startY");
+        stopY = tagCompound.getInt("stopY");
         byte[] byteArray = tagCompound.getByteArray("relcoords");
         positions.clear();
         int j = 0;
@@ -767,21 +767,21 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             positions.add(new BlockPos(getPos().getX() + c.getDx(), getPos().getY() + c.getDy(), getPos().getZ() + c.getDz()));
         }
         if (tagCompound.hasKey("bminX")) {
-            int bminX = tagCompound.getInteger("bminX");
-            int bminZ = tagCompound.getInteger("bminZ");
-            int bmaxX = tagCompound.getInteger("bmaxX");
-            int bmaxZ = tagCompound.getInteger("bmaxZ");
+            int bminX = tagCompound.getInt("bminX");
+            int bminZ = tagCompound.getInt("bminZ");
+            int bmaxX = tagCompound.getInt("bmaxX");
+            int bmaxZ = tagCompound.getInt("bmaxZ");
             if(bminX <= bmaxX && bminZ <= bmaxZ) { // Fix saves that were affected by issue #1601 by validating bounds here
                 bounds = new Bounds(bminX, bminZ, bmaxX, bmaxZ);
             }
         }
         if (tagCompound.hasKey("movingId")) {
-            Integer id = tagCompound.getInteger("movingId");
+            Integer id = tagCompound.getInt("movingId");
             movingState = Block.getStateById(id);
         } else if (tagCompound.hasKey("movingBlock")) {
             // Deprecated (@todo remove in 1.13)
             String id = tagCompound.getString("movingBlock");
-            int meta = tagCompound.getInteger("movingMeta");
+            int meta = tagCompound.getInt("movingMeta");
             movingState = Block.REGISTRY.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
         }
     }
@@ -789,11 +789,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
-        tagCompound.setBoolean("prevIn", prevIn);
+        tagCompound.putBoolean("rs", redstoneOut);
+        tagCompound.putBoolean("prevIn", prevIn);
         tagCompound.setDouble("movingY", movingY);
-        tagCompound.setInteger("startY", startY);
-        tagCompound.setInteger("stopY", stopY);
+        tagCompound.putInt("startY", startY);
+        tagCompound.putInt("stopY", stopY);
         byte[] blocks = new byte[positions.size() * 6];
         int j = 0;
         for (BlockPos pos : positions) {
@@ -807,14 +807,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             j += 6;
         }
         if (bounds != null) {
-            tagCompound.setInteger("bminX", bounds.getMinX());
-            tagCompound.setInteger("bminZ", bounds.getMinZ());
-            tagCompound.setInteger("bmaxX", bounds.getMaxX());
-            tagCompound.setInteger("bmaxZ", bounds.getMaxZ());
+            tagCompound.putInt("bminX", bounds.getMinX());
+            tagCompound.putInt("bminZ", bounds.getMinZ());
+            tagCompound.putInt("bmaxX", bounds.getMaxX());
+            tagCompound.putInt("bmaxZ", bounds.getMaxZ());
         }
         tagCompound.setByteArray("relcoords", blocks);
         if (movingState != null) {
-            tagCompound.setInteger("movingId", Block.getStateId(movingState));
+            tagCompound.putInt("movingId", Block.getStateId(movingState));
         }
         if (!getWorld().isRemote) {
             // Only do this server side

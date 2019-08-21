@@ -4,6 +4,7 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 
@@ -66,8 +67,8 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
 
         needpulse = tagCompound.getBoolean("needPulse");
@@ -76,22 +77,22 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        int m = tagCompound.getInteger("mode");
+        int m = tagCompound.getInt("mode");
         mode = EnderMonitorMode.values()[m];
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
-        tagCompound.setBoolean("needPulse", needpulse);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        tagCompound.putBoolean("needPulse", needpulse);
         return tagCompound;
     }
 
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("mode", mode.ordinal());
+        tagCompound.putInt("mode", mode.ordinal());
     }
 
     @Override

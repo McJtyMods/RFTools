@@ -79,7 +79,7 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
 
             channels.put(channel, value);
         }
-        lastId = tagCompound.getInteger("lastId");
+        lastId = tagCompound.getInt("lastId");
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
             lst.appendTag(tc);
         }
         tagCompound.setTag("channels", lst);
-        tagCompound.setInteger("lastId", lastId);
+        tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }
 

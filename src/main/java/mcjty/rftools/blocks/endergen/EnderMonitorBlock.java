@@ -46,7 +46,7 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            int mode = tagCompound.getInteger("mode");
+            int mode = tagCompound.getInt("mode");
             String smode = EnderMonitorMode.values()[mode].getDescription();
             list.add(TextFormatting.GREEN + "Mode: " + smode);
         }

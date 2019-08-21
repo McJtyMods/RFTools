@@ -12,12 +12,12 @@ public class CounterPlusClientScreenModule extends CounterClientScreenModule {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
-                this.dim = tagCompound.getInteger("monitordim");
+                this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons
-                this.dim = tagCompound.getInteger("dim");
+                this.dim = tagCompound.getInt("dim");
             }
-            coordinate = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+            coordinate = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
         }
     }
 

@@ -67,7 +67,7 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
             tagCompound = new CompoundNBT();
             stack.setTagCompound(tagCompound);
         }
-        tagCompound.setInteger("count", numStacks);
+        tagCompound.putInt("count", numStacks);
     }
 
     @SideOnly(Side.CLIENT)
@@ -96,15 +96,15 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
         if (max == -1) {
             // This is a remote storage module.
             if (tagCompound.hasKey("id")) {
-                int id = tagCompound.getInteger("id");
+                int id = tagCompound.getInt("id");
                 list.add(TextFormatting.GREEN + "Remote id: " + id);
             } else {
                 list.add(TextFormatting.YELLOW + "Unlinked");
             }
         } else {
-            int cnt = tagCompound.getInteger("count");
+            int cnt = tagCompound.getInt("count");
             if (tagCompound.hasKey("id")) {
-                int id = tagCompound.getInteger("id");
+                int id = tagCompound.getInt("id");
                 list.add(TextFormatting.GREEN + "Contents id: " + id);
             }
             list.add(TextFormatting.GREEN + "Contents: " + cnt + "/" + max + " stacks");

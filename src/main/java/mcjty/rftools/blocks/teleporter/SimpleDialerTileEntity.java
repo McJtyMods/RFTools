@@ -68,12 +68,12 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("transX")) {
-            transmitter = new GlobalCoordinate(new BlockPos(tagCompound.getInteger("transX"), tagCompound.getInteger("transY"), tagCompound.getInteger("transZ")), tagCompound.getInteger("transDim"));
+            transmitter = new GlobalCoordinate(new BlockPos(tagCompound.getInt("transX"), tagCompound.getInt("transY"), tagCompound.getInt("transZ")), tagCompound.getInt("transDim"));
         } else {
             transmitter = null;
         }
         if (tagCompound.hasKey("receiver")) {
-            receiver = tagCompound.getInteger("receiver");
+            receiver = tagCompound.getInt("receiver");
         } else {
             receiver = null;
         }
@@ -84,14 +84,14 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         if (transmitter != null) {
-            tagCompound.setInteger("transX", transmitter.getCoordinate().getX());
-            tagCompound.setInteger("transY", transmitter.getCoordinate().getY());
-            tagCompound.setInteger("transZ", transmitter.getCoordinate().getZ());
-            tagCompound.setInteger("transDim", transmitter.getDimension());
+            tagCompound.putInt("transX", transmitter.getCoordinate().getX());
+            tagCompound.putInt("transY", transmitter.getCoordinate().getY());
+            tagCompound.putInt("transZ", transmitter.getCoordinate().getZ());
+            tagCompound.putInt("transDim", transmitter.getDimension());
         }
         if (receiver != null) {
-            tagCompound.setInteger("receiver", receiver);
+            tagCompound.putInt("receiver", receiver);
         }
-        tagCompound.setBoolean("once", onceMode);
+        tagCompound.putBoolean("once", onceMode);
     }
 }

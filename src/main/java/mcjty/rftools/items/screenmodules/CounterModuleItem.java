@@ -97,10 +97,10 @@ public class CounterModuleItem extends Item implements IModuleProvider, INBTPres
             tagCompound = new CompoundNBT();
         }
         if (te instanceof CounterTileEntity) {
-            tagCompound.setInteger("monitordim", world.provider.getDimension());
-            tagCompound.setInteger("monitorx", pos.getX());
-            tagCompound.setInteger("monitory", pos.getY());
-            tagCompound.setInteger("monitorz", pos.getZ());
+            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitorx", pos.getX());
+            tagCompound.putInt("monitory", pos.getY());
+            tagCompound.putInt("monitorz", pos.getZ());
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";

@@ -127,7 +127,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setBoolean("showFav", showOnlyFavorites);
+        tagCompound.putBoolean("showFav", showOnlyFavorites);
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {

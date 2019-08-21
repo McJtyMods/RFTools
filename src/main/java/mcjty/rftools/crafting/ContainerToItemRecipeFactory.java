@@ -69,7 +69,7 @@ public class ContainerToItemRecipeFactory implements IRecipeFactory {
                         }
                     }
 
-                    childDamage = tagCompound.getInteger("childDamage");
+                    childDamage = tagCompound.getInt("childDamage");
                     if (childDamage == META_FOR_SCANNER) {
                         childDamage = 0;
                     }

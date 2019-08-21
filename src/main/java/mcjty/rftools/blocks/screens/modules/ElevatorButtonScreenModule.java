@@ -124,13 +124,13 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.hasKey("elevatorx")) {
                 if (tagCompound.hasKey("elevatordim")) {
-                    this.dim = tagCompound.getInteger("elevatordim");
+                    this.dim = tagCompound.getInt("elevatordim");
                 } else {
                     // Compatibility reasons
-                    this.dim = tagCompound.getInteger("dim");
+                    this.dim = tagCompound.getInt("dim");
                 }
                 if (dim == this.dim) {
-                    BlockPos c = new BlockPos(tagCompound.getInteger("elevatorx"), tagCompound.getInteger("elevatory"), tagCompound.getInteger("elevatorz"));
+                    BlockPos c = new BlockPos(tagCompound.getInt("elevatorx"), tagCompound.getInt("elevatory"), tagCompound.getInt("elevatorz"));
                     int dx = Math.abs(c.getX() - pos.getX());
                     int dz = Math.abs(c.getZ() - pos.getZ());
                     if (dx <= 64 && dz <= 64) {

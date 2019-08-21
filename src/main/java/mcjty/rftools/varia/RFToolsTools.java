@@ -63,9 +63,9 @@ public class RFToolsTools {
             return null;
         }
         CompoundNBT tagCompound = stack.getTag();
-        int monitorx = tagCompound.getInteger("monitorx");
-        int monitory = tagCompound.getInteger("monitory");
-        int monitorz = tagCompound.getInteger("monitorz");
+        int monitorx = tagCompound.getInt("monitorx");
+        int monitory = tagCompound.getInt("monitory");
+        int monitorz = tagCompound.getInt("monitorz");
         return new BlockPos(monitorx, monitory, monitorz);
     }
 

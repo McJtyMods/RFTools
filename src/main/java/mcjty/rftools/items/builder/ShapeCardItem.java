@@ -126,7 +126,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     }
 
     public static void setData(CompoundNBT tagCompound, int scanID) {
-        tagCompound.setInteger("scanid", scanID);
+        tagCompound.putInt("scanid", scanID);
     }
 
     public static void setModifier(CompoundNBT tag, ShapeModifier modifier) {
@@ -158,23 +158,23 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
     public static void setDimension(ItemStack itemStack, int x, int y, int z) {
         CompoundNBT tagCompound = getCompound(itemStack);
-        if (tagCompound.getInteger("dimX") == x && tagCompound.getInteger("dimY") == y && tagCompound.getInteger("dimZ") == z) {
+        if (tagCompound.getInt("dimX") == x && tagCompound.getInt("dimY") == y && tagCompound.getInt("dimZ") == z) {
             return;
         }
-        tagCompound.setInteger("dimX", x);
-        tagCompound.setInteger("dimY", y);
-        tagCompound.setInteger("dimZ", z);
+        tagCompound.putInt("dimX", x);
+        tagCompound.putInt("dimY", y);
+        tagCompound.putInt("dimZ", z);
     }
 
 
     public static void setOffset(ItemStack itemStack, int x, int y, int z) {
         CompoundNBT tagCompound = getCompound(itemStack);
-        if (tagCompound.getInteger("offsetX") == x && tagCompound.getInteger("offsetY") == y && tagCompound.getInteger("offsetZ") == z) {
+        if (tagCompound.getInt("offsetX") == x && tagCompound.getInt("offsetY") == y && tagCompound.getInt("offsetZ") == z) {
             return;
         }
-        tagCompound.setInteger("offsetX", x);
-        tagCompound.setInteger("offsetY", y);
-        tagCompound.setInteger("offsetZ", z);
+        tagCompound.putInt("offsetX", x);
+        tagCompound.putInt("offsetY", y);
+        tagCompound.putInt("offsetZ", z);
     }
 
     private static CompoundNBT getCompound(ItemStack itemStack) {
@@ -193,9 +193,9 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             tagCompound.removeTag("corner1y");
             tagCompound.removeTag("corner1z");
         } else {
-            tagCompound.setInteger("corner1x", corner.getX());
-            tagCompound.setInteger("corner1y", corner.getY());
-            tagCompound.setInteger("corner1z", corner.getZ());
+            tagCompound.putInt("corner1x", corner.getX());
+            tagCompound.putInt("corner1y", corner.getY());
+            tagCompound.putInt("corner1z", corner.getZ());
         }
     }
 
@@ -207,13 +207,13 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (!tagCompound.hasKey("corner1x")) {
             return null;
         }
-        return new BlockPos(tagCompound.getInteger("corner1x"), tagCompound.getInteger("corner1y"), tagCompound.getInteger("corner1z"));
+        return new BlockPos(tagCompound.getInt("corner1x"), tagCompound.getInt("corner1y"), tagCompound.getInt("corner1z"));
     }
 
     public static int getMode(ItemStack itemStack) {
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            return tagCompound.getInteger("mode");
+            return tagCompound.getInt("mode");
         } else {
             return MODE_NONE;
         }
@@ -221,10 +221,10 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
     public static void setMode(ItemStack itemStack, int mode) {
         CompoundNBT tagCompound = getCompound(itemStack);
-        if (tagCompound.getInteger("mode") == mode) {
+        if (tagCompound.getInt("mode") == mode) {
             return;
         }
-        tagCompound.setInteger("mode", mode);
+        tagCompound.putInt("mode", mode);
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
@@ -236,20 +236,20 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             tagCompound.removeTag("selectedZ");
             tagCompound.removeTag("selectedDim");
         } else {
-            tagCompound.setInteger("selectedX", c.getCoordinate().getX());
-            tagCompound.setInteger("selectedY", c.getCoordinate().getY());
-            tagCompound.setInteger("selectedZ", c.getCoordinate().getZ());
-            tagCompound.setInteger("selectedDim", c.getDimension());
+            tagCompound.putInt("selectedX", c.getCoordinate().getX());
+            tagCompound.putInt("selectedY", c.getCoordinate().getY());
+            tagCompound.putInt("selectedZ", c.getCoordinate().getZ());
+            tagCompound.putInt("selectedDim", c.getDimension());
         }
     }
 
     public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null && tagCompound.hasKey("selectedX")) {
-            int x = tagCompound.getInteger("selectedX");
-            int y = tagCompound.getInteger("selectedY");
-            int z = tagCompound.getInteger("selectedZ");
-            int dim = tagCompound.getInteger("selectedDim");
+            int x = tagCompound.getInt("selectedX");
+            int y = tagCompound.getInt("selectedY");
+            int z = tagCompound.getInt("selectedZ");
+            int dim = tagCompound.getInt("selectedDim");
             return new GlobalCoordinate(new BlockPos(x, y, z), dim);
         }
         return null;
@@ -388,7 +388,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             String sn = tagCompound.getString("shapenew");
             shape = Shape.getShape(sn);
         } else {
-            int shapedeprecated = tagCompound.getInteger("shape");
+            int shapedeprecated = tagCompound.getInt("shape");
             ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
             shape = sd.getNewshape();
         }
@@ -417,7 +417,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound.hasKey("shapenew")) {
             return tagCompound.getBoolean("solid");
         } else {
-            int shapedeprecated = tagCompound.getInteger("shape");
+            int shapedeprecated = tagCompound.getInt("shape");
             ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
             return sd.isSolid();
         }
@@ -439,7 +439,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (shape != Shape.SHAPE_SCAN) {
             return 0;
         }
-        return tagCompound.getInteger("scanid");
+        return tagCompound.getInt("scanid");
     }
 
     // Also find scanId's from children
@@ -453,7 +453,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     private static int getScanIdRecursive(CompoundNBT tagCompound) {
         Shape shape = getShape(tagCompound);
         if (tagCompound.hasKey("scanid") && shape == Shape.SHAPE_SCAN) {
-            return tagCompound.getInteger("scanid");
+            return tagCompound.getInt("scanid");
         }
         if (shape == Shape.SHAPE_COMPOSITION) {
             // See if there is a scan in the composition that has a scan id
@@ -502,7 +502,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             return;
         }
         tagCompound.setString("shapenew", shape.getDescription());
-        tagCompound.setBoolean("solid", solid);
+        tagCompound.putBoolean("solid", solid);
     }
 
     public static BlockPos getDimension(ItemStack stack) {
@@ -517,9 +517,9 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (!tagCompound.hasKey("dimX")) {
             return new BlockPos(5, 5, 5);
         }
-        int dimX = tagCompound.getInteger("dimX");
-        int dimY = tagCompound.getInteger("dimY");
-        int dimZ = tagCompound.getInteger("dimZ");
+        int dimX = tagCompound.getInt("dimX");
+        int dimY = tagCompound.getInt("dimY");
+        int dimZ = tagCompound.getInt("dimZ");
         return new BlockPos(dimX, clampDimension(dimY, 256), dimZ);
     }
 
@@ -532,9 +532,9 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
-        int dimX = tagCompound.getInteger("dimX");
-        int dimY = tagCompound.getInteger("dimY");
-        int dimZ = tagCompound.getInteger("dimZ");
+        int dimX = tagCompound.getInt("dimX");
+        int dimY = tagCompound.getInt("dimY");
+        int dimZ = tagCompound.getInt("dimZ");
         return new BlockPos(clampDimension(dimX, maximum), clampDimension(dimY, maximum), clampDimension(dimZ, maximum));
     }
 
@@ -552,9 +552,9 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return new BlockPos(0, 0, 0);
         }
-        int offsetX = tagCompound.getInteger("offsetX");
-        int offsetY = tagCompound.getInteger("offsetY");
-        int offsetZ = tagCompound.getInteger("offsetZ");
+        int offsetX = tagCompound.getInt("offsetX");
+        int offsetY = tagCompound.getInt("offsetY");
+        int offsetZ = tagCompound.getInt("offsetZ");
         return new BlockPos(offsetX, offsetY, offsetZ);
     }
 
@@ -567,9 +567,9 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return new BlockPos(0, 0, 0);
         }
-        int offsetX = tagCompound.getInteger("offsetX");
-        int offsetY = tagCompound.getInteger("offsetY");
-        int offsetZ = tagCompound.getInteger("offsetZ");
+        int offsetX = tagCompound.getInt("offsetX");
+        int offsetY = tagCompound.getInt("offsetY");
+        int offsetZ = tagCompound.getInt("offsetZ");
         return new BlockPos(clampOffset(offsetX, maximum), clampOffset(offsetY, maximum), clampOffset(offsetZ, maximum));
     }
 

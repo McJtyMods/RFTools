@@ -150,7 +150,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
             scan.readFromNBT(tc);
             scans.put(id, scan);
         }
-        lastId = tagCompound.getInteger("lastId");
+        lastId = tagCompound.getInt("lastId");
     }
 
     @SuppressWarnings("NullableProblems")
@@ -164,7 +164,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
             lst.appendTag(tc);
         }
         tagCompound.setTag("scans", lst);
-        tagCompound.setInteger("lastId", lastId);
+        tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }
 

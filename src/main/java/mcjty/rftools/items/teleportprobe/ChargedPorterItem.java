@@ -76,12 +76,12 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
                 return;
             }
             PlayerEntity player = (PlayerEntity) entityIn;
-            int timer = tagCompound.getInteger("tpTimer");
+            int timer = tagCompound.getInt("tpTimer");
             timer--;
             if (timer <= 0) {
                 tagCompound.removeTag("tpTimer");
                 TeleportDestinations destinations = TeleportDestinations.getDestinations(worldIn);
-                int target = tagCompound.getInteger("target");
+                int target = tagCompound.getInt("target");
                 GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
                 if (coordinate == null) {
                     Logging.message(player, TextFormatting.RED + "Something went wrong! The target has disappeared!");
@@ -92,7 +92,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
                 ForgeEventHandlers.addPlayerToTeleportHere(destination, player);
 //                    TeleportationTools.performTeleport(player, destination, 0, 10, false);
             } else {
-                tagCompound.setInteger("tpTimer", timer);
+                tagCompound.putInt("tpTimer", timer);
             }
         }
     }
@@ -110,7 +110,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             CompoundNBT tagCompound = stack.getTag();
             int energy = 0;
             if (tagCompound != null) {
-                energy = tagCompound.getInteger("Energy");
+                energy = tagCompound.getInt("Energy");
             }
             int level = (9 * energy) / capacity;
             if (level < 0) {
@@ -162,7 +162,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 
     private void startTeleport(ItemStack stack, PlayerEntity player, World world) {
         CompoundNBT tagCompound = stack.getTag();
-        if (tagCompound == null || (!tagCompound.hasKey("target")) || tagCompound.getInteger("target") == -1) {
+        if (tagCompound == null || (!tagCompound.hasKey("target")) || tagCompound.getInt("target") == -1) {
             if (world.isRemote) {
                 Logging.message(player, TextFormatting.RED + "The charged porter has no target.");
             }
@@ -184,7 +184,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 //
 //            }
 
-            int target = tagCompound.getInteger("target");
+            int target = tagCompound.getInt("target");
 
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
@@ -214,7 +214,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 //            if (porterProperties != null) {
 //                porterProperties.startTeleport(target, ticks);
 //            }
-            tagCompound.setInteger("tpTimer", ticks);
+            tagCompound.putInt("tpTimer", ticks);
             Logging.message(player, TextFormatting.YELLOW + "Start teleportation!");
         }
     }
@@ -247,7 +247,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         if (world.isRemote) {
             Logging.message(player, "Charged porter target is set to " + id + ".");
         }
-        tagCompound.setInteger("target", id);
+        tagCompound.putInt("target", id);
     }
 
     protected void selectOnThinAir(PlayerEntity player, World world, CompoundNBT tagCompound, ItemStack stack) {
@@ -262,9 +262,9 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
+            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInt("Energy") + " RF");
             if (tagCompound.hasKey("target")) {
-                list.add(TextFormatting.BLUE + "Target: " + tagCompound.getInteger("target"));
+                list.add(TextFormatting.BLUE + "Target: " + tagCompound.getInt("target"));
             } else {
                 list.add(TextFormatting.RED + "No target set! Sneak-Right click on receiver to set.");
             }

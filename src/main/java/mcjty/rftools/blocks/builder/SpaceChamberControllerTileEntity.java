@@ -137,7 +137,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        channel = tagCompound.getInteger("channel");
+        channel = tagCompound.getInt("channel");
     }
 
     @Override
@@ -151,6 +151,6 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("channel", channel);
+        tagCompound.putInt("channel", channel);
     }
 }

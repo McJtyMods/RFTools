@@ -32,7 +32,7 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             if (tagCompound.hasKey("channel")) {
-                channel = tagCompound.getInteger("channel");
+                channel = tagCompound.getInt("channel");
             }
             toggle = tagCompound.getBoolean("toggle");
         }

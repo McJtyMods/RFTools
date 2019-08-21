@@ -48,14 +48,14 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             if (tagCompound.hasKey("transX")) {
-                int transX = tagCompound.getInteger("transX");
-                int transY = tagCompound.getInteger("transY");
-                int transZ = tagCompound.getInteger("transZ");
-                int dim = tagCompound.getInteger("transDim");
+                int transX = tagCompound.getInt("transX");
+                int transY = tagCompound.getInt("transY");
+                int transZ = tagCompound.getInt("transZ");
+                int dim = tagCompound.getInt("transDim");
                 list.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
             }
             if (tagCompound.hasKey("receiver")) {
-                int receiver = tagCompound.getInteger("receiver");
+                int receiver = tagCompound.getInt("receiver");
                 list.add(TextFormatting.GREEN + "Receiver: " + receiver);
             }
             if (tagCompound.getBoolean("once")) {
@@ -100,14 +100,14 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
         CompoundNBT tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             if (tagCompound.hasKey("transX")) {
-                int transX = tagCompound.getInteger("transX");
-                int transY = tagCompound.getInteger("transY");
-                int transZ = tagCompound.getInteger("transZ");
-                int dim = tagCompound.getInteger("transDim");
+                int transX = tagCompound.getInt("transX");
+                int transY = tagCompound.getInt("transY");
+                int transZ = tagCompound.getInt("transZ");
+                int dim = tagCompound.getInt("transDim");
                 currenttip.add(TextFormatting.GREEN + "Transmitter at: " + transX + "," + transY + "," + transZ + " (dim " + dim + ")");
             }
             if (tagCompound.hasKey("receiver")) {
-                int receiver = tagCompound.getInteger("receiver");
+                int receiver = tagCompound.getInt("receiver");
                 currenttip.add(TextFormatting.GREEN + "Receiver: " + receiver);
             }
             if (tagCompound.getBoolean("once")) {

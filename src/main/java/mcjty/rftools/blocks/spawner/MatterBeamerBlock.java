@@ -66,7 +66,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 //        CompoundNBT tagCompound = itemStack.getTag();
 //        if (tagCompound != null) {
 //            String name = tagCompound.getString("tpName");
-//            int id = tagCompound.getInteger("destinationId");
+//            int id = tagCompound.getInt("destinationId");
 //            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
 //        }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

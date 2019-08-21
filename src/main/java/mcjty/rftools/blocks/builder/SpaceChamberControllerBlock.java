@@ -43,7 +43,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
+            int channel = tagCompound.getInt("channel");
             list.add(TextFormatting.GREEN + "Channel: " + channel);
         }
 

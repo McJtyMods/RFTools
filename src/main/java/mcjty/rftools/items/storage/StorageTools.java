@@ -36,9 +36,9 @@ public class StorageTools {
             return;
         }
 
-        int moduleDamage = tagCompound.getInteger("childDamage");
+        int moduleDamage = tagCompound.getInt("childDamage");
         if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
-            int id = tagCompound.getInteger("id");
+            int id = tagCompound.getInt("id");
             RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(player.getEntityWorld(), id);
             if (remoteStorage != null) {
                 remoteStorage.compact(id);
@@ -83,15 +83,15 @@ public class StorageTools {
         if (tagCompound == null) {
             return;
         }
-        int id = tagCompound.getInteger("id");
+        int id = tagCompound.getInt("id");
         RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(player.getEntityWorld(), id);
         if (remoteStorage != null) {
             id = remoteStorage.cycle(id);
-            tagCompound.setInteger("id", id);
+            tagCompound.putInt("id", id);
             int si = remoteStorage.findRemoteIndex(id);
             if (si != -1) {
                 int maxStacks = remoteStorage.getMaxStacks(si);
-                tagCompound.setInteger("maxSize", maxStacks);
+                tagCompound.putInt("maxSize", maxStacks);
             }
             remoteStorage.markDirty();
         } else {

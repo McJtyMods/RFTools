@@ -183,7 +183,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         if (tagCompound.hasKey("monitorX")) {
-            monitor = new BlockPos(tagCompound.getInteger("monitorX"), tagCompound.getInteger("monitorY"), tagCompound.getInteger("monitorZ"));
+            monitor = new BlockPos(tagCompound.getInt("monitorX"), tagCompound.getInt("monitorY"), tagCompound.getInt("monitorZ"));
         } else {
             monitor = null;
         }
@@ -193,7 +193,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        rflevel = tagCompound.getInteger("rflevel");
+        rflevel = tagCompound.getInt("rflevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
     }
@@ -202,18 +202,18 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         if (monitor != null) {
-            tagCompound.setInteger("monitorX", monitor.getX());
-            tagCompound.setInteger("monitorY", monitor.getY());
-            tagCompound.setInteger("monitorZ", monitor.getZ());
+            tagCompound.putInt("monitorX", monitor.getX());
+            tagCompound.putInt("monitorY", monitor.getY());
+            tagCompound.putInt("monitorZ", monitor.getZ());
         }
-        tagCompound.setBoolean("inAlarm", inAlarm);
+        tagCompound.putBoolean("inAlarm", inAlarm);
         return tagCompound;
     }
 
     @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("rflevel", getRflevel());
+        tagCompound.putInt("rflevel", getRflevel());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
     }

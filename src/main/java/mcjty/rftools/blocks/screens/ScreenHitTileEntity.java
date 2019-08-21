@@ -21,9 +21,9 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        dx = tagCompound.getInteger("dx");
-        dy = tagCompound.getInteger("dy");
-        dz = tagCompound.getInteger("dz");
+        dx = tagCompound.getInt("dx");
+        dy = tagCompound.getInt("dy");
+        dz = tagCompound.getInt("dz");
     }
 
     public int getDx() {
@@ -41,9 +41,9 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("dx", dx);
-        tagCompound.setInteger("dy", dy);
-        tagCompound.setInteger("dz", dz);
+        tagCompound.putInt("dx", dx);
+        tagCompound.putInt("dy", dy);
+        tagCompound.putInt("dz", dz);
         return tagCompound;
     }
 

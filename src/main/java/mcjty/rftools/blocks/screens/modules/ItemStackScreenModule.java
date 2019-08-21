@@ -151,16 +151,16 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             if (tagCompound.hasKey("slot1")) {
-                slot1 = tagCompound.getInteger("slot1");
+                slot1 = tagCompound.getInt("slot1");
             }
             if (tagCompound.hasKey("slot2")) {
-                slot2 = tagCompound.getInteger("slot2");
+                slot2 = tagCompound.getInt("slot2");
             }
             if (tagCompound.hasKey("slot3")) {
-                slot3 = tagCompound.getInteger("slot3");
+                slot3 = tagCompound.getInt("slot3");
             }
             if (tagCompound.hasKey("slot4")) {
-                slot4 = tagCompound.getInteger("slot4");
+                slot4 = tagCompound.getInt("slot4");
             }
         }
     }
@@ -169,13 +169,13 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
-                this.dim = tagCompound.getInteger("monitordim");
+                this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons
-                this.dim = tagCompound.getInteger("dim");
+                this.dim = tagCompound.getInt("dim");
             }
             if (dim == this.dim) {
-                BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                BlockPos c = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());
                 int dy = Math.abs(c.getY() - pos.getY());
                 int dz = Math.abs(c.getZ() - pos.getZ());

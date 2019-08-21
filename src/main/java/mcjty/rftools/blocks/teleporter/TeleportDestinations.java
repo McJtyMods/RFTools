@@ -226,7 +226,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         destinations.clear();
         destinationById.clear();
         destinationIdByCoordinate.clear();
-        lastId = tagCompound.getInteger("lastId");
+        lastId = tagCompound.getInt("lastId");
         readDestinationsFromNBT(tagCompound);
     }
 
@@ -255,7 +255,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         writeDestinationsToNBT(tagCompound, destinations.values(), destinationIdByCoordinate);
-        tagCompound.setInteger("lastId", lastId);
+        tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }
 

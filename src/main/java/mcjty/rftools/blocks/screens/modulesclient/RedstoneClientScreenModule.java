@@ -79,17 +79,17 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
                 notext = tagCompound.getString("notext");
             }
             if (tagCompound.hasKey("color")) {
-                color = tagCompound.getInteger("color");
+                color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
             if (tagCompound.hasKey("yescolor")) {
-                yescolor = tagCompound.getInteger("yescolor");
+                yescolor = tagCompound.getInt("yescolor");
             } else {
                 yescolor = 0xffffff;
             }
             if (tagCompound.hasKey("nocolor")) {
-                nocolor = tagCompound.getInteger("nocolor");
+                nocolor = tagCompound.getInt("nocolor");
             } else {
                 nocolor = 0xffffff;
             }
