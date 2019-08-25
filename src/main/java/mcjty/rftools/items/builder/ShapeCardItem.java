@@ -1,7 +1,11 @@
 package mcjty.rftools.items.builder;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.varia.*;
+import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.Check32;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
@@ -9,28 +13,28 @@ import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.input.Keyboard;
 
 import java.io.*;
 import java.util.*;
@@ -44,32 +48,35 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     public static final int MODE_CORNER2 = 2;
 
     public ShapeCardItem() {
-        super("shape_card");
-        setMaxStackSize(1);
-        setHasSubtypes(true);
-        setMaxDamage(0);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(0).group(RFTools.setup.getTab()));
+        setRegistryName("shape_card");
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void initModel() {
-        for(ShapeCardType type : ShapeCardType.values()) {
-            ModelResourceLocation modelResourceLocation = type.getModelResourceLocation();
-            if(modelResourceLocation != null) {
-                ModelLoader.setCustomModelResourceLocation(this, type.getDamage(), modelResourceLocation);
-            }
-        }
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public void initModel() {
+//        for(ShapeCardType type : ShapeCardType.values()) {
+//            ModelResourceLocation modelResourceLocation = type.getModelResourceLocation();
+//            if(modelResourceLocation != null) {
+//                ModelLoader.setCustomModelResourceLocation(this, type.getDamage(), modelResourceLocation);
+//            }
+//        }
+//    }
+
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
+
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
-
-    @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
         if (!world.isRemote) {
+            PlayerEntity player = context.getPlayer();
+            Hand hand = context.getHand();
+            BlockPos pos = context.getPos();
+            ItemStack stack = context.getItem();
             int mode = getMode(stack);
             if (mode == MODE_NONE) {
                 if (player.isSneaking()) {
@@ -104,7 +111,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
-                    CompoundNBT tag = getCompound(stack);
+                    CompoundNBT tag = stack.getOrCreateTag();
                     BlockPos c1 = getCorner1(stack);
                     if (c1 == null) {
                         Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -125,39 +132,44 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         return ActionResultType.SUCCESS;
     }
 
+    @Override
+    public Collection<String> getTagsToPreserve() {
+        return Collections.emptyList(); // @todo 1.14
+    }
+
     public static void setData(CompoundNBT tagCompound, int scanID) {
         tagCompound.putInt("scanid", scanID);
     }
 
     public static void setModifier(CompoundNBT tag, ShapeModifier modifier) {
-        tag.setString("mod_op", modifier.getOperation().getCode());
-        tag.setBoolean("mod_flipy", modifier.isFlipY());
-        tag.setString("mod_rot", modifier.getRotation().getCode());
+        tag.putString("mod_op", modifier.getOperation().getCode());
+        tag.putBoolean("mod_flipy", modifier.isFlipY());
+        tag.putString("mod_rot", modifier.getRotation().getCode());
     }
 
     public static void setGhostMaterial(CompoundNBT tag, ItemStack materialGhost) {
         if (materialGhost.isEmpty()) {
-            tag.removeTag("ghost_block");
-            tag.removeTag("ghost_meta");
+            tag.remove("ghost_block");
+//            tag.remove("ghost_meta");         // @todo 1.14 not more meta
         } else {
             Block block = Block.getBlockFromItem(materialGhost.getItem());
             if (block == null) {
-                tag.removeTag("ghost_block");
-                tag.removeTag("ghost_meta");
+                tag.remove("ghost_block");
+//                tag.remove("ghost_meta");     // @todo 1.14 not more meta
             } else {
-                tag.setString("ghost_block", block.getRegistryName().toString());
-                tag.setInteger("ghost_meta", materialGhost.getMetadata());
+                tag.putString("ghost_block", block.getRegistryName().toString());
+//                tag.putInt("ghost_meta", materialGhost.getMetadata());        // @todo 1.14 no more meta
             }
         }
     }
 
     public static void setChildren(ItemStack itemStack, ListNBT list) {
-        CompoundNBT tagCompound = getCompound(itemStack);
-        tagCompound.setTag("children", list);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
+        tagCompound.put("children", list);
     }
 
     public static void setDimension(ItemStack itemStack, int x, int y, int z) {
-        CompoundNBT tagCompound = getCompound(itemStack);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
         if (tagCompound.getInt("dimX") == x && tagCompound.getInt("dimY") == y && tagCompound.getInt("dimZ") == z) {
             return;
         }
@@ -168,7 +180,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
 
     public static void setOffset(ItemStack itemStack, int x, int y, int z) {
-        CompoundNBT tagCompound = getCompound(itemStack);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
         if (tagCompound.getInt("offsetX") == x && tagCompound.getInt("offsetY") == y && tagCompound.getInt("offsetZ") == z) {
             return;
         }
@@ -177,21 +189,12 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         tagCompound.putInt("offsetZ", z);
     }
 
-    private static CompoundNBT getCompound(ItemStack itemStack) {
-        CompoundNBT tagCompound = itemStack.getTag();
-        if (tagCompound == null) {
-            tagCompound = new CompoundNBT();
-            itemStack.setTagCompound(tagCompound);
-        }
-        return tagCompound;
-    }
-
     public static void setCorner1(ItemStack itemStack, BlockPos corner) {
-        CompoundNBT tagCompound = getCompound(itemStack);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
         if (corner == null) {
-            tagCompound.removeTag("corner1x");
-            tagCompound.removeTag("corner1y");
-            tagCompound.removeTag("corner1z");
+            tagCompound.remove("corner1x");
+            tagCompound.remove("corner1y");
+            tagCompound.remove("corner1z");
         } else {
             tagCompound.putInt("corner1x", corner.getX());
             tagCompound.putInt("corner1y", corner.getY());
@@ -204,7 +207,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return null;
         }
-        if (!tagCompound.hasKey("corner1x")) {
+        if (!tagCompound.contains("corner1x")) {
             return null;
         }
         return new BlockPos(tagCompound.getInt("corner1x"), tagCompound.getInt("corner1y"), tagCompound.getInt("corner1z"));
@@ -220,7 +223,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     }
 
     public static void setMode(ItemStack itemStack, int mode) {
-        CompoundNBT tagCompound = getCompound(itemStack);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
         if (tagCompound.getInt("mode") == mode) {
             return;
         }
@@ -228,13 +231,13 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
-        CompoundNBT tagCompound = getCompound(itemStack);
+        CompoundNBT tagCompound = itemStack.getOrCreateTag();
 
         if (c == null) {
-            tagCompound.removeTag("selectedX");
-            tagCompound.removeTag("selectedY");
-            tagCompound.removeTag("selectedZ");
-            tagCompound.removeTag("selectedDim");
+            tagCompound.remove("selectedX");
+            tagCompound.remove("selectedY");
+            tagCompound.remove("selectedZ");
+            tagCompound.remove("selectedDim");
         } else {
             tagCompound.putInt("selectedX", c.getCoordinate().getX());
             tagCompound.putInt("selectedY", c.getCoordinate().getY());
@@ -245,7 +248,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
     public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
         CompoundNBT tagCompound = itemStack.getTag();
-        if (tagCompound != null && tagCompound.hasKey("selectedX")) {
+        if (tagCompound != null && tagCompound.contains("selectedX")) {
             int x = tagCompound.getInt("selectedX");
             int y = tagCompound.getInt("selectedY");
             int z = tagCompound.getInt("selectedZ");
@@ -256,48 +259,47 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     }
 
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
 
-        ShapeCardType type = ShapeCardType.fromDamage(itemStack.getItemDamage());
+        ShapeCardType type = ShapeCardType.fromDamage(itemStack.getDamage());   // @todo 1.14, should not use damage here!
         if (!BuilderConfiguration.shapeCardAllowed.get()) {
-            list.add(TextFormatting.RED + "Disabled in config!");
+            list.add(new StringTextComponent(TextFormatting.RED + "Disabled in config!"));
         } else if (type != ShapeCardType.CARD_SHAPE) {
             if (!BuilderConfiguration.quarryAllowed.get()) {
-                list.add(TextFormatting.RED + "Disabled in config!");
+                list.add(new StringTextComponent(TextFormatting.RED + "Disabled in config!"));
             } else if (type.isQuarry() && type.isClearing()) {
                 if (!BuilderConfiguration.clearingQuarryAllowed.get()) {
-                    list.add(TextFormatting.RED + "Disabled in config!");
+                    list.add(new StringTextComponent(TextFormatting.RED + "Disabled in config!"));
                 }
             }
         }
 
         Shape shape = getShape(itemStack);
         boolean issolid = isSolid(itemStack);
-        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")");
-        list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
-        list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")"));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack))));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack))));
 
         if (shape.isComposition()) {
             CompoundNBT card = itemStack.getTag();
-            ListNBT children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
-            list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
+            ListNBT children = card.getList("children", Constants.NBT.TAG_COMPOUND);
+            list.add(new StringTextComponent(TextFormatting.DARK_GREEN + "Formulas: " + children.size()));
         }
 
         if (shape.isScan()) {
             CompoundNBT card = itemStack.getTag();
-            int scanid = card.getInteger("scanid");
-            list.add(TextFormatting.DARK_GREEN + "Scan id: " + scanid);
+            int scanid = card.getInt("scanid");
+            list.add(new StringTextComponent(TextFormatting.DARK_GREEN + "Scan id: " + scanid));
         }
 
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
-            list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area"));
             type.addInformation(list);
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
@@ -307,24 +309,25 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
      * @return
      */
     public static boolean isNormalShapeCard(ItemStack stack) {
-        int damage = stack.getItemDamage();
+        int damage = stack.getDamage(); // @todo 1.14 WRONG!
         return damage == ShapeCardType.CARD_SHAPE.getDamage() || damage == ShapeCardType.CARD_PUMP_LIQUID.getDamage();
     }
 
     private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
         blocks.add(block);
-        if (oredict) {
-            int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
-            for (int id : iDs) {
-                String oreName = OreDictionary.getOreName(id);
-                List<ItemStack> ores = ItemStackTools.getOres(oreName);
-                for (ItemStack ore : ores) {
-                    if (ore.getItem() instanceof ItemBlock) {
-                        blocks.add(((ItemBlock)ore.getItem()).getBlock());
-                    }
-                }
-            }
-        }
+        // @todo 1.14 use tags!
+//        if (oredict) {
+//            int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
+//            for (int id : iDs) {
+//                String oreName = OreDictionary.getOreName(id);
+//                List<ItemStack> ores = ItemStackTools.getOres(oreName);
+//                for (ItemStack ore : ores) {
+//                    if (ore.getItem() instanceof ItemBlock) {
+//                        blocks.add(((ItemBlock)ore.getItem()).getBlock());
+//                    }
+//                }
+//            }
+//        }
     }
 
     public static Set<Block> getVoidedBlocks(ItemStack stack) {
@@ -380,11 +383,11 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return Shape.SHAPE_BOX;
         }
-        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+        if (!tagCompound.contains("shape") && !tagCompound.contains("shapenew")) {
             return Shape.SHAPE_BOX;
         }
         Shape shape;
-        if (tagCompound.hasKey("shapenew")) {
+        if (tagCompound.contains("shapenew")) {
             String sn = tagCompound.getString("shapenew");
             shape = Shape.getShape(sn);
         } else {
@@ -411,10 +414,10 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return true;
         }
-        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+        if (!tagCompound.contains("shape") && !tagCompound.contains("shapenew")) {
             return true;
         }
-        if (tagCompound.hasKey("shapenew")) {
+        if (tagCompound.contains("shapenew")) {
             return tagCompound.getBoolean("solid");
         } else {
             int shapedeprecated = tagCompound.getInt("shape");
@@ -434,7 +437,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (stack.isEmpty()) {
             return 0;
         }
-        CompoundNBT tagCompound = getCompound(stack);
+        CompoundNBT tagCompound = stack.getOrCreateTag();
         Shape shape = getShape(tagCompound);
         if (shape != Shape.SHAPE_SCAN) {
             return 0;
@@ -447,19 +450,19 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (stack.isEmpty()) {
             return 0;
         }
-        return getScanIdRecursive(getCompound(stack));
+        return getScanIdRecursive(stack.getOrCreateTag());
     }
 
     private static int getScanIdRecursive(CompoundNBT tagCompound) {
         Shape shape = getShape(tagCompound);
-        if (tagCompound.hasKey("scanid") && shape == Shape.SHAPE_SCAN) {
+        if (tagCompound.contains("scanid") && shape == Shape.SHAPE_SCAN) {
             return tagCompound.getInt("scanid");
         }
         if (shape == Shape.SHAPE_COMPOSITION) {
             // See if there is a scan in the composition that has a scan id
-            ListNBT children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < children.tagCount() ; i++) {
-                CompoundNBT childTag = children.getCompoundTagAt(i);
+            ListNBT children = tagCompound.getList("children", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < children.size() ; i++) {
+                CompoundNBT childTag = children.getCompound(i);
                 int id = getScanIdRecursive(childTag);
                 if (id != 0) {
                     return id;
@@ -496,12 +499,12 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
 
     public static void setShape(ItemStack stack, Shape shape, boolean solid) {
-        CompoundNBT tagCompound = getCompound(stack);
+        CompoundNBT tagCompound = stack.getOrCreateTag();
         if (isSolid(tagCompound) == solid && getShape(tagCompound).equals(shape)) {
             // Nothing happens
             return;
         }
-        tagCompound.setString("shapenew", shape.getDescription());
+        tagCompound.putString("shapenew", shape.getDescription());
         tagCompound.putBoolean("solid", solid);
     }
 
@@ -514,7 +517,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
-        if (!tagCompound.hasKey("dimX")) {
+        if (!tagCompound.contains("dimX")) {
             return new BlockPos(5, 5, 5);
         }
         int dimX = tagCompound.getInt("dimX");
@@ -586,7 +589,8 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
-            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            // @todo 1.14
+//            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -750,30 +754,30 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         }
     }
 
-    @Override
-    public String getUnlocalizedName(ItemStack itemStack) {
-        if (itemStack.getItemDamage() == 0) {
-            return super.getUnlocalizedName(itemStack);
-        } else {
-            return super.getUnlocalizedName(itemStack) + itemStack.getItemDamage();
-        }
-    }
-
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (this.isInCreativeTab(tab)) {
-            for(ShapeCardType type : ShapeCardType.values()) {
-                int damage = type.getDamage();
-                if(damage >= 0) {
-                    items.add(new ItemStack(this, 1, damage));
-                }
-            }
-        }
-    }
+    // @todo 1.14
+//    @Override
+//    public String getUnlocalizedName(ItemStack itemStack) {
+//        if (itemStack.getItemDamage() == 0) {
+//            return super.getUnlocalizedName(itemStack);
+//        } else {
+//            return super.getUnlocalizedName(itemStack) + itemStack.getItemDamage();
+//        }
+//    }
+//    @Override
+//    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+//        if (this.isInCreativeTab(tab)) {
+//            for(ShapeCardType type : ShapeCardType.values()) {
+//                int damage = type.getDamage();
+//                if(damage >= 0) {
+//                    items.add(new ItemStack(this, 1, damage));
+//                }
+//            }
+//        }
+//    }
 
     private static boolean validFile(PlayerEntity player, String filename) {
         if (filename.contains("\\") || filename.contains("/") || filename.contains(":")) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Invalid filename '" + filename + "'! Cannot be a path!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Invalid filename '" + filename + "'! Cannot be a path!"), false);
             return false;
         }
         return true;
@@ -805,17 +809,18 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             writer.println("OFF:" + offset.getX() + "," + offset.getY() + "," + offset.getZ());
             for (BlockState state : statePalette.getPalette()) {
                 String r = state.getBlock().getRegistryName().toString();
-                writer.println(r + "@" + state.getBlock().getMetaFromState(state));
+//                writer.println(r + "@" + state.getBlock().getMetaFromState(state));   // @todo 1.14 no more meta!
+                writer.println(r);
             }
             writer.println("DATA");
 
             byte[] encoded = Base64.getEncoder().encode(data);
             writer.write(new String(encoded));
         } catch (FileNotFoundException e) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot write to file '" + filename + "'!"), false);
             return;
         }
-        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"), false);
+        player.sendStatusMessage(new StringTextComponent(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"), false);
     }
 
     public static void load(PlayerEntity player, ItemStack card, String filename) {
@@ -826,14 +831,14 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         Shape shape = ShapeCardItem.getShape(card);
 
         if (shape != Shape.SHAPE_SCAN) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"), false);
             return;
         }
 
-        CompoundNBT compound = ShapeCardItem.getCompound(card);
-        int scanId = compound.getInteger("scanid");
+        CompoundNBT compound = card.getOrCreateTag();
+        int scanId = compound.getInt("scanid");
         if (scanId == 0) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "This card is not linked to scan data!"), false);
             return;
         }
 
@@ -844,18 +849,18 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String s = reader.readLine();
             if (!"SHAPE".equals(s)) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             s = reader.readLine();
             if (!s.startsWith("DIM:")) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             BlockPos dim = parse(s.substring(4));
             s = reader.readLine();
             if (!s.startsWith("OFF:")) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             BlockPos off = parse(s.substring(4));
@@ -866,11 +871,12 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0]));
                 int meta = Integer.parseInt(split[1]);
                 if (block == null) {
-                    player.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"), false);
+                    player.sendStatusMessage(new StringTextComponent(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"), false);
                     block = Blocks.STONE;
                     meta = 0;
                 }
-                statePalette.add(block.getStateFromMeta(meta));
+//                statePalette.add(block.getStateFromMeta(meta));
+                statePalette.add(block.getDefaultState());  // @todo 1.14 no more meta!
                 s = reader.readLine();
             }
             s = reader.readLine();
@@ -878,19 +884,19 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
             setDataFromFile(scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
         } catch (IOException e) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
         } catch (NullPointerException e) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' is too short!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "File '" + filename + "' is too short!"), false);
             return;
         } catch (ArrayIndexOutOfBoundsException e) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
+            player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
             return;
         }
-        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + file.getPath() + "'"), false);
+        player.sendStatusMessage(new StringTextComponent(TextFormatting.GREEN + "Loaded shape from file '" + file.getPath() + "'"), false);
     }
 
     private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {

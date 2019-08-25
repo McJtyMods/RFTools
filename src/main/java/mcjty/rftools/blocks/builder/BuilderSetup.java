@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.Logging;
@@ -26,12 +25,12 @@ public class BuilderSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static SupportBlock supportBlock;
-    public static BaseBlock<ComposerTileEntity, GenericContainer> composerBlock;
-    public static BaseBlock<ScannerTileEntity, GenericContainer> scannerBlock;
-    public static BaseBlock<RemoteScannerTileEntity, GenericContainer> remoteScannerBlock;
-    public static BaseBlock<ProjectorTileEntity, GenericContainer> projectorBlock;
-    public static BaseBlock<LocatorTileEntity, GenericContainer> locatorBlock;
-    public static BaseBlock<BuilderTileEntity, GenericContainer> builderBlock;
+    public static BaseBlock composerBlock;
+    public static BaseBlock scannerBlock;
+    public static BaseBlock remoteScannerBlock;
+    public static BaseBlock projectorBlock;
+    public static BaseBlock locatorBlock;
+    public static BaseBlock builderBlock;
 
     @ObjectHolder("rftools:builder")
     public static TileEntityType<?> TYPE_BUILDER;

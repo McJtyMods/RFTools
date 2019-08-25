@@ -7,7 +7,7 @@ import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -28,11 +28,11 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
-})
-public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickableTileEntity,
-        IMachineInformation, SimpleComponent /*, IPeripheral*/ {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
+//})
+public class BlockProtectorTileEntity extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
+        IMachineInformation /*, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "protector.setRsMode";
     public static final String COMPONENT_NAME = "block_protector";

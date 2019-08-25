@@ -6,11 +6,14 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Arrays;
@@ -119,7 +122,7 @@ public enum ShapeCardType {
     private final ShapeCardType.SingleBlockHandler singleBlockHandler;
     private final String hudLogEntry;
     private final boolean quarry, clearing, fortune;
-    private final List<String> information;
+    private final List<ITextComponent> information;
 
     private static final Map<Integer, ShapeCardType> SHAPE_TYPE_MAP;
 
@@ -183,11 +186,11 @@ public enum ShapeCardType {
         }
     }
 
-    public void addInformation(List<String> list) {
+    public void addInformation(List<ITextComponent> list) {
         list.addAll(information);
-        list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension.get() + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension.get()) + "x" + BuilderConfiguration.maxBuilderDimension.get());
-        list.add(TextFormatting.GREEN + "Base cost: " + rfNeeded.get() + " RF/t per block");
-        list.add(TextFormatting.GREEN + (this == CARD_SHAPE ? "(final cost depends on infusion level)" : "(final cost depends on infusion level and block hardness)"));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension.get() + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension.get()) + "x" + BuilderConfiguration.maxBuilderDimension.get()));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Base cost: " + rfNeeded.get() + " RF/t per block"));
+        list.add(new StringTextComponent(TextFormatting.GREEN + (this == CARD_SHAPE ? "(final cost depends on infusion level)" : "(final cost depends on infusion level and block hardness)")));
     }
 
     public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, BlockState srcState, BlockState pickState) {
