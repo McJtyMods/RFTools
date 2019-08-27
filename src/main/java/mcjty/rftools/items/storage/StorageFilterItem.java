@@ -13,7 +13,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -82,7 +82,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         stack.setTagCompound(new CompoundNBT());
                     }
                     StorageFilterInventory.convertItemsToNBT(stack.getTag(), stacks);
-                    playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"), false);
+                    playerIn.sendStatusMessage(new StringTextComponent(TextFormatting.GREEN + "Stored inventory contents in filter"), false);
                 } else {
                     BlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
@@ -100,7 +100,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
                             if (stacks.get(i).isEmpty()) {
                                 stacks.set(i, blockStack);
-                                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"), false);
+                                playerIn.sendStatusMessage(new StringTextComponent(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"), false);
                                 StorageFilterInventory.convertItemsToNBT(stack.getTag(), stacks);
                                 break;
                             }

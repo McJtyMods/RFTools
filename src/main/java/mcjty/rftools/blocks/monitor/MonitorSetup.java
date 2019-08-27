@@ -5,12 +5,16 @@ import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
-
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 
 public class MonitorSetup {
-    public static BaseBlock<RFMonitorBlockTileEntity, GenericContainer> monitorBlock;
-    public static BaseBlock<LiquidMonitorBlockTileEntity, GenericContainer> liquidMonitorBlock;
+    public static BaseBlock monitorBlock;
+    public static BaseBlock liquidMonitorBlock;
+
+    @ObjectHolder("rftools:liquid_monitor")
+    public static TileEntityType<?> TYPE_LIQUID_MONITOR;
 
     public static void init() {
         monitorBlock = ModBlocks.builderFactory.<RFMonitorBlockTileEntity> builder("rf_monitor")

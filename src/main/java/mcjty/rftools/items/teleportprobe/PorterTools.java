@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -92,7 +92,7 @@ public class PorterTools {
                     if (donext == 1) {
                         String name = destination.getName() + " (dimension " + destination.getDimension() + ")";
                         tagCompound.putInt("target", target);
-                        ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Target: "+
+                        ITextComponent component = new StringTextComponent(TextFormatting.GREEN + "Target: "+
                         TextFormatting.WHITE + name);
                         if (playerEntity != null) {
                             playerEntity.sendStatusMessage(component, false);

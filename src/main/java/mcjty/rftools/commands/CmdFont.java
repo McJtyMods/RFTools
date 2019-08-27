@@ -8,7 +8,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 public class CmdFont extends AbstractRfToolsCommand {
@@ -30,7 +30,7 @@ public class CmdFont extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length < 3) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Several parameters are missing!");
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "Several parameters are missing!");
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -38,7 +38,7 @@ public class CmdFont extends AbstractRfToolsCommand {
             }
             return;
         } else if (args.length > 3) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Too many parameters!");
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "Too many parameters!");
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -52,7 +52,7 @@ public class CmdFont extends AbstractRfToolsCommand {
 //        ScreenConfiguration.fontSize = fetchFloat(sender, args, 2, 40);
         TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()), (float) ScreenConfiguration.fontSize.get(), false);
         if (font == null) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Could not load font!");
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "Could not load font!");
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {

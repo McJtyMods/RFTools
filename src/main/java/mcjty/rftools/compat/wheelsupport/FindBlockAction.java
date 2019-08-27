@@ -14,10 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
@@ -74,19 +74,19 @@ public class FindBlockAction implements IWheelAction {
                 }
             }
             if (storage.isEmpty()) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No storage tablet in inventory!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "No storage tablet in inventory!"), false);
                 return;
             }
 
             CompoundNBT tagCompound = storage.getTag();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No storage module in tablet!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "No storage module in tablet!"), false);
                 return;
             }
 
             int firstEmptyStack = player.inventory.getFirstEmptyStack();
             if (firstEmptyStack < 0) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No room in inventory for block!"), false);
+                player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "No room in inventory for block!"), false);
                 return;
             }
 
@@ -102,7 +102,7 @@ public class FindBlockAction implements IWheelAction {
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
                     ServerWorld w = DimensionManager.getWorld(monitordim);
                     if (w == null || !WorldTools.chunkLoaded(w, mpos)) {
-                        player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
+                        player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
                         TileEntity te = w.getTileEntity(mpos);
                         if (te instanceof StorageScannerTileEntity) {
@@ -114,7 +114,7 @@ public class FindBlockAction implements IWheelAction {
                         }
                     }
                 } else {
-                    player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
+                    player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {

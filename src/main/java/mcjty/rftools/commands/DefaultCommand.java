@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -25,14 +25,14 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     public void showHelp(ICommandSender sender) {
-        ITextComponent component1 = new TextComponentString(TextFormatting.BLUE + getName() + " <subcommand> <args>");
+        ITextComponent component1 = new StringTextComponent(TextFormatting.BLUE + getName() + " <subcommand> <args>");
         if (sender instanceof PlayerEntity) {
             ((PlayerEntity) sender).sendStatusMessage(component1, false);
         } else {
             sender.sendMessage(component1);
         }
         for (Map.Entry<String,RfToolsCommand> me : commands.entrySet()) {
-            ITextComponent component = new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp());
+            ITextComponent component = new StringTextComponent("    " + me.getKey() + " " + me.getValue().getHelp());
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -91,7 +91,7 @@ public abstract class DefaultCommand implements ICommand {
             RfToolsCommand command = commands.get(args[0]);
             if (command == null) {
                 if (!world.isRemote) {
-                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]);
+                    ITextComponent component = new StringTextComponent(TextFormatting.RED + "Unknown RfTools command: " + args[0]);
                     if (sender instanceof PlayerEntity) {
                         ((PlayerEntity) sender).sendStatusMessage(component, false);
                     } else {
@@ -107,7 +107,7 @@ public abstract class DefaultCommand implements ICommand {
                 } else {
                     // Server-side.
                     if (!sender.canUseCommand(command.getPermissionLevel(), getName())) {
-                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Command is not allowed!");
+                        ITextComponent component = new StringTextComponent(TextFormatting.RED + "Command is not allowed!");
                         if (sender instanceof PlayerEntity) {
                             ((PlayerEntity) sender).sendStatusMessage(component, false);
                         } else {
@@ -117,7 +117,7 @@ public abstract class DefaultCommand implements ICommand {
                         command.execute(sender, args);
                     }
 //                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
-//                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
+//                        sender.addChatMessage(new StringTextComponent(TextFormatting.RED + "Command is not allowed!"));
 //                    } else {
 //                        command.execute(sender, args);
 //                    }

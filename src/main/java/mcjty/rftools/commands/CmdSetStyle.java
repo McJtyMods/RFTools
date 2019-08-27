@@ -6,7 +6,7 @@ import mcjty.lib.preferences.PreferencesProperties;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 public class CmdSetStyle extends AbstractRfToolsCommand {
@@ -28,7 +28,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 2) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Too many parameters!");
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "Too many parameters!");
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -38,7 +38,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
         }
 
         if (!(sender instanceof PlayerEntity)) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "This command only works as a player!");
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "This command only works as a player!");
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -52,7 +52,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
 
         if (args.length < 2) {
             GuiStyle style = properties.getStyle();
-            ITextComponent component = new TextComponentString(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle());
+            ITextComponent component = new StringTextComponent(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle());
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
@@ -69,7 +69,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
                 buf = buf + " " + style.getStyle();
             }
 
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Unknown style! Options:" + buf);
+            ITextComponent component = new StringTextComponent(TextFormatting.RED + "Unknown style! Options:" + buf);
             if (sender instanceof PlayerEntity) {
                 ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {

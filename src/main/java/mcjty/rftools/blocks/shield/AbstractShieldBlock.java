@@ -1,32 +1,22 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.lib.McJtyRegister;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.state.IProperty;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-
-
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -42,45 +32,43 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.002, 0.002, 0.002, 0.998, 0.998, 0.998);
 
     public AbstractShieldBlock(String registryName, String unlocName, boolean opaque) {
+        super(Properties.create(Material.GLASS)
+                .hardnessAndResistance(-1.0F, 3600000.0F)
+                .noDrops()
+            );
         super(Material.GLASS);
-        this.lightOpacity = opaque ? 255 : 0;
+//        this.lightOpacity = opaque ? 255 : 0; // @todo 1.14
         setRegistryName(registryName);
-        setUnlocalizedName(unlocName);
-        setBlockUnbreakable();
-        setResistance(6000000.0F);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 
-    public static boolean activateBlock(Block block, World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
-    }
+
+//    public static boolean activateBlock(Block block, World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
+//        return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+//    }
 
     public static Collection<IProperty<?>> getPropertyKeys(BlockState state) {
-        return state.getPropertyKeys();
+        return state.getProperties();
     }
 
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
+//    @SideOnly(Side.CLIENT)
+//    public void initModel() {
+//        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+//    }
 
-    @Override
-    public boolean isOpaqueCube(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isBlockNormalCube(BlockState state) {
-        return false;
-    }
+    // @todo 1.14
+//    @Override
+//    public boolean isOpaqueCube(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isBlockNormalCube(BlockState state) {
+//        return false;
+//    }
 
     @Override
     public boolean canEntityDestroy(BlockState state, IBlockReader world, BlockPos pos, Entity entity) {
         return false;
-    }
-
-    @Override
-    public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
     }
 
     @Override

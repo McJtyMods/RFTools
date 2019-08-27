@@ -7,10 +7,10 @@ import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Items;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -47,7 +47,7 @@ public enum ShapeCardType {
     },
 
     CARD_VOID(1, "void", false, false, false, BuilderTileEntity::voidBlock, "    Void mode",
-            () -> (BuilderConfiguration.builderRfPerQuarry.get() * (int) BuilderConfiguration.voidShapeCardFactor.get()),
+            () -> (BuilderConfiguration.builderRfPerQuarry.get() * (int) (double) BuilderConfiguration.voidShapeCardFactor.get()),
             "This item will cause the builder to void",
             "all blocks in the configured space."),
 
@@ -106,13 +106,14 @@ public enum ShapeCardType {
             "liquids from an tank on top/bottom into the world.");
 
     private static String getDirtOrCobbleName() {
+        // @todo 1.14, re-evaluate
         BlockState state = BuilderConfiguration.getQuarryReplace();
         Block block = state.getBlock();
         Item item = Item.getItemFromBlock(block);
-        if(item == Items.AIR || !item.getHasSubtypes()) {
-            return block.getLocalizedName();
+        if(item == Items.AIR) {
+            return block.getTranslationKey();
         } else {
-            return new ItemStack(item, 1, block.getMetaFromState(state)).getDisplayName(); // TODO see if this can be made less fragile
+            return new ItemStack(item, 1).getDisplayName().getFormattedText(); // TODO see if this can be made less fragile
         }
     }
 
@@ -150,7 +151,7 @@ public enum ShapeCardType {
         this.rfNeeded = rfNeeded;
         this.singleBlockHandler = singleBlockHandler;
         this.hudLogEntry = hudLogEntry;
-        this.information = Arrays.stream(information).map(TextFormatting.WHITE.toString()::concat).collect(Collectors.toList());
+        this.information = Arrays.stream(information).map(a -> new StringTextComponent(TextFormatting.WHITE.toString() + a)).collect(Collectors.toList());
     }
 
     public int getDamage() {

@@ -1,15 +1,16 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.CapabilityTools;
-import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -19,6 +20,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static mcjty.rftools.blocks.monitor.MonitorSetup.TYPE_LIQUID_MONITOR;
 
 public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickableTileEntity {
     // Data that is saved
@@ -26,7 +30,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
     private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
 
-    public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
+    public static IntegerProperty LEVEL = IntegerProperty.create("level", 0, 5);
 
     public static final String CMD_GETADJACENTBLOCKS = "getAdj";
     public static final String CLIENTCMD_ADJACENTBLOCKSREADY = "adjReady";
@@ -36,6 +40,10 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
 
     private int fluidlevel = 0;
     private boolean inAlarm = false;
+
+    public LiquidMonitorBlockTileEntity() {
+        super(TYPE_LIQUID_MONITOR);
+    }
 
     public RFMonitorMode getAlarmMode() {
         return alarmMode;
@@ -100,10 +108,10 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
-                            if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
-//                            } else if (tileEntity instanceof IFluidHandler) {
-//                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
+                            if (tileEntity != null) {
+                                tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(h -> {
+                                    adjacentBlocks.add(new BlockPos(xx, yy, zz));
+                                });
                             }
                         }
                     }
@@ -114,8 +122,8 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -132,38 +140,31 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         }
         counter = 20;
 
-        long stored = 0;
-        long maxContents = 0;
+        AtomicLong stored = new AtomicLong();
+        AtomicLong maxContents = new AtomicLong();
 
-        TileEntity tileEntity = getWorld().getTileEntity(monitor);
-        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = CapabilityTools.hasFluidCapabilitySafe(tileEntity);
-        if (fluidHandler != null) {
+        TileEntity tileEntity = world.getTileEntity(monitor);
+        if (!CapabilityTools.getFluidCapabilitySafe(tileEntity).map(fluidHandler -> {
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
             if (properties != null && properties.length > 0) {
                 if (properties[0].getContents() != null) {
-                    stored = properties[0].getContents().amount;
+                    stored.set(properties[0].getContents().amount);
                 }
-                maxContents = properties[0].getCapacity();
+                maxContents.set(properties[0].getCapacity());
             }
-//        } else if (tileEntity instanceof IFluidHandler) {
-//            IFluidHandler handler = (IFluidHandler) tileEntity;
-//            FluidTankInfo[] tankInfo = handler.getTankInfo(Direction.DOWN);
-//            if (tankInfo != null && tankInfo.length > 0) {
-//                if (tankInfo[0].fluid != null) {
-//                    stored = tankInfo[0].fluid.amount;
-//                }
-//                maxContents = tankInfo[0].capacity;
-//            }
-        } else {
+            return true;
+        }).orElseGet(() -> {
             setInvalid();
+            return false;
+        })) {
             return;
-        }
+        };
 
         int ratio = 0;  // Will be set as metadata;
         boolean alarm = false;
 
-        if (maxContents > 0) {
-            ratio = (int) (1 + (stored * 5) / maxContents);
+        if (maxContents.get() > 0) {
+            ratio = (int) (1 + (stored.get() * 5) / maxContents.get());
             if (ratio < 1) {
                 ratio = 1;
             } else if (ratio > 5) {
@@ -175,10 +176,10 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                     alarm = false;
                     break;
                 case MODE_LESS:
-                    alarm = ((stored * 100 / maxContents) < alarmLevel);
+                    alarm = ((stored.get() * 100 / maxContents.get()) < alarmLevel);
                     break;
                 case MODE_MORE:
-                    alarm = ((stored * 100 / maxContents) > alarmLevel);
+                    alarm = ((stored.get() * 100 / maxContents.get()) > alarmLevel);
                     break;
             }
 
@@ -195,46 +196,46 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     private void setRedstoneOut(boolean a) {
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
+        getWorld().notifyNeighborsOfStateChange(this.pos, MonitorSetup.liquidMonitorBlock);
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        if (tagCompound.hasKey("monitorX")) {
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        if (tagCompound.contains("monitorX")) {
             monitor = new BlockPos(tagCompound.getInt("monitorX"), tagCompound.getInt("monitorY"), tagCompound.getInt("monitorZ"));
         } else {
             monitor = null;
         }
         inAlarm = tagCompound.getBoolean("inAlarm");
+        // @todo 1.14 loot tables
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         fluidlevel = tagCompound.getInt("fluidlevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         if (monitor != null) {
             tagCompound.putInt("monitorX", monitor.getX());
             tagCompound.putInt("monitorY", monitor.getY());
             tagCompound.putInt("monitorZ", monitor.getZ());
         }
         tagCompound.putBoolean("inAlarm", inAlarm);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putInt("fluidlevel", getFluidLevel());
-        tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
-        tagCompound.setByte("alarmLevel", (byte) alarmLevel);
+        tagCompound.putByte("alarmMode", (byte) alarmMode.getIndex());
+        tagCompound.putByte("alarmLevel", (byte) alarmLevel);
     }
 
     @Nonnull
@@ -263,15 +264,17 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         return false;
     }
 
-    @Override
-    public BlockState getActualState(BlockState state) {
-        int level = getFluidLevel();
-        return state.withProperty(LEVEL, level);
-    }
+// @todo 1.14 proper blockstate
+//    @Override
+//    public BlockState getActualState(BlockState state) {
+//        int level = getFluidLevel();
+//        return state.withProperty(LEVEL, level);
+//    }
+
 
     @Override
     public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-        Direction direction = state.getValue(BaseBlock.FACING);
+        Direction direction = state.get(BlockStateProperties.FACING);
         if (side == direction) {
             return isPowered() ? 15 : 0;
         }
