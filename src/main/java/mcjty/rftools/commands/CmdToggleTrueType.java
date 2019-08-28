@@ -1,6 +1,6 @@
 package mcjty.rftools.commands;
 
-import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class CmdToggleTrueType extends AbstractRfToolsCommand {
     @Override
@@ -19,7 +19,7 @@ public class CmdToggleTrueType extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         // @todo fix the 1.13 way?
         //        ScreenConfiguration.useTruetype.set(!ScreenConfiguration.useTruetype.get());
     }

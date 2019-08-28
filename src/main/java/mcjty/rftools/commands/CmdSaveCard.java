@@ -1,7 +1,6 @@
 package mcjty.rftools.commands;
 
 import mcjty.rftools.items.builder.ShapeCardItem;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -25,7 +24,7 @@ public class CmdSaveCard extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         if (args.length > 2) {
             sender.sendMessage(new StringTextComponent(TextFormatting.RED + "Too many parameters!"));
             return;

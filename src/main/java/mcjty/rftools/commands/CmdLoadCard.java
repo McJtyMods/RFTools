@@ -34,18 +34,17 @@ public class CmdLoadCard extends AbstractRfToolsCommand {
             return;
         }
 
-        if (!(sender instanceof PlayerEntity)) {
+        if (sender == null) {
             sender.sendMessage(new StringTextComponent(TextFormatting.RED + "This command only works as a player!"));
             return;
         }
 
-        PlayerEntity player = (PlayerEntity) sender;
-        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
+        ItemStack heldItem = sender.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty() || !(heldItem.getItem() instanceof ShapeCardItem)) {
             sender.sendMessage(new StringTextComponent(TextFormatting.RED + "You need to hold a shapecard in your hand!"));
             return;
         }
 
-        ShapeCardItem.load(player, heldItem, args[1]);
+        ShapeCardItem.load(sender, heldItem, args[1]);
     }
 }

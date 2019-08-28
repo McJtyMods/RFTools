@@ -1,20 +1,20 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class BlockProtectorConfiguration {
     public static final String CATEGORY_BLOCKPROTECTOR = "blockprotector";
 
-    public static ConfigSpec.BooleanValue enabled;
+    public static ForgeConfigSpec.BooleanValue enabled;
 
-    public static ConfigSpec.IntValue MAXENERGY;
-    public static ConfigSpec.IntValue RECEIVEPERTICK;
-    public static ConfigSpec.IntValue rfPerProtectedBlock;
-    public static ConfigSpec.IntValue rfForHarvestAttempt;
-    public static ConfigSpec.IntValue rfForExplosionProtection;
-    public static ConfigSpec.IntValue maxProtectDistance;
+    public static ForgeConfigSpec.IntValue MAXENERGY;
+    public static ForgeConfigSpec.IntValue RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue rfPerProtectedBlock;
+    public static ForgeConfigSpec.IntValue rfForHarvestAttempt;
+    public static ForgeConfigSpec.IntValue rfForExplosionProtection;
+    public static ForgeConfigSpec.IntValue maxProtectDistance;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the block protector machine").push(CATEGORY_BLOCKPROTECTOR);
         CLIENT_BUILDER.comment("Settings for the block protector machine").push(CATEGORY_BLOCKPROTECTOR);
 

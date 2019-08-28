@@ -1,7 +1,7 @@
 package mcjty.rftools.commands;
 
 import mcjty.rftools.shapes.ScanDataManager;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class CmdListScans extends AbstractRfToolsCommand {
     @Override
@@ -20,7 +20,7 @@ public class CmdListScans extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         ScanDataManager.listScans(sender);
     }
 }

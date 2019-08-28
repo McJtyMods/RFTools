@@ -102,6 +102,10 @@ jar {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
     if (findProject(':TheOneProbe') != null) {
         compile project(':TheOneProbe')
     } else {

@@ -1,27 +1,25 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.blocks.shield.filters.DefaultFilter;
+import mcjty.rftools.blocks.shield.filters.PlayerFilter;
+import mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.IProperty;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
 public abstract class AbstractShieldBlock extends Block implements ITileEntityProvider {
 
@@ -36,7 +34,6 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
                 .hardnessAndResistance(-1.0F, 3600000.0F)
                 .noDrops()
             );
-        super(Material.GLASS);
 //        this.lightOpacity = opaque ? 255 : 0; // @todo 1.14
         setRegistryName(registryName);
     }
@@ -71,62 +68,63 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         return false;
     }
 
-    @Override
-    public int quantityDropped(Random random) {
-        return 0;
-    }
-
-    @Override
-    public EnumPushReaction getMobilityFlag(BlockState state) {
-        return EnumPushReaction.BLOCK;
-    }
-
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
-        return COLLISION_BOX;
-    }
-
-    @Override
-    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, @Nullable Entity entity, boolean p_185477_7_) {
-        NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
-        int cdData = shieldBlockTileEntity.getCollisionData();
-
-        if (cdData == 0) {
-            // No collision for anything.
-            return;
-        }
-        if ((cdData & META_HOSTILE) != 0) {
-            if (entity instanceof IMob) {
-                if (checkEntityCD(world, pos, HostileFilter.HOSTILE)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
-                }
-                return;
-            }
-        }
-        if ((cdData & META_PASSIVE) != 0) {
-            if (entity instanceof IAnimals && !(entity instanceof IMob)) {
-                if (checkEntityCD(world, pos, AnimalFilter.ANIMAL)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
-                }
-                return;
-            }
-        }
-        if ((cdData & META_PLAYERS) != 0) {
-            if (entity instanceof PlayerEntity) {
-                if (checkPlayerCD(world, pos, (PlayerEntity) entity)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
-                }
-            }
-        }
-        if ((cdData & META_ITEMS) != 0) {
-            if (!(entity instanceof LivingEntity)) {
-                if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
-                }
-                return;
-            }
-        }
-    }
+    // @todo 1.14
+//    @Override
+//    public int quantityDropped(Random random) {
+//        return 0;
+//    }
+//
+//    @Override
+//    public EnumPushReaction getMobilityFlag(BlockState state) {
+//        return EnumPushReaction.BLOCK;
+//    }
+//
+//    @Override
+//    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
+//        return COLLISION_BOX;
+//    }
+//
+//    @Override
+//    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, @Nullable Entity entity, boolean p_185477_7_) {
+//        NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
+//        int cdData = shieldBlockTileEntity.getCollisionData();
+//
+//        if (cdData == 0) {
+//            // No collision for anything.
+//            return;
+//        }
+//        if ((cdData & META_HOSTILE) != 0) {
+//            if (entity instanceof IMob) {
+//                if (checkEntityCD(world, pos, HostileFilter.HOSTILE)) {
+//                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
+//                }
+//                return;
+//            }
+//        }
+//        if ((cdData & META_PASSIVE) != 0) {
+//            if (entity instanceof IAnimals && !(entity instanceof IMob)) {
+//                if (checkEntityCD(world, pos, AnimalFilter.ANIMAL)) {
+//                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
+//                }
+//                return;
+//            }
+//        }
+//        if ((cdData & META_PLAYERS) != 0) {
+//            if (entity instanceof PlayerEntity) {
+//                if (checkPlayerCD(world, pos, (PlayerEntity) entity)) {
+//                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
+//                }
+//            }
+//        }
+//        if ((cdData & META_ITEMS) != 0) {
+//            if (!(entity instanceof LivingEntity)) {
+//                if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
+//                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
+//                }
+//                return;
+//            }
+//        }
+//    }
 
     private boolean checkEntityCD(World world, BlockPos pos, String filterName) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
@@ -174,7 +172,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, BlockState state, Entity entity) {
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         if (!(entity instanceof LivingEntity)) {
             int cdData = shieldBlockTileEntity.getCollisionData();
@@ -187,24 +185,27 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         shieldBlockTileEntity.handleDamage(entity);
     }
 
-    @Override
-    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos thispos, Direction side) {
-        BlockPos pos = thispos.offset(side);
+    // @todo 1.14
+//    @Override
+//    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos thispos, Direction side) {
+//        BlockPos pos = thispos.offset(side);
+//
+//        NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);
+//        if (shieldBlockTileEntity == null) {
+//            return super.shouldSideBeRendered(state, world, pos, side);
+//        }
+//        BlockState mimic = shieldBlockTileEntity.getMimicBlock();
+//        if (mimic == null) {
+//            return super.shouldSideBeRendered(state, world, pos, side);
+//        } else {
+//            return mimic.getBlock().shouldSideBeRendered(state, world, pos, side);
+//        }
+//    }
 
-        NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);
-        if (shieldBlockTileEntity == null) {
-            return super.shouldSideBeRendered(state, world, pos, side);
-        }
-        BlockState mimic = shieldBlockTileEntity.getMimicBlock();
-        if (mimic == null) {
-            return super.shouldSideBeRendered(state, world, pos, side);
-        } else {
-            return mimic.getBlock().shouldSideBeRendered(state, world, pos, side);
-        }
-    }
 
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(World world, int metadata) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new NoTickShieldBlockTileEntity();
     }
 }

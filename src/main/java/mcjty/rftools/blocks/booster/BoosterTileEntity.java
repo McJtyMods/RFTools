@@ -1,35 +1,44 @@
 package mcjty.rftools.blocks.booster;
 
-import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+
+import static mcjty.rftools.blocks.booster.BoosterSetup.TYPE_BOOSTER;
 
 public class BoosterTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_RSMODE = "booster.setRsMode";
 
-    public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_MODULE = 0;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/booster.gui"));
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, 0, 7, 8, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(27, 102);
+        }
+    };
+
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
+            BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get()));
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULE) {
         @Override
@@ -46,7 +55,7 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
     private EnvironmentModule cachedModule;
 
     public BoosterTileEntity() {
-        super(BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get());
+        super(TYPE_BOOSTER);
     }
 
     @Override
@@ -54,21 +63,24 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
         return true;
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        return tagCompound;
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             if (timeout > 0) {
                 timeout--;
                 markDirty();
@@ -91,34 +103,45 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
                 }
             }
             if (cachedModule != null) {
-                long rf = getStoredPower();
-                int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
-                rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
-                for (LivingEntity entity : searchEntities()) {
-                    if (rfNeeded <= rf) {
-                        if (cachedModule.apply(getWorld(), getPos(), entity, 40)) {
-                            // Consume energy
-                            consumeEnergy(rfNeeded);
-                            rf -= rfNeeded;
+                energyHandler.ifPresent(h -> {
+                    long rf = h.getEnergyStored();
+                    int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
+                    rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
+                    for (LivingEntity entity : searchEntities()) {
+                        if (rfNeeded <= rf) {
+                            if (cachedModule.apply(getWorld(), getPos(), entity, 40)) {
+                                // Consume energy
+                                h.consumeEnergy(rfNeeded);
+                                rf -= rfNeeded;
+                            }
                         }
                     }
-                }
-                timeout = 10;
-                markDirty();
+                    timeout = 10;
+                    markDirty();
+                });
             }
         }
     }
 
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        cachedModule = null;
-        getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
-    }
+    // @todo 1.14 (cached module!!!)
+//    @Override
+//    public void setInventorySlotContents(int index, ItemStack stack) {
+//        cachedModule = null;
+//        getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
+//    }
 
-    @Override
-    public ItemStack decrStackSize(int index, int count) {
-        cachedModule = null;
-        return getInventoryHelper().decrStackSize(index, count);
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(BoosterTileEntity.this, CONTAINER_FACTORY, 1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() instanceof EnvModuleProvider;
+            }
+
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() instanceof EnvModuleProvider;
+            }
+        };
     }
 
     private List<LivingEntity> searchEntities() {
@@ -133,7 +156,7 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -143,35 +166,5 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
             return true;
         }
         return false;
-    }
-
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        return CONTAINER_FACTORY.getAccessibleSlots();
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return CONTAINER_FACTORY.isOutputSlot(index);
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return CONTAINER_FACTORY.isInputSlot(index);
     }
 }

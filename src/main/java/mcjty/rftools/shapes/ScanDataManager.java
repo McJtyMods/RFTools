@@ -3,7 +3,7 @@ package mcjty.rftools.shapes;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.ListNBT;
@@ -111,7 +111,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
         return scan;
     }
 
-    public static void listScans(ICommandSender sender) {
+    public static void listScans(PlayerEntity sender) {
         ScanDataManager scans = getScans();
         for (Map.Entry<Integer, Scan> entry : scans.scans.entrySet()) {
             Integer scanid = entry.getKey();

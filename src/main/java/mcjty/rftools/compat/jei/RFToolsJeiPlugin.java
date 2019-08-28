@@ -3,11 +3,8 @@ package mcjty.rftools.compat.jei;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
-import mezz.jei.api.BlankModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.JEIPlugin;
-import mezz.jei.api.gui.IGuiIngredient;
-import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -15,7 +12,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
-@JEIPlugin
+@JeiPlugin
 public class RFToolsJeiPlugin extends BlankModPlugin {
 
     public static void transferRecipe(Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients, BlockPos pos) {

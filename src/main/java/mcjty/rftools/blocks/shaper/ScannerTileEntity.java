@@ -8,7 +8,7 @@ import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;
@@ -44,15 +44,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity {
+public class ScannerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String ACTION_SCAN = "scan";
 

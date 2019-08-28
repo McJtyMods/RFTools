@@ -3,7 +3,6 @@ package mcjty.rftools.commands;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -32,7 +31,7 @@ public class CmdListReceivers extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(sender.getEntityWorld());
 
         Collection<TeleportDestinationClientInfo> validDestinations = destinations.getValidDestinations(sender.getEntityWorld(), null);

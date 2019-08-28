@@ -1,8 +1,6 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.preferences.PreferencesProperties;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -25,11 +23,11 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         if (args.length > 3) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "Too many parameters!");
             if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -39,30 +37,31 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
         if (!(sender instanceof PlayerEntity)) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "This command only works as a player!");
             if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
             return;
         }
 
-        PlayerEntity player = (PlayerEntity) sender;
-        PreferencesProperties properties = McJtyLib.getPreferencesProperties(player);
+        PlayerEntity player = sender;
+        McJtyLib.getPreferencesProperties(player).ifPresent(properties -> {
 
-        if (args.length < 3) {
-            int buffX = properties.getBuffX();
-            int buffY = properties.getBuffY();
-            ITextComponent component = new StringTextComponent(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY);
-            if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
-            } else {
-                sender.sendMessage(component);
+            if (args.length < 3) {
+                int buffX = properties.getBuffX();
+                int buffY = properties.getBuffY();
+                ITextComponent component = new StringTextComponent(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY);
+                if (sender instanceof PlayerEntity) {
+                    sender.sendStatusMessage(component, false);
+                } else {
+                    sender.sendMessage(component);
+                }
+                return;
             }
-            return;
-        }
 
-        int x = fetchInt(sender, args, 1, 0);
-        int y = fetchInt(sender, args, 2, 0);
-        properties.setBuffXY(x, y);
+            int x = fetchInt(sender, args, 1, 0);
+            int y = fetchInt(sender, args, 2, 0);
+            properties.setBuffXY(x, y);
+        });
     }
 }

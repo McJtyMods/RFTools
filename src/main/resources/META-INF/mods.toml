@@ -1,0 +1,44 @@
+modLoader="javafml" #mandatory
+loaderVersion="[28,)" #mandatory (25 is current forge version)
+issueTrackerURL="http://github.com/McJtyMods/RFTools/issues"
+displayURL="http://github.com/McJtyMods/RFTools/"
+# A file name (in the root of the mod JAR) containing a logo for display
+#logoFile="examplemod.png" #optional
+# A text field displayed in the mod UI
+#credits="Thanks for this example mod goes to Java" #optional
+# A text field displayed in the mod UI
+authors="McJty"
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+# The modid of the mod
+modId="rftools"
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="${file.jarVersion}" #mandatory
+displayName="RFTools"
+# A URL to query for updates for this mod. See the JSON update specification <here>
+#updateJSONURL="http://myurl.me/" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+The base class for all RFTools tech mods (and XNet/Deep Resonance)
+'''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.rftools]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[28,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+[[dependencies.rftools]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14,1.15)"
+    ordering="NONE"
+    side="BOTH"
+#[[dependencies.rftools]]
+#    modId="mcjtylib"
+#    mandatory=true
+#    versionRange="[3.5.3,4.0.0)"
+#    ordering="NONE"
+#    side="BOTH"

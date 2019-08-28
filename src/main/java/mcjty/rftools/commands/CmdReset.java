@@ -1,8 +1,6 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.preferences.PreferencesProperties;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -25,11 +23,11 @@ public class CmdReset extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         if (args.length > 1) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "Too many parameters!");
             if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -39,17 +37,16 @@ public class CmdReset extends AbstractRfToolsCommand {
         if (!(sender instanceof PlayerEntity)) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "This command only works as a player!");
             if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
             return;
         }
 
-        PlayerEntity player = (PlayerEntity) sender;
-        PreferencesProperties preferencesProperties = McJtyLib.getPreferencesProperties(player);
-        if (preferencesProperties != null) {
-            preferencesProperties.reset();
-        }
+        PlayerEntity player = sender;
+        McJtyLib.getPreferencesProperties(player).ifPresent( h -> {
+            h.reset();
+        });
     }
 }

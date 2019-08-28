@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -30,11 +30,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
-
-
 import java.util.List;
 
-public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
+public class LocatorTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_SETTINGS = "locator.setSettings";
 

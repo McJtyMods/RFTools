@@ -102,6 +102,12 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
         }
     }
 
+    public void consumeEnergy(long amount) {
+        energyHandler.ifPresent(h -> {
+            h.consumeEnergy(amount);
+        });
+    }
+
     private void checkStateServer() {
         if (!getPos().equals(cachedPos)) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());

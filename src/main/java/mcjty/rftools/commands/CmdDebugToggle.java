@@ -1,7 +1,6 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.varia.Logging;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -29,7 +28,7 @@ public class CmdDebugToggle extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         Logging.debugMode = !Logging.debugMode;
         if (Logging.debugMode) {
             ITextComponent component = new StringTextComponent(TextFormatting.YELLOW + "RFTools Debug Mode enabled!");

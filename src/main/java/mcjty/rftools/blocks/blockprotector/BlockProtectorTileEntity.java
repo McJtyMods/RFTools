@@ -1,12 +1,11 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
@@ -14,19 +13,25 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
+
+import static mcjty.rftools.blocks.blockprotector.BlockProtectorSetup.TYPE_PROTECTOR;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
@@ -43,22 +48,33 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
     // Relative coordinates (relative to this tile entity)
     private Set<BlockPos> protectedBlocks = new HashSet<>();
 
-    @Override
-    @Optional.Method(modid = "opencomputers")
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
+            BlockProtectorConfiguration.MAXENERGY.get(), BlockProtectorConfiguration.RECEIVEPERTICK.get()));
 
-    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] redstoneMode(Context context, Arguments args) {
-        if(args.count() == 0) {
-            return new Object[] { getRSMode().getDescription() };
-        } else {
-            String mode = args.checkString(0);
-            return setRedstoneMode(mode);
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            layoutPlayerInventorySlots(10, 70);
         }
-    }
+    };
+
+
+//    @Override
+//    @Optional.Method(modid = "opencomputers")
+//    public String getComponentName() {
+//        return COMPONENT_NAME;
+//    }
+//
+//    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] redstoneMode(Context context, Arguments args) {
+//        if(args.count() == 0) {
+//            return new Object[] { getRSMode().getDescription() };
+//        } else {
+//            String mode = args.checkString(0);
+//            return setRedstoneMode(mode);
+//        }
+//    }
 
     private Object[] setRedstoneMode(String mode) {
         RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
@@ -70,7 +86,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
     }
 
     public BlockProtectorTileEntity() {
-        super(BlockProtectorConfiguration.MAXENERGY.get(), BlockProtectorConfiguration.RECEIVEPERTICK.get());
+        super(TYPE_PROTECTOR);
     }
 
     @Override
@@ -106,10 +122,16 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
+    }
+
+    public void consumeEnergy(long amount) {
+        energyHandler.ifPresent(h -> {
+            h.consumeEnergy(amount);
+        });
     }
 
     private void checkStateServer() {
@@ -133,15 +155,15 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
         boolean oldActive = active;
 
         super.onDataPacket(net, packet);
 
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             // If needed send a render update.
             if (active != oldActive) {
-                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+                world.func_225319_b(getPos(), null, null);
             }
         }
     }
@@ -160,12 +182,14 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         if (!isMachineEnabled()) {
             return false;
         }
-        long rf = getStoredPower();
-        if (BlockProtectorConfiguration.rfForHarvestAttempt.get() > rf) {
-            return false;
-        }
-        consumeEnergy(BlockProtectorConfiguration.rfForHarvestAttempt.get());
-        return true;
+        return energyHandler.map(h -> {
+            long rf = h.getEnergyStored();
+            if (BlockProtectorConfiguration.rfForHarvestAttempt.get() > rf) {
+                return false;
+            }
+            h.consumeEnergy(BlockProtectorConfiguration.rfForHarvestAttempt.get());
+            return true;
+        }).orElse(false);
     }
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
@@ -173,18 +197,20 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         if (!isMachineEnabled()) {
             return -1;
         }
-        long rf = getStoredPower();
-        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection.get() * (1.0 - distance) * radius / 8.0f) + 1;
-        rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
+        return energyHandler.map(h -> {
+            long rf = h.getEnergyStored();
+            int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection.get() * (1.0 - distance) * radius / 8.0f) + 1;
+            rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (rfneeded > rf) {
-            return -1;
-        }
-        if (rfneeded <= 0) {
-            rfneeded = 1;
-        }
-        consumeEnergy(rfneeded);
-        return rfneeded;
+            if (rfneeded > rf) {
+                return -1;
+            }
+            if (rfneeded <= 0) {
+                rfneeded = 1;
+            }
+            consumeEnergy(rfneeded);
+            return rfneeded;
+        }).orElse(0);
     }
 
     public Set<BlockPos> getProtectedBlocks() {
@@ -283,22 +309,22 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
 
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
-        ListNBT tagList = tagCompound.getTagList("coordinates", Constants.NBT.TAG_COMPOUND);
+        ListNBT tagList = tagCompound.getList("coordinates", Constants.NBT.TAG_COMPOUND);
         protectedBlocks.clear();
-        for (int i = 0 ; i < tagList.tagCount() ; i++) {
-            CompoundNBT tag = (CompoundNBT) tagList.get(i);
-            protectedBlocks.add(BlockPosTools.readFromNBT(tag, "c"));
+        for (INBT inbt : tagList) {
+            CompoundNBT tag = (CompoundNBT) inbt;
+            protectedBlocks.add(BlockPosTools.read(tag, "c"));
         }
         active = tagCompound.getBoolean("active");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        if (tagCompound.hasKey("protectorId")) {
+        if (tagCompound.contains("protectorId")) {
             id = tagCompound.getInt("protectorId");
         } else {
             id = -1;
@@ -306,26 +332,26 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         ListNBT list = new ListNBT();
         for (BlockPos block : protectedBlocks) {
-            list.appendTag(BlockPosTools.writeToNBT(block));
+            list.add(BlockPosTools.write(block));
         }
-        tagCompound.setTag("coordinates", list);
+        tagCompound.put("coordinates", list);
         tagCompound.putBoolean("active", active);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putInt("protectorId", id);
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -337,4 +363,12 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         return false;
     }
 
+    @Nullable
+    @Override
+    public Container createMenu(int windowId, PlayerInventory inventory, PlayerEntity player) {
+        GenericContainer container = new GenericContainer(BlockProtectorSetup.CONTAINER_PROTECTOR, windowId, BlockProtectorTileEntity.CONTAINER_FACTORY, getPos(), this);
+        container.setupInventories(new EmptyHandler(), inventory);
+        energyHandler.ifPresent(e -> e.addIntegerListeners(container));
+        return container;
+    }
 }

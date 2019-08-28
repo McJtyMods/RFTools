@@ -4,7 +4,6 @@ import mcjty.lib.font.FontLoader;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.setup.ClientProxy;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -28,19 +27,19 @@ public class CmdFont extends AbstractRfToolsCommand {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void execute(PlayerEntity sender, String[] args) {
         if (args.length < 3) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "Several parameters are missing!");
-            if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+            if (sender != null) {
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
             return;
         } else if (args.length > 3) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "Too many parameters!");
-            if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+            if (sender != null) {
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -50,11 +49,12 @@ public class CmdFont extends AbstractRfToolsCommand {
         // @todo, fix the 1.13 way
 //        ScreenConfiguration.font = fetchString(sender, args, 1, "rftools:fonts/ubuntu.ttf");
 //        ScreenConfiguration.fontSize = fetchFloat(sender, args, 2, 40);
-        TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()), (float) ScreenConfiguration.fontSize.get(), false);
+        TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()),
+                (float) (double) ScreenConfiguration.fontSize.get(), false);
         if (font == null) {
             ITextComponent component = new StringTextComponent(TextFormatting.RED + "Could not load font!");
-            if (sender instanceof PlayerEntity) {
-                ((PlayerEntity) sender).sendStatusMessage(component, false);
+            if (sender != null) {
+                sender.sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }

@@ -3,16 +3,15 @@ package mcjty.rftools.blocks.builder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.builder.BlockFlags;
+import mcjty.lib.blocks.RotationType;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
-import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
@@ -48,63 +47,53 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         supportBlock = new SupportBlock();
 
-        builderBlock = ModBlocks.builderFactory.<BuilderTileEntity> builder("builder")
-                .tileEntityClass(BuilderTileEntity.class)
-                .container(BuilderTileEntity.CONTAINER_FACTORY)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .rotationType(BaseBlock.RotationType.HORIZROTATION)
-                .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
-                .guiId(GuiProxy.GUI_BUILDER)
+        builderBlock = new BaseBlock("builder", new BlockBuilder()
+                .tileEntitySupplier(BuilderTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
+//                .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
                 .infusable()
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.builder")
-                .build();
+                .infoExtended("message.rftools.builder")) {
+            @Override
+            public RotationType getRotationType() {
+                return RotationType.HORIZROTATION;
+            }
+        };
 
-        composerBlock = ModBlocks.builderFactory.<ComposerTileEntity> builder("composer")
-                .tileEntityClass(ComposerTileEntity.class)
-                .container(ComposerTileEntity.CONTAINER_FACTORY)
-                .guiId(GuiProxy.GUI_COMPOSER)
+        composerBlock = new BaseBlock("composer", new BlockBuilder()
+                .tileEntitySupplier(ComposerTileEntity::new)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.composer")
-                .build();
+                .infoExtended("message.rftools.composer"));
 
-        locatorBlock = ModBlocks.builderFactory.<LocatorTileEntity> builder("locator")
-                .tileEntityClass(LocatorTileEntity.class)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .emptyContainer()
-                .guiId(GuiProxy.GUI_LOCATOR)
+        locatorBlock = new BaseBlock("locator", new BlockBuilder()
+                .tileEntitySupplier(LocatorTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.locator")
-                .build();
+                .infoExtended("message.rftools.locator"));
 
-        projectorBlock = ModBlocks.builderFactory.<ProjectorTileEntity> builder("projector")
-                .tileEntityClass(ProjectorTileEntity.class)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .rotationType(BaseBlock.RotationType.HORIZROTATION)
-                .container(ProjectorTileEntity.CONTAINER_FACTORY)
-                .guiId(GuiProxy.GUI_PROJECTOR)
+        projectorBlock = new BaseBlock("protector", new BlockBuilder()
+                .tileEntitySupplier(ProjectorTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.projector")
-                .build();
+                .infoExtended("message.rftools.projector")) {
+            @Override
+            public RotationType getRotationType() {
+                return RotationType.HORIZROTATION;
+            }
+        };
 
-        scannerBlock = ModBlocks.builderFactory.<ScannerTileEntity> builder("scanner")
-                .tileEntityClass(ScannerTileEntity.class)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .container(ScannerTileEntity.CONTAINER_FACTORY)
-                .guiId(GuiProxy.GUI_SCANNER)
+        scannerBlock = new BaseBlock("scanner", new BlockBuilder()
+                .tileEntitySupplier(ScannerTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.scanner")
-                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
-                .build();
-        remoteScannerBlock = ModBlocks.builderFactory.<RemoteScannerTileEntity> builder("remote_scanner")
-                .tileEntityClass(RemoteScannerTileEntity.class)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .container(ScannerTileEntity.CONTAINER_FACTORY)
-                .guiId(GuiProxy.GUI_SCANNER)
+                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1));
+        remoteScannerBlock = new BaseBlock("remote_scanner", new BlockBuilder()
+                .tileEntitySupplier(RemoteScannerTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.remote_scanner")
-                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
-                .build();
+                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1)));
 
         initItems();
 
@@ -112,36 +101,36 @@ public class BuilderSetup {
         readBuilderBlocksConfig();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        spaceChamberBlock.initModel();
-        spaceChamberControllerBlock.initModel();
-
-        builderBlock.initModel();
-        builderBlock.setGuiFactory(GuiBuilder::new);
-        BuilderRenderer.register();
-
-        supportBlock.initModel();
-
-        composerBlock.initModel();
-        composerBlock.setGuiFactory(GuiComposer::new);
-
-        scannerBlock.initModel();
-        scannerBlock.setGuiFactory(GuiScanner::new);
-
-        remoteScannerBlock.initModel();
-        remoteScannerBlock.setGuiFactory(GuiScanner::new);
-
-        projectorBlock.initModel();
-        projectorBlock.setGuiFactory(GuiProjector::new);
-        ProjectorRenderer.register();
-
-        locatorBlock.initModel();
-        locatorBlock.setGuiFactory(GuiLocator::new);
-
-        spaceChamberCardItem.initModel();
-        shapeCardItem.initModel();
-    }
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        spaceChamberBlock.initModel();
+//        spaceChamberControllerBlock.initModel();
+//
+//        builderBlock.initModel();
+//        builderBlock.setGuiFactory(GuiBuilder::new);
+//        BuilderRenderer.register();
+//
+//        supportBlock.initModel();
+//
+//        composerBlock.initModel();
+//        composerBlock.setGuiFactory(GuiComposer::new);
+//
+//        scannerBlock.initModel();
+//        scannerBlock.setGuiFactory(GuiScanner::new);
+//
+//        remoteScannerBlock.initModel();
+//        remoteScannerBlock.setGuiFactory(GuiScanner::new);
+//
+//        projectorBlock.initModel();
+//        projectorBlock.setGuiFactory(GuiProjector::new);
+//        ProjectorRenderer.register();
+//
+//        locatorBlock.initModel();
+//        locatorBlock.setGuiFactory(GuiLocator::new);
+//
+//        spaceChamberCardItem.initModel();
+//        shapeCardItem.initModel();
+//    }
 
     private static void initItems() {
         spaceChamberCardItem = new SpaceChamberCardItem();

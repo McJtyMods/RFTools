@@ -5,11 +5,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,9 +23,9 @@ public class BlockProtectorEventHandlers {
         int x = event.getPos().getX();
         int y = event.getPos().getY();
         int z = event.getPos().getZ();
-        World world = event.getWorld();
+        IWorld world = event.getWorld();
 
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world.getWorld(), x, y, z);
         if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
             event.setCanceled(true);
         }
