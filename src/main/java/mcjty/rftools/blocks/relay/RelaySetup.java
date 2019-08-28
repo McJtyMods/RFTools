@@ -5,11 +5,16 @@ import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
-
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 
 public class RelaySetup {
-    public static BaseBlock<RelayTileEntity, GenericContainer> relayBlock;
+    public static BaseBlock relayBlock;
+
+
+    @ObjectHolder("rftools:relay")
+    public static TileEntityType<?> TYPE_RELAY;
 
     public static void init() {
         relayBlock = ModBlocks.builderFactory.<RelayTileEntity> builder("relay")

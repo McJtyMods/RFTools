@@ -58,6 +58,9 @@ public class LogicBlockSetup {
     @ObjectHolder("rftools:three_logic")
     public static TileEntityType<?> TYPE_THREE_LOGIC;
 
+    @ObjectHolder("rftools:invchecker")
+    public static TileEntityType<?> TYPE_INVCHECKER;
+
     public static void init() {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();

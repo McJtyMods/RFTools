@@ -1,15 +1,14 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.varia.EnergyTools;
-import net.darkhax.tesla.api.ITeslaConsumer;
 import net.minecraft.util.Direction;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
 
-@Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")
-class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
+//@Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")
+class RelayEnergyStorage implements IEnergyStorage {
     private final RelayTileEntity relayTileEntity;
     private final Direction side;
 
@@ -30,12 +29,15 @@ class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
 
     @Override
     public int getEnergyStored() {
-        return EnergyTools.getIntEnergyStored(relayTileEntity.getStoredPower(), relayTileEntity.getCapacity());
+        // @todo 1.14 optimal?
+        return relayTileEntity.getCapability(CapabilityEnergy.ENERGY).map(h ->
+            EnergyTools.getIntEnergyStored(h.getEnergyStored(), h.getMaxEnergyStored())).orElse(0);
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return EnergyTools.unsignedClampToInt(relayTileEntity.getCapacity());
+        return relayTileEntity.getCapability(CapabilityEnergy.ENERGY).map(h ->
+                h.getMaxEnergyStored()).orElse(0);
     }
 
     @Override
@@ -46,11 +48,5 @@ class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
     @Override
     public boolean canReceive() {
         return true;
-    }
-
-    @Optional.Method(modid = "tesla")
-    @Override
-    public long givePower(long power, boolean simulated) {
-        return relayTileEntity.receiveEnergy(side, EnergyTools.unsignedClampToInt(power), simulated);
     }
 }

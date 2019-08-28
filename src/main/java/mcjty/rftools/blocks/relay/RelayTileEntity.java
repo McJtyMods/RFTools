@@ -1,29 +1,30 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.OrientationTools;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+
+import static mcjty.rftools.blocks.relay.RelaySetup.TYPE_RELAY;
 
 public class RelayTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation {
 
@@ -87,13 +88,24 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
     private int powerOut = 0;
     private long lastTime = 0;
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, MAXENERGY, RECEIVEPERTICK));
+    private LazyOptional[] facingStorage = new LazyOptional[] {
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.DOWN)),
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.UP)),
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.NORTH)),
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.SOUTH)),
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.WEST)),
+            LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.EAST))
+    };
+
+
     public RelayTileEntity() {
-        super(MAXENERGY, RECEIVEPERTICK);
+        super(TYPE_RELAY);
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -150,48 +162,52 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
 
-        long energyStored = getStoredPower();
-        if (energyStored <= 0) {
-            return;
-        }
+        energyHandler.ifPresent(h -> {
+            long energyStored = h.getEnergyStored();
+            if (energyStored <= 0) {
+                return;
+            }
 
-        BlockState state = getWorld().getBlockState(getPos());
-        for (Direction facing : Direction.VALUES) { // there's no sensible way to send power out the null side, so just send it out the real sides
-            int side = OrientationTools.reorient(facing, state).ordinal();
+            BlockState state = world.getBlockState(getPos());
+            for (Direction facing : OrientationTools.DIRECTION_VALUES) { // there's no sensible way to send power out the null side, so just send it out the real sides
+                int side = OrientationTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
-            if (rf[side] > 0 && !inputMode[side]) {
-                TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
-                Direction opposite = facing.getOpposite();
-                if (EnergyTools.isEnergyTE(te, opposite)) {
-                    int rfToGive = (int) Math.min(rf[side], energyStored);
-                    int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                if (rf[side] > 0 && !inputMode[side]) {
+                    TileEntity te = world.getTileEntity(getPos().offset(facing));
+                    Direction opposite = facing.getOpposite();
+                    if (EnergyTools.isEnergyTE(te, opposite)) {
+                        int rfToGive = (int) Math.min(rf[side], energyStored);
+                        int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
 
-                    powerOut += received;
-                    energyStored -= storage.extractEnergy(received, false);
-                    if (energyStored <= 0) {
-                        return;
+                        powerOut += received;
+                        energyStored -= h.extractEnergy(received, false);
+                        if (energyStored <= 0) {
+                            return;
+                        }
                     }
                 }
             }
-        }
+        });
     }
 
     // deliberately not @Optional, as other power APIs delegate to this method
     public int receiveEnergy(Direction from, int maxReceive, boolean simulate) {
-        boolean redstoneSignal = powerLevel > 0;
+        return energyHandler.map(h -> {
+            boolean redstoneSignal = powerLevel > 0;
 
-        boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
-        BlockState state = getWorld().getBlockState(getPos());
-        int side = from == null ? 6 : OrientationTools.reorient(from, state).ordinal();
-        if (inputMode[side]) {
-            int[] rf = redstoneSignal ? rfOn : rfOff;
-            int actual = (int)storage.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
-            if (!simulate) {
-                powerIn += actual;
+            boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
+            BlockState state = world.getBlockState(getPos());
+            int side = from == null ? 6 : OrientationTools.reorient(from, state).ordinal();
+            if (inputMode[side]) {
+                int[] rf = redstoneSignal ? rfOn : rfOff;
+                int actual = (int) h.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
+                if (!simulate) {
+                    powerIn += actual;
+                }
+                return actual;
             }
-            return actual;
-        }
-        return 0;
+            return 0;
+        }).orElse(0);
     }
 
     public boolean isInputModeOn(int side) {
@@ -210,10 +226,11 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
         return rfOff[side];
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        if (tagCompound.hasKey("rfOn")) {
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        if (tagCompound.contains("rfOn")) {
             // Old block
             int on = tagCompound.getInt("rfOn");
             int off = tagCompound.getInt("rfOff");
@@ -240,23 +257,26 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
         }
     }
 
+    // @todo 1.14 loot tables
+
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setIntArray("on", rfOn);
-        tagCompound.setIntArray("off", rfOff);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putIntArray("on", rfOn);
+        tagCompound.putIntArray("off", rfOff);
         byte[] inOn = new byte[7];
         byte[] inOff = new byte[7];
         for (int i = 0 ; i < 7 ; i++) {
             inOn[i] = (byte) (inputModeOn[i] ? 1 : 0);
             inOff[i] = (byte) (inputModeOff[i] ? 1 : 0);
         }
-        tagCompound.setByteArray("inputOn", inOn);
-        tagCompound.setByteArray("inputOff", inOff);
+        tagCompound.putByteArray("inputOn", inOn);
+        tagCompound.putByteArray("inputOff", inOff);
+        return tagCompound;
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -275,43 +295,36 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
         return false;
     }
 
-    private RelayEnergyStorage facingStorage[] = new RelayEnergyStorage[7];
-
+    @Nonnull
     @Override
-    public boolean hasCapability(Capability<?> capability, Direction facing) {
-        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY, as super already does this
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, Direction facing) {
-        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER) {
-            int facingOrdinal = facing == null ? 6 : facing.ordinal();
-            if (facingStorage[facingOrdinal] == null) {
-                facingStorage[facingOrdinal] = new RelayEnergyStorage(this, facing);
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            if (facing == null) {
+                return energyHandler.cast();
+            } else {
+                return facingStorage[facing.ordinal()].cast();
             }
-            return (T) facingStorage[facingOrdinal];
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(cap, facing);
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        if (mode == ProbeMode.EXTENDED) {
-            int rfPerTickIn = getLastRfPerTickIn();
-            int rfPerTickOut = getLastRfPerTickOut();
-            probeInfo.text(TextFormatting.GREEN + "In:  " + rfPerTickIn + "RF/t");
-            probeInfo.text(TextFormatting.GREEN + "Out: " + rfPerTickOut + "RF/t");
-        }
-    }
 
-    @Override
-    public BlockState getActualState(BlockState state) {
-        boolean enabled = isPowered();
-        return state.withProperty(ENABLED, enabled);
-    }
+    //    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        if (mode == ProbeMode.EXTENDED) {
+//            int rfPerTickIn = getLastRfPerTickIn();
+//            int rfPerTickOut = getLastRfPerTickOut();
+//            probeInfo.text(TextFormatting.GREEN + "In:  " + rfPerTickIn + "RF/t");
+//            probeInfo.text(TextFormatting.GREEN + "Out: " + rfPerTickOut + "RF/t");
+//        }
+//    }
+
+    // @todo 1.14 proper blockstate
+//    @Override
+//    public BlockState getActualState(BlockState state) {
+//        boolean enabled = isPowered();
+//        return state.withProperty(ENABLED, enabled);
+//    }
 }

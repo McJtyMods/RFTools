@@ -87,7 +87,7 @@ public class BuilderSetup {
 //                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.scanner")
-                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1));
+                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1)));
         remoteScannerBlock = new BaseBlock("remote_scanner", new BlockBuilder()
                 .tileEntitySupplier(RemoteScannerTileEntity::new)
 //                .flags(BlockFlags.REDSTONE_CHECK)

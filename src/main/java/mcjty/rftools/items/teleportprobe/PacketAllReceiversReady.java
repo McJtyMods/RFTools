@@ -1,29 +1,18 @@
 package mcjty.rftools.items.teleportprobe;
 
-import io.netty.buffer.ByteBuf;
-import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PacketAllReceiversReady implements IMessage {
+public class PacketAllReceiversReady {
     private List<TeleportDestinationClientInfo> destinationList;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        int size = buf.readInt();
-        destinationList = new ArrayList<>(size);
-        for (int i = 0 ; i < size ; i++) {
-            destinationList.add(new TeleportDestinationClientInfo(buf));
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(destinationList.size());
         for (TeleportDestination destination : destinationList) {
             destination.toBytes(buf);
@@ -33,8 +22,12 @@ public class PacketAllReceiversReady implements IMessage {
     public PacketAllReceiversReady() {
     }
 
-    public PacketAllReceiversReady(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketAllReceiversReady(PacketBuffer buf) {
+        int size = buf.readInt();
+        destinationList = new ArrayList<>(size);
+        for (int i = 0 ; i < size ; i++) {
+            destinationList.add(new TeleportDestinationClientInfo(buf));
+        }
     }
 
     public PacketAllReceiversReady(List<TeleportDestinationClientInfo> destinationList) {
@@ -42,8 +35,8 @@ public class PacketAllReceiversReady implements IMessage {
         this.destinationList.addAll(destinationList);
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             GuiTeleportProbe.setReceivers(destinationList);
         });

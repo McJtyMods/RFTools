@@ -1,49 +1,28 @@
 package mcjty.rftools.blocks.logic.invchecker;
 
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CapabilityTools;
-import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.List;
-
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_INVCHECKER;
 import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.META_MATCH;
 import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.OREDICT_USE;
 
-public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTileEntity, DefaultSidedInventory {
+public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTileEntity {
 
     public static final String CMD_SETAMOUNT = "inv.setCounter";
     public static final String CMD_SETSLOT = "inv.setSlot";
@@ -52,25 +31,27 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
 
     public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_ITEMMATCH = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/invchecker.gui"));
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), ContainerFactory.CONTAINER_CONTAINER, SLOT_ITEMMATCH, 154, 24, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
 
     private int amount = 1;
     private int slot = 0;
     private boolean oreDict = false;
     private boolean useMeta = false;
-    private TIntSet set1 = null;
+    private IntOpenHashSet set1 = null;
 
     private int checkCounter = 0;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
 
-    @Override
-    protected boolean needsCustomInvWrapper() {
-        return true;
-    }
-
 
     public InvCheckerTileEntity() {
+        super(TYPE_INVCHECKER);
     }
 
     public int getAmount() {
@@ -109,16 +90,17 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
         markDirtyClient();
     }
 
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        // Clear the oredict cache
-        set1 = null;
-        getInventoryHelper().setInventorySlotContents(getInventoryStackLimit(), index, stack);
-    }
+    // @todo 1.14
+//    @Override
+//    public void setInventorySlotContents(int index, ItemStack stack) {
+//        // Clear the oredict cache
+//        set1 = null;
+//        getInventoryHelper().setInventorySlotContents(getInventoryStackLimit(), index, stack);
+//    }
 
     @Override
-    public void update() {
-        if (getWorld().isRemote) {
+    public void tick() {
+        if (world.isRemote) {
             return;
         }
 
@@ -134,25 +116,16 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
     public boolean checkOutput() {
         boolean newout = false;
 
-        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
+        Direction inputSide = getFacing(world.getBlockState(getPos())).getInputSide();
         BlockPos inputPos = getPos().offset(inputSide);
-        TileEntity te = getWorld().getTileEntity(inputPos);
+        TileEntity te = world.getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
-            ItemStack stack = ItemStack.EMPTY;
-            if (CapabilityTools.hasItemCapabilitySafe(te)) {
-                IItemHandler capability = CapabilityTools.getItemCapabilitySafe(te);
-                if (capability == null) {
-                    Block errorBlock = getWorld().getBlockState(inputPos).getBlock();
-                    Logging.logError("Block: " + errorBlock.getLocalizedName() + " at " + BlockPosTools.toString(inputPos) + " returns null for getCapability(). Report to mod author");
-                } else if (slot >= 0 && slot < capability.getSlots()) {
-                    stack = capability.getStackInSlot(slot);
+            ItemStack stack = CapabilityTools.getItemCapabilitySafe(te).map(h -> {
+                if (slot >= 0 && slot < h.getSlots()) {
+                    return h.getStackInSlot(slot);
                 }
-            } else if (te instanceof IInventory) {
-                IInventory inventory = (IInventory) te;
-                if (slot >= 0 && slot < inventory.getSizeInventory()) {
-                    stack = inventory.getStackInSlot(slot);
-                }
-            }
+                return ItemStack.EMPTY;
+            }).orElse(ItemStack.EMPTY);
             if (!stack.isEmpty()) {
                 int nr = isItemMatching(stack);
                 newout = nr >= amount;
@@ -167,9 +140,10 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
         if (!matcher.isEmpty()) {
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
-                    if ((!useMeta) || matcher.getMetadata() == stack.getMetadata()) {
-                        nr = stack.getCount();
-                    }
+                    // @todo 1.14
+//                    if ((!useMeta) || matcher.getMetadata() == stack.getMetadata()) {
+//                        nr = stack.getCount();
+//                    }
                 }
             } else {
                 if (useMeta) {
@@ -189,80 +163,62 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
     }
 
     private boolean isEqualForOredict(ItemStack s1, ItemStack s2) {
-        if (set1 == null) {
-            int[] oreIDs1 = OreDictionary.getOreIDs(s1);
-            set1 = new TIntHashSet(oreIDs1);
-        }
-        if (set1.isEmpty()) {
-            // The first item is not an ore. In this case we do normal equality of item
-            return s1.getItem() == s2.getItem();
-        }
-
-        int[] oreIDs2 = OreDictionary.getOreIDs(s2);
-        if (oreIDs2.length == 0) {
-            // The first is an ore but this isn't. So we cannot match.
-            return false;
-        }
-        TIntSet set2 = new TIntHashSet(oreIDs2);
-        set2.retainAll(set1);
-        return !set2.isEmpty();
-    }
-
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
+//        if (set1 == null) {
+//            int[] oreIDs1 = OreDictionary.getOreIDs(s1);
+//            set1 = new TIntHashSet(oreIDs1);
+//        }
+//        if (set1.isEmpty()) {
+//            // The first item is not an ore. In this case we do normal equality of item
+//            return s1.getItem() == s2.getItem();
+//        }
+//
+//        int[] oreIDs2 = OreDictionary.getOreIDs(s2);
+//        if (oreIDs2.length == 0) {
+//            // The first is an ore but this isn't. So we cannot match.
+//            return false;
+//        }
+//        TIntSet set2 = new TIntHashSet(oreIDs2);
+//        set2.retainAll(set1);
+//        return !set2.isEmpty();
+        // @todo 1.14
         return false;
     }
 
     @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        amount = tagCompound.getInteger("amount");
-        slot = tagCompound.getInteger("slot");
+        amount = tagCompound.getInt("amount");
+        slot = tagCompound.getInt("slot");
         oreDict = tagCompound.getBoolean("oredict");
         useMeta = tagCompound.getBoolean("useMeta");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setInteger("amount", amount);
-        tagCompound.setInteger("slot", slot);
-        tagCompound.setBoolean("oredict", oreDict);
-        tagCompound.setBoolean("useMeta", useMeta);
+        tagCompound.putInt("amount", amount);
+        tagCompound.putInt("slot", slot);
+        tagCompound.putBoolean("oredict", oreDict);
+        tagCompound.putBoolean("useMeta", useMeta);
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -295,20 +251,20 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
         return false;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        boolean rc = checkOutput();
-        probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        boolean rc = checkOutput();
+//        probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//    }
 
 
 }
