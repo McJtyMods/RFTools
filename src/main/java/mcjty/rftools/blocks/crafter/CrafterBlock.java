@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.crafter;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -16,95 +16,98 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-
-import org.lwjgl.input.Keyboard;
-
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable, INBTPreservingIngredient
+public class CrafterBlock extends GenericRFToolsBlock implements Infusable, INBTPreservingIngredient
         /*, IRedstoneConnectable*/ {
 
-    public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
-        super(Material.IRON, tileEntityClass, CrafterContainer::new, blockName, true);
+    public CrafterBlock(String blockName, Supplier<TileEntity> tileEntitySupplier) {
+        super(blockName, new BlockBuilder()
+            .tileEntitySupplier(tileEntitySupplier));
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public BiFunction<CrafterBaseTE, CrafterContainer, GenericGuiContainer<? super CrafterBaseTE>> getGuiFactory() {
-        return GuiCrafter::new;
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public BiFunction<CrafterBaseTE, CrafterContainer, GenericGuiContainer<? super CrafterBaseTE>> getGuiFactory() {
+//        return GuiCrafter::new;
+//    }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            ListNBT recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
+            ListNBT bufferTagList = tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
+            ListNBT recipeTagList = tagCompound.getList("Recipes", Constants.NBT.TAG_COMPOUND);
 
             int rc = 0;
-            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                CompoundNBT itemTag = bufferTagList.getCompoundTagAt(i);
+            for (int i = 0 ; i < bufferTagList.size() ; i++) {
+                CompoundNBT itemTag = bufferTagList.getCompound(i);
                 if (itemTag != null) {
-                    ItemStack stack = new ItemStack(itemTag);
+                    ItemStack stack = ItemStack.read(itemTag);
                     if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
             }
 
-            list.add(TextFormatting.GREEN + "Contents: " + rc + " stacks");
+            list.add(new StringTextComponent(TextFormatting.GREEN + "Contents: " + rc + " stacks"));
 
             rc = 0;
-            for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
-                CompoundNBT tagRecipe = recipeTagList.getCompoundTagAt(i);
-                CompoundNBT resultCompound = tagRecipe.getCompoundTag("Result");
+            for (int i = 0 ; i < recipeTagList.size() ; i++) {
+                CompoundNBT tagRecipe = recipeTagList.getCompound(i);
+                CompoundNBT resultCompound = tagRecipe.getCompound("Result");
                 if (resultCompound != null) {
-                    ItemStack stack = new ItemStack(resultCompound);
+                    ItemStack stack = ItemStack.read(resultCompound);
                     if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
             }
 
-            list.add(TextFormatting.GREEN + "Recipes: " + rc + " recipes");
+            list.add(new StringTextComponent(TextFormatting.GREEN + "Recipes: " + rc + " recipes"));
         }
 
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            int amount;
-            if (tileEntityClass.equals(CrafterBlockTileEntity1.class)) {
-                amount = 2;
-            } else if (tileEntityClass.equals(CrafterBlockTileEntity2.class)) {
-                amount = 4;
-            } else {
-                amount = 8;
-            }
-            list.add(TextFormatting.WHITE + "This machine can handle up to " + amount + " recipes");
-            list.add(TextFormatting.WHITE + "at once and allows recipes to use the crafting results");
-            list.add(TextFormatting.WHITE + "of previous steps.");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+            int amount = 2;
+            // @todo 1.14 find another way!
+//            if (tileEntityClass.equals(CrafterBlockTileEntity1.class)) {
+//                amount = 2;
+//            } else if (tileEntityClass.equals(CrafterBlockTileEntity2.class)) {
+//                amount = 4;
+//            } else {
+//                amount = 8;
+//            }
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This machine can handle up to " + amount + " recipes"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "at once and allows recipes to use the crafting results"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "of previous steps."));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
-    @Override
-    protected IModuleSupport getModuleSupport() {
-        return new ModuleSupport(CrafterContainer.SLOT_FILTER_MODULE) {
-            @Override
-            public boolean isModule(ItemStack itemStack) {
-                return itemStack.getItem() == ModularStorageSetup.storageFilterItem;
-            }
-        };
-    }
+    // @todo 1.14
+//    @Override
+//    protected IModuleSupport getModuleSupport() {
+//        return new ModuleSupport(CrafterContainer.SLOT_FILTER_MODULE) {
+//            @Override
+//            public boolean isModule(ItemStack itemStack) {
+//                return itemStack.getItem() == ModularStorageSetup.storageFilterItem;
+//            }
+//        };
+//    }
 
     @Override
     public Container createServerContainer(PlayerEntity PlayerEntity, TileEntity tileEntity) {

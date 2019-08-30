@@ -8,6 +8,7 @@ import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -23,7 +24,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SecurityCardItem extends GenericRFToolsItem {
+public class SecurityCardItem extends Item {
 
     public static String channelNameFromServer = "";
     private static long lastTime = 0;

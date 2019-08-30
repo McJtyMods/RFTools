@@ -4,10 +4,15 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ElevatorSetup {
 
     public static BaseBlock elevatorBlock;
+
+    @ObjectHolder("rftools:elevator")
+    public static TileEntityType<?> TYPE_ELEVATOR;
 
     public static void init() {
         elevatorBlock = ModBlocks.builderFactory.<ElevatorTileEntity> builder("elevator")

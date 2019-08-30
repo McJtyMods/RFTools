@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -11,8 +11,12 @@ import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 
-public class SecurityManagerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
+import javax.annotation.Nonnull;
+
+public class SecurityManagerTileEntity extends GenericTileEntity {
 
     public static final String CMD_SETCHANNELNAME = "security.setChannelName";
     public static final Key<String> PARAM_NAME = new Key<>("name", Type.STRING);
@@ -39,32 +43,20 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     public static final int BUFFER_SIZE = (3*4);
     public static final int SLOT_PLAYERINV = SLOT_CARD + BUFFER_SIZE + 2;
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, BUFFER_SIZE + 2);
 
-    @Override
-    protected boolean needsCustomInvWrapper() {
-        return true;
-    }
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
 
-    private CompoundNBT getOrCreateNBT(ItemStack cardStack) {
-        CompoundNBT tagCompound = cardStack.getTag();
-        if (tagCompound == null) {
-            tagCompound = new CompoundNBT();
-            cardStack.setTagCompound(tagCompound);
-        }
-        return tagCompound;
-    }
 
     private void updateCard(ItemStack cardStack) {
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             return;
         }
         if (cardStack.isEmpty()) {
             return;
         }
-        CompoundNBT tagCompound = getOrCreateNBT(cardStack);
-        if (!tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
+        CompoundNBT tagCompound = cardStack.getOrCreateTag();
+        if (!tagCompound.contains("channel")) {
+            SecurityChannels securityChannels = SecurityChannels.getChannels(world);
             int id = securityChannels.newChannel();
             tagCompound.putInt("channel", id);
             securityChannels.save();
@@ -73,145 +65,102 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void updateLinkedCard() {
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             return;
         }
-        ItemStack masterCard = inventoryHelper.getStackInSlot(SLOT_CARD);
-        if (masterCard.isEmpty()) {
-            return;
-        }
-        ItemStack linkerCard = inventoryHelper.getStackInSlot(SLOT_LINKER);
-        if (linkerCard.isEmpty()) {
-            return;
-        }
+        itemHandler.ifPresent(h -> {
+            ItemStack masterCard = h.getStackInSlot(SLOT_CARD);
+            if (masterCard.isEmpty()) {
+                return;
+            }
+            ItemStack linkerCard = h.getStackInSlot(SLOT_LINKER);
+            if (linkerCard.isEmpty()) {
+                return;
+            }
 
-        CompoundNBT masterNBT = masterCard.getTag();
-        if (masterNBT == null) {
-            return;
-        }
-        CompoundNBT linkerNBT = getOrCreateNBT(linkerCard);
-        linkerNBT.setInteger("channel", masterNBT.getInteger("channel"));
-        markDirtyClient();
+            CompoundNBT masterNBT = masterCard.getTag();
+            if (masterNBT == null) {
+                return;
+            }
+            CompoundNBT linkerNBT = linkerCard.getOrCreateTag();
+            linkerNBT.putInt("channel", masterNBT.getInt("channel"));
+            markDirtyClient();
+        });
     }
 
     private void addPlayer(String player) {
-        CompoundNBT tagCompound = getCardInfo();
-        if (tagCompound == null) {
-            return;
-        }
-        if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInt("channel");
-            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
-            channel.addPlayer(player);
-            securityChannels.save();
-            markDirtyClient();
-        }
+        getCardInfo().ifPresent(tagCompound -> {
+            if (tagCompound.contains("channel")) {
+                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                int id = tagCompound.getInt("channel");
+                SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+                channel.addPlayer(player);
+                securityChannels.save();
+                markDirtyClient();
+            }
+        });
     }
 
     private void delPlayer(String player) {
-        CompoundNBT tagCompound = getCardInfo();
-        if (tagCompound == null) {
-            return;
-        }
-        if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInt("channel");
-            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
-            channel.delPlayer(player);
-            securityChannels.save();
-            markDirtyClient();
-        }
+        getCardInfo().ifPresent(tagCompound -> {
+            if (tagCompound.contains("channel")) {
+                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                int id = tagCompound.getInt("channel");
+                SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+                channel.delPlayer(player);
+                securityChannels.save();
+                markDirtyClient();
+            }
+        });
     }
 
     private void setWhiteListMode(boolean whitelist) {
-        CompoundNBT tagCompound = getCardInfo();
-        if (tagCompound == null) {
-            return;
-        }
-        if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInt("channel");
-            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
-            channel.setWhitelist(whitelist);
-            securityChannels.save();
-            markDirtyClient();
-        }
+        getCardInfo().ifPresent(tagCompound -> {
+            if (tagCompound.contains("channel")) {
+                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                int id = tagCompound.getInt("channel");
+                SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+                channel.setWhitelist(whitelist);
+                securityChannels.save();
+                markDirtyClient();
+            }
+        });
     }
 
     private void setChannelName(String name) {
-        CompoundNBT tagCompound = getCardInfo();
-        if (tagCompound == null) {
-            return;
-        }
-        if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
-            int id = tagCompound.getInt("channel");
-            SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
-            channel.setName(name);
-            securityChannels.save();
-            markDirtyClient();
-        }
+        getCardInfo().ifPresent(tagCompound -> {
+            if (tagCompound.contains("channel")) {
+                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                int id = tagCompound.getInt("channel");
+                SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
+                channel.setName(name);
+                securityChannels.save();
+                markDirtyClient();
+            }
+        });
     }
 
-    private CompoundNBT getCardInfo() {
-        ItemStack cardStack = inventoryHelper.getStackInSlot(SLOT_CARD);
-        if (cardStack.isEmpty()) {
-            return null;
-        }
-        return getOrCreateNBT(cardStack);
+    private LazyOptional<CompoundNBT> getCardInfo() {
+        return itemHandler.map(h -> h.getStackInSlot(SLOT_CARD)).filter(s -> !s.isEmpty()).map(s -> s.getOrCreateTag());
+    }
+
+    // @todo 1.14 loot tables
+    @Override
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+    }
+
+    // @todo 1.14 loot tables
+    @Override
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        return tagCompound;
     }
 
     @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (index == SLOT_CARD) {
-            updateCard(stack);
-            updateLinkedCard();
-        } else if (index == SLOT_LINKER) {
-            updateLinkedCard();
-        }
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return SecuritySetup.securityCardItem.equals(stack.getItem());
-    }
-
-    @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
-    }
-
-    @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-    }
-
-    @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -230,5 +179,35 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             return true;
         }
         return false;
+    }
+
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(SecurityManagerTileEntity.this, CONTAINER_FACTORY, BUFFER_SIZE + 2) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() instanceof SecurityCardItem;
+            }
+
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() instanceof SecurityCardItem;
+            }
+
+            @Override
+            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isOutputSlot(slot);
+            }
+
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                if (index == SLOT_CARD) {
+                    updateCard(getStackInSlot(index));
+                    updateLinkedCard();
+                } else if (index == SLOT_LINKER) {
+                    updateLinkedCard();
+                }
+            }
+        };
     }
 }

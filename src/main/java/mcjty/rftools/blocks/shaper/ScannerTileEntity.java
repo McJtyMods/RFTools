@@ -5,15 +5,16 @@ import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IAction;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
@@ -25,30 +26,25 @@ import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
 import mcjty.rftools.varia.RLE;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.theoneprobe.api.TextStyleClass;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_SCANNER;
 
 public class ScannerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
@@ -83,14 +79,13 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_OUT, 15, 200);
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(ModularStorageSetup.storageFilterItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 35, 7);
+                    ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModularStorageSetup.storageFilterItem) */), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 35, 7);
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(ModItems.modifierItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODIFIER, 55, 7);
             layoutPlayerInventorySlots(85, 142);
         }
     };
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 4);
     private StorageFilterCache filterCache = null;
 
     private int scanId = 0;
@@ -103,23 +98,28 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     // Client side indication if there is a scan in progress
     private int progressBusy = -1;
 
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScannerConfiguration.SCANNER_MAXENERGY.get(), ScannerConfiguration.SCANNER_RECEIVEPERTICK.get()));
+
     public ScannerTileEntity() {
-        super(ScannerConfiguration.SCANNER_MAXENERGY.get(), ScannerConfiguration.SCANNER_RECEIVEPERTICK.get());
+        super(TYPE_SCANNER);
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             if (progress != null) {
-                if (getStoredPower() >= getEnergyPerTick()) {
-                    consumeEnergy(getEnergyPerTick());
-                    int done = 0;
-                    while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick.get()) {
-                        progressScan();
-                        done += dataDim.getZ() * dataDim.getY();  // We scan planes on the x axis
+                energyHandler.ifPresent(h -> {
+                    if (h.getEnergyStored() >= getEnergyPerTick()) {
+                        h.consumeEnergy(getEnergyPerTick());
+                        int done = 0;
+                        while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick.get()) {
+                            progressScan();
+                            done += dataDim.getZ() * dataDim.getY();  // We scan planes on the x axis
+                        }
                     }
-                }
+                });
             } else if (isMachineEnabled()) {
                 scan();
             }
@@ -135,57 +135,10 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
     protected boolean needsRedstoneMode() {
         return true;
     }
 
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == SLOT_FILTER) {
-            filterCache = null;
-        }
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (index == SLOT_OUT) {
-            if (!stack.isEmpty()) {
-                updateScanCard(stack);
-                markDirty();
-            }
-        }
-        if (index == SLOT_IN) {
-            if (!stack.isEmpty()) {
-                dataDim = ShapeCardItem.getDimension(stack);
-                if (renderStack.isEmpty()) {
-                    renderStack = new ItemStack(BuilderSetup.shapeCardItem);
-                }
-                updateScanCard(renderStack);
-                markDirty();
-            }
-        }
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int count) {
-        if (index == SLOT_FILTER) {
-            filterCache = null;
-        }
-        return getInventoryHelper().decrStackSize(index, count);
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
 
     public int getScanId() {
         if (scanId == 0) {
@@ -207,21 +160,18 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
     private void getFilterCache() {
         if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
+            filterCache = StorageFilterItem.getCache(itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY));
         }
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return stack.getItem() == BuilderSetup.shapeCardItem;
-    }
-
-    @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
-        if (tagCompound.hasKey("render")) {
-            renderStack = new ItemStack(tagCompound.getCompoundTag("render"));
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
+        if (tagCompound.contains("render")) {
+            renderStack = ItemStack.read(tagCompound.getCompound("render"));
         } else {
             renderStack = ItemStack.EMPTY;
         }
@@ -234,13 +184,13 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
 
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         if (!renderStack.isEmpty()) {
             CompoundNBT tc = new CompoundNBT();
-            renderStack.writeToNBT(tc);
-            tagCompound.setTag("render", tc);
+            renderStack.write(tc);
+            tagCompound.put("render", tc);
         }
         tagCompound.putInt("scanid", getScanId());
         if (dataDim != null) {
@@ -258,11 +208,12 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         } else {
             tagCompound.putInt("progress", (progress.x-progress.tl.getX()) * 100 / progress.dimX);
         }
+        return tagCompound;
     }
 
 
     public ItemStack getRenderStack() {
-        ItemStack stack = inventoryHelper.getStackInSlot(SLOT_OUT);
+        ItemStack stack = itemHandler.map(h -> h.getStackInSlot(SLOT_OUT)).orElse(ItemStack.EMPTY);
         if (!stack.isEmpty()) {
             return stack;
         }
@@ -300,7 +251,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         if (progress != null) {
             return;
         }
-        if (getStackInSlot(SLOT_IN).isEmpty()) {
+        if (itemHandler.map(h -> h.getStackInSlot(SLOT_IN)).filter(s -> !s.isEmpty()).isPresent()) {
             // Cannot scan. No input card
             return;
         }
@@ -318,11 +269,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     public World getScanWorld(int dimension) {
-        World w = DimensionManager.getWorld(dimension);
-        if (w == null) {
-            w = getWorld().getMinecraftServer().getWorld(dimension);
-        }
-        return w;
+        return WorldTools.loadWorld(dimension);
     }
 
     protected BlockPos getScanPos() {
@@ -330,7 +277,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     public int getScanDimension() {
-        return getWorld().getDimension().getType().getId();
+        return world.getDimension().getType().getId();
     }
 
     public BlockPos getScanCenter() {
@@ -371,8 +318,8 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                 }
                 switch (modifier.getType()) {
                     case FILTER_SLOT: {
-                        ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
-                        if (!modifier.getIn().isEmpty() && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
+                        ItemStack inputItem = inState.getBlock().getItem(world, pos, inState);
+                        if (false) { // @todo 1.14 !modifier.getIn().isEmpty() && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
                             StorageFilterCache filter = StorageFilterItem.getCache(modifier.getIn());
                             if (filter.match(inputItem)) {
                                 outState = getOutput(inState, modifier);
@@ -388,27 +335,28 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                         break;
                     }
                     case FILTER_ORE: {
-                        ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
+                        ItemStack inputItem = inState.getBlock().getItem(world, pos, inState);
                         if (!inputItem.isEmpty()) {
-                            int[] oreIDs = OreDictionary.getOreIDs(inputItem);
-                            for (int id : oreIDs) {
-                                if (OreDictionary.getOreName(id).startsWith("ore")) {
-                                    outState = getOutput(inState, modifier);
-                                    stop = true;
-                                    break;
-                                }
-                            }
+                            // @todo 1.14 use tags
+//                            int[] oreIDs = OreDictionary.getOreIDs(inputItem);
+//                            for (int id : oreIDs) {
+//                                if (OreDictionary.getOreName(id).startsWith("ore")) {
+//                                    outState = getOutput(inState, modifier);
+//                                    stop = true;
+//                                    break;
+//                                }
+//                            }
                         }
                         break;
                     }
                     case FILTER_LIQUID:
-                        if (inState.getBlock() instanceof BlockLiquid) {
+                        if (inState.getBlock() instanceof FlowingFluidBlock) {
                             outState = getOutput(inState, modifier);
                             stop = true;
                         }
                         break;
                     case FILTER_TILEENTITY:
-                        if (getWorld().getTileEntity(pos) != null) {
+                        if (world.getTileEntity(pos) != null) {
                             outState = getOutput(inState, modifier);
                             stop = true;
                         }
@@ -432,7 +380,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
             if (block == null) {
                 return Blocks.AIR.getDefaultState();
             } else {
-                return block.getStateFromMeta(outputItem.getMetadata());
+                return block.getDefaultState();
             }
         }
     }
@@ -453,7 +401,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
     private void startScanArea(BlockPos center, int dimension, int dimX, int dimY, int dimZ) {
         progress = new ScanProgress();
-        progress.modifiers = ModifierItem.getModifiers(getStackInSlot(SLOT_MODIFIER));
+        progress.modifiers = ModifierItem.getModifiers(itemHandler.map(h -> h.getStackInSlot(SLOT_MODIFIER)).orElse(ItemStack.EMPTY));
         progress.modifierMapping = new HashMap<>();
         progress.rle = new RLE();
         progress.tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
@@ -525,19 +473,63 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         progress = null;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        probeInfo.text(TextStyleClass.LABEL + "Scan id: " + TextStyleClass.INFO + getScanId());
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        probeInfo.text(TextStyleClass.LABEL + "Scan id: " + TextStyleClass.INFO + getScanId());
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        currenttip.add("Scan id: " + TextFormatting.WHITE + getScanId());
+//    }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        currenttip.add("Scan id: " + TextFormatting.WHITE + getScanId());
-    }
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(ScannerTileEntity.this, CONTAINER_FACTORY, 4) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == BuilderSetup.shapeCardItem;
+            }
 
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
+            }
+
+            @Override
+            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isOutputSlot(slot);
+            }
+
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                if (index == SLOT_FILTER) {
+                    filterCache = null;
+                }
+                if (index == SLOT_OUT) {
+                    ItemStack stack = getStackInSlot(index);
+                    if (!stack.isEmpty()) {
+                        updateScanCard(stack);
+                        markDirty();
+                    }
+                }
+                if (index == SLOT_IN) {
+                    ItemStack stack = getStackInSlot(index);
+                    if (!stack.isEmpty()) {
+                        dataDim = ShapeCardItem.getDimension(stack);
+                        if (renderStack.isEmpty()) {
+                            renderStack = new ItemStack(BuilderSetup.shapeCardItem);
+                        }
+                        updateScanCard(renderStack);
+                        markDirty();
+                    }
+                }
+            }
+        };
+    }
 }

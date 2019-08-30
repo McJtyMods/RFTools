@@ -6,6 +6,7 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ModifierItem extends GenericRFToolsItem {
+public class ModifierItem extends Item {
 
     public ModifierItem() {
         super("modifier_module");

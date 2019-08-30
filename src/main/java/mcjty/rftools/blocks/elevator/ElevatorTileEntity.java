@@ -2,29 +2,29 @@ package mcjty.rftools.blocks.elevator;
 
 
 import com.mojang.authlib.GameProfile;
+import mcjty.lib.McJtyLib;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Broadcaster;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -35,22 +35,20 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.fml.common.Optional;
-
-
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static mcjty.lib.blocks.BaseBlock.FACING_HORIZ;
+import static mcjty.rftools.blocks.elevator.ElevatorSetup.TYPE_ELEVATOR;
 
-public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
+public class ElevatorTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static String CMD_SETNAME = "elevator.setName";
 
@@ -81,8 +79,10 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private FakePlayer harvester = null;
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ElevatorConfiguration.MAXENERGY.get(), ElevatorConfiguration.RFPERTICK.get()));
+
     public ElevatorTileEntity() {
-        super(ElevatorConfiguration.MAXENERGY.get(), ElevatorConfiguration.RFPERTICK.get());
+        super(TYPE_ELEVATOR);
     }
 
     private FakePlayer getHarvester() {
@@ -96,12 +96,12 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
 
     public void clearCaches(Direction side) {
-        for (int y = 0 ; y < getWorld().getHeight() ; y++) {
+        for (int y = 0 ; y < world.getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(getPos(), y);
-            if (getWorld().getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
-                TileEntity te = getWorld().getTileEntity(pos2);
+            if (world.getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
+                TileEntity te = world.getTileEntity(pos2);
                 if (te instanceof ElevatorTileEntity) {
-                    Direction side2 = getWorld().getBlockState(pos2).getValue(FACING_HORIZ);
+                    Direction side2 = world.getBlockState(pos2).get(BlockStateProperties.HORIZONTAL_FACING);
                     if (side2 == side) {
                         ElevatorTileEntity tileEntity = (ElevatorTileEntity) te;
                         tileEntity.cachedControllerPos = null;
@@ -124,13 +124,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private void setRedstoneState() {
         markDirty();
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
+        world.notifyNeighborsOfStateChange(this.pos, ElevatorSetup.elevatorBlock);
     }
 
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             boolean newout = isPlatformHere();
             if (newout != redstoneOut) {
                 redstoneOut = newout;
@@ -169,20 +169,19 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
+
     @Override
-    public void invalidate() {
-        super.invalidate();
-        if (getWorld().isRemote) {
+    public void remove() {
+        super.remove();
+        if (world.isRemote) {
             stopSounds();
         }
     }
 
-    @SideOnly(Side.CLIENT)
     private void stopSounds() {
-        ElevatorSounds.stopSound(getWorld(), getPos());
+        ElevatorSounds.stopSound(world, getPos());
     }
 
-    @SideOnly(Side.CLIENT)
     protected void handleSound() {
         if (ElevatorConfiguration.baseElevatorVolume.get() < 0.01f) {
             // No sounds.
@@ -197,29 +196,28 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         boolean shutdown = Math.abs(movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd.get() * 2;
 
         if (shutdown) {
-            if (!ElevatorSounds.isStopPlaying(getWorld(), pos)) {
-                ElevatorSounds.playStop(getWorld(), pos);
+            if (!ElevatorSounds.isStopPlaying(world, pos)) {
+                ElevatorSounds.playStop(world, pos);
             }
         } else if (startup) {
-            if (!ElevatorSounds.isStartupPlaying(getWorld(), pos)) {
-                ElevatorSounds.playStartup(getWorld(), pos);
+            if (!ElevatorSounds.isStartupPlaying(world, pos)) {
+                ElevatorSounds.playStartup(world, pos);
             }
         } else {
-            if (!ElevatorSounds.isLoopPlaying(getWorld(), pos)) {
-                ElevatorSounds.playLoop(getWorld(), pos);
+            if (!ElevatorSounds.isLoopPlaying(world, pos)) {
+                ElevatorSounds.playLoop(world, pos);
             }
         }
-        ElevatorSounds.moveSound(getWorld(), pos, (float) movingY);
+        ElevatorSounds.moveSound(world, pos, (float) movingY);
     }
 
-    @SideOnly(Side.CLIENT)
     private void handleClientMovement() {
         double d = calculateSpeed();
         handlePlatformMovement(d);
         if (bounds != null) {
-            EntityPlayerSP player = Minecraft.getInstance().player;
+            PlayerEntity player = McJtyLib.proxy.getClientPlayer();
             AxisAlignedBB aabb = getAABBAboveElevator(d);
-            boolean on = player.getEntityBoundingBox().intersects(aabb);
+            boolean on = player.getBoundingBox().intersects(aabb);
             if (on) {
                 player.setPosition(player.posX, movingY + 1, player.posZ);
             }
@@ -270,7 +268,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double offset = speed > 0 ? speed * 2 : speed;
         Set<Entity> oldEntities = this.entitiesOnPlatform;
         entitiesOnPlatform = new HashSet<>();
-        List<Entity> entities = getWorld().getEntitiesWithinAABB(Entity.class, getAABBAboveElevator(speed));
+        List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, getAABBAboveElevator(speed));
         for (Entity entity : entities) {
             entity.fallDistance = 0;
             entitiesOnPlatform.add(entity);
@@ -285,7 +283,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 // to ensure it is still in the patform shaft and in that case put it back on the platform.
                 // We also put back the entity if we know the list is complete.
                 if (entity instanceof PlayerEntity || entitiesOnPlatformComplete) {
-                    if (entity.getEntityBoundingBox().intersects(getAABBBigMargin())) {
+                    if (entity.getBoundingBox().intersects(getAABBBigMargin())) {
                         // Entity is no longer on the platform but was on the platform before and
                         // is still in the elevator shaft. In that case we put it back.
                         entity.fallDistance = 0;
@@ -332,17 +330,17 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
 
         // The orientation of this elevator.
-        BlockState blockState = getWorld().getBlockState(getPos());
+        BlockState blockState = world.getBlockState(getPos());
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return null;
         }
-        Direction side = blockState.getValue(FACING_HORIZ);
+        Direction side = blockState.get(BlockStateProperties.HORIZONTAL_FACING);
 
-        for (int y = 0; y < getWorld().getHeight(); y++) {
+        for (int y = 0; y < world.getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
-            BlockState otherState = getWorld().getBlockState(elevatorPos);
+            BlockState otherState = world.getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                Direction otherSide = otherState.getValue(FACING_HORIZ);
+                Direction otherSide = otherState.get(BlockStateProperties.HORIZONTAL_FACING);
                 if (otherSide == side) {
                     cachedControllerPos = elevatorPos;
                     return elevatorPos;
@@ -355,13 +353,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // Find the position of the elevator that has the platform.
     private BlockPos findElevatorWithPlatform() {
         // The orientation of this elevator.
-        Direction side = getWorld().getBlockState(getPos()).getValue(FACING_HORIZ);
+        Direction side = world.getBlockState(getPos()).get(BlockStateProperties.HORIZONTAL_FACING);
 
-        for (int y = 0; y < getWorld().getHeight(); y++) {
+        for (int y = 0; y < world.getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
-            BlockState otherState = getWorld().getBlockState(elevatorPos);
+            BlockState otherState = world.getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                Direction otherSide = otherState.getValue(FACING_HORIZ);
+                Direction otherSide = otherState.get(BlockStateProperties.HORIZONTAL_FACING);
                 if (otherSide == side) {
                     BlockPos frontPos = elevatorPos.offset(side);
                     if (isValidPlatformBlock(frontPos)) {
@@ -374,7 +372,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     private boolean isValidPlatformBlock(BlockPos frontPos) {
-        World world = getWorld();
         BlockState state = world.getBlockState(frontPos);
         Block block = state.getBlock();
         return !block.isAir(state, world, frontPos) && !block.hasTileEntity(state);
@@ -391,8 +388,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private void stopMoving() {
         movingY = stopY;
         for (BlockPos pos : positions) {
-            if (getWorld().getBlockState(pos).getBlock().isReplaceable(getWorld(), pos)) {
-                getWorld().setBlockState(getPosAtY(pos, stopY), movingState, 3);
+            // @todo 1.14 check!
+            if (world.getBlockState(pos).getMaterial().isReplaceable()) {
+                world.setBlockState(getPosAtY(pos, stopY), movingState, 3);
             }
         }
         // Current level will have to be recalculated
@@ -481,26 +479,25 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     private boolean canMoveBlock(BlockPos pos) {
-        World world = getWorld();
         BlockState state = world.getBlockState(pos);
         return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, getHarvester());
     }
 
     // Always called on controller TE (bottom one)
     private void getBounds(BlockPos start) {
-        Direction side = getWorld().getBlockState(getPos()).getValue(FACING_HORIZ);
+        Direction side = world.getBlockState(getPos()).get(BlockStateProperties.HORIZONTAL_FACING);
         bounds = new Bounds();
         for (int a = 1; a < ElevatorConfiguration.maxPlatformSize.get(); a++) {
             BlockPos offset = start.offset(side, a);
             if (canMoveBlock(offset)) {
-                getWorld().setBlockToAir(offset);
+                world.setBlockState(offset, Blocks.AIR.getDefaultState());
                 bounds.addPos(offset);
                 positions.add(getPosAtY(offset, getPos().getY()));
 
                 for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize.get() / 2); b++) {
                     BlockPos offsetLeft = offset.offset(side.rotateY(), b);
                     if (canMoveBlock(offsetLeft)) {
-                        getWorld().setBlockToAir(offsetLeft);
+                        world.setBlockState(offsetLeft, Blocks.AIR.getDefaultState());
                         bounds.addPos(offsetLeft);
                         positions.add(getPosAtY(offsetLeft, getPos().getY()));
                     } else {
@@ -511,7 +508,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize.get() / 2); b++) {
                     BlockPos offsetRight = offset.offset(side.rotateYCCW(), b);
                     if (canMoveBlock(offsetRight)) {
-                        getWorld().setBlockToAir(offsetRight);
+                        world.setBlockState(offsetRight, Blocks.AIR.getDefaultState());
                         bounds.addPos(offsetRight);
                         positions.add(getPosAtY(offsetRight, getPos().getY()));
                     } else {
@@ -552,14 +549,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Go to the specific level (levels start at 0)
     public void toLevel(int level) {
-        Direction side = getWorld().getBlockState(getPos()).getValue(FACING_HORIZ);
+        Direction side = world.getBlockState(getPos()).get(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos controllerPos = findBottomElevator();
-        for (int y = controllerPos.getY() ; y < getWorld().getHeight() ; y++) {
+        for (int y = controllerPos.getY() ; y < world.getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(controllerPos, y);
-            if (getWorld().getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
-                TileEntity te2 = getWorld().getTileEntity(pos2);
+            if (world.getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
+                TileEntity te2 = world.getTileEntity(pos2);
                 if (te2 instanceof ElevatorTileEntity) {
-                    Direction side2 = getWorld().getBlockState(pos2).getValue(FACING_HORIZ);
+                    Direction side2 = world.getBlockState(pos2).get(BlockStateProperties.HORIZONTAL_FACING);
                     if (side == side2) {
                         if (level == 0) {
                             ((ElevatorTileEntity) te2).movePlatformHere();
@@ -578,16 +575,16 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             // Cannot happen
             return;
         }
-        BlockState blockState = getWorld().getBlockState(getPos());
+        BlockState blockState = world.getBlockState(getPos());
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return;
         }
-        Direction side = blockState.getValue(FACING_HORIZ);
-        for (int y = controllerPos.getY() ; y < getWorld().getHeight() ; y++) {
+        Direction side = blockState.get(BlockStateProperties.HORIZONTAL_FACING);
+        for (int y = controllerPos.getY() ; y < world.getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(controllerPos, y);
-            TileEntity te2 = getWorld().getTileEntity(pos2);
+            TileEntity te2 = world.getTileEntity(pos2);
             if (te2 instanceof ElevatorTileEntity) {
-                Direction side2 = getWorld().getBlockState(pos2).getValue(FACING_HORIZ);
+                Direction side2 = world.getBlockState(pos2).get(BlockStateProperties.HORIZONTAL_FACING);
                 if (side == side2) {
                     heights.add(y);
                 }
@@ -598,9 +595,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     public int getCurrentLevel(List<Integer> heights) {
         BlockPos controllerPos = findBottomElevator();
-        TileEntity te = getWorld().getTileEntity(controllerPos);
+        TileEntity te = world.getTileEntity(controllerPos);
         if (te instanceof ElevatorTileEntity) {
-            Direction side = getWorld().getBlockState(controllerPos).getValue(FACING_HORIZ);
+            Direction side = world.getBlockState(controllerPos).get(BlockStateProperties.HORIZONTAL_FACING);
             ElevatorTileEntity controller = (ElevatorTileEntity) te;
             if (controller.cachedCurrent == -1) {
                 int level = 0;
@@ -624,11 +621,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Return true if the platform is here (i.e. there is a block in front of the elevator)
     public boolean isPlatformHere() {
-        BlockState blockState = getWorld().getBlockState(getPos());
+        BlockState blockState = world.getBlockState(getPos());
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return false;
         }
-        Direction side = blockState.getValue(FACING_HORIZ);
+        Direction side = blockState.get(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos frontPos = getPos().offset(side);
         return isValidPlatformBlock(frontPos);
     }
@@ -639,11 +636,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         // What about TE blocks in front of platform?
 
         // First check if the platform is here already:
-        BlockState blockState = getWorld().getBlockState(getPos());
+        BlockState blockState = world.getBlockState(getPos());
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return;
         }
-        Direction side = blockState.getValue(FACING_HORIZ);
+        Direction side = blockState.get(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos frontPos = getPos().offset(side);
         if (isValidPlatformBlock(frontPos)) {
             // Platform is already here (or something is blocking here)
@@ -659,7 +656,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
         // Find the bottom elevator (this is the one doing the work).
         BlockPos controllerPos = findBottomElevator();
-        ElevatorTileEntity controller = (ElevatorTileEntity) getWorld().getTileEntity(controllerPos);
+        ElevatorTileEntity controller = (ElevatorTileEntity) world.getTileEntity(controllerPos);
 
         if (controller.isMoving()) {
             // Already moving, do nothing
@@ -667,25 +664,25 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
 
         // Check if we have enough energy
-        int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
-        if (controller.getStoredPower() < rfNeeded) {
-            Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
-            return;
-        }
+        controller.energyHandler.ifPresent(h -> {
+            int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
+            if (h.getEnergyStored() < rfNeeded) {
+                Broadcaster.broadcast(world, getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
+                return;
+            }
 
-        if(controller.startMoving(platformPos, getPos(), getWorld().getBlockState(platformPos.offset(side)))) {
-            controller.consumeEnergy(rfNeeded);
-        } else {
-            Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "The block in front of the elevator platform could not be moved!", 10);
-        }
-
+            if (controller.startMoving(platformPos, getPos(), world.getBlockState(platformPos.offset(side)))) {
+                h.consumeEnergy(rfNeeded);
+            } else {
+                Broadcaster.broadcast(world, getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "The block in front of the elevator platform could not be moved!", 10);
+            }
+        });
     }
 
     public static BlockPos getPosAtY(BlockPos p, int y) {
         return new BlockPos(p.getX(), y, p.getZ());
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         if (isMoving()) {
@@ -694,7 +691,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         return super.getRenderBoundingBox();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared() {
         if (isMoving()) {
@@ -719,23 +715,23 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
         CompoundNBT compound = packet.getNbtCompound();
         this.readFromNBTCommon(compound);
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         readFromNBTCommon(tagCompound);
         redstoneOut = tagCompound.getBoolean("rs");
         entitiesOnPlatformComplete = false;
-        if (tagCompound.hasKey("players")) {
+        if (tagCompound.contains("players")) {
             entitiesOnPlatform.clear();
-            ServerWorld world = DimensionManager.getWorld(0);
-            List<ServerPlayerEntity> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
-            ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < playerList.tagCount(); i++) {
-                CompoundNBT p = playerList.getCompoundTagAt(i);
+            ServerWorld world = WorldTools.getOverworld();
+            List<ServerPlayerEntity> serverPlayers = world.getServer().getPlayerList().getPlayers();
+            ListNBT playerList = tagCompound.getList("players", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < playerList.size(); i++) {
+                CompoundNBT p = playerList.getCompound(i);
                 long lsb = p.getLong("lsb");
                 long msb = p.getLong("msb");
                 UUID uuid = new UUID(msb, lsb);
@@ -750,7 +746,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     private void readFromNBTCommon(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+        super.read(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
         movingY = tagCompound.getDouble("movingY");
         startY = tagCompound.getInt("startY");
@@ -766,7 +762,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             RelCoordinate c = new RelCoordinate(dx, dy, dz);
             positions.add(new BlockPos(getPos().getX() + c.getDx(), getPos().getY() + c.getDy(), getPos().getZ() + c.getDz()));
         }
-        if (tagCompound.hasKey("bminX")) {
+        if (tagCompound.contains("bminX")) {
             int bminX = tagCompound.getInt("bminX");
             int bminZ = tagCompound.getInt("bminZ");
             int bmaxX = tagCompound.getInt("bmaxX");
@@ -775,23 +771,23 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 bounds = new Bounds(bminX, bminZ, bmaxX, bmaxZ);
             }
         }
-        if (tagCompound.hasKey("movingId")) {
+        if (tagCompound.contains("movingId")) {
             Integer id = tagCompound.getInt("movingId");
             movingState = Block.getStateById(id);
-        } else if (tagCompound.hasKey("movingBlock")) {
+        } else if (tagCompound.contains("movingBlock")) {
             // Deprecated (@todo remove in 1.13)
             String id = tagCompound.getString("movingBlock");
-            int meta = tagCompound.getInt("movingMeta");
-            movingState = Block.REGISTRY.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
+            movingState = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)).getDefaultState();
         }
+        readRestorableFromNBT(tagCompound);
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         tagCompound.putBoolean("rs", redstoneOut);
         tagCompound.putBoolean("prevIn", prevIn);
-        tagCompound.setDouble("movingY", movingY);
+        tagCompound.putDouble("movingY", movingY);
         tagCompound.putInt("startY", startY);
         tagCompound.putInt("stopY", stopY);
         byte[] blocks = new byte[positions.size() * 6];
@@ -812,11 +808,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             tagCompound.putInt("bmaxX", bounds.getMaxX());
             tagCompound.putInt("bmaxZ", bounds.getMaxZ());
         }
-        tagCompound.setByteArray("relcoords", blocks);
+        tagCompound.putByteArray("relcoords", blocks);
         if (movingState != null) {
             tagCompound.putInt("movingId", Block.getStateId(movingState));
         }
-        if (!getWorld().isRemote) {
+        if (!world.isRemote) {
             // Only do this server side
             if (!entitiesOnPlatform.isEmpty()) {
                 ListNBT playerList = new ListNBT();
@@ -825,31 +821,29 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                         PlayerEntity player = (PlayerEntity) entity;
                         UUID id = player.getGameProfile().getId();
                         CompoundNBT p = new CompoundNBT();
-                        p.setLong("lsb", id.getLeastSignificantBits());
-                        p.setLong("msb", id.getMostSignificantBits());
-                        playerList.appendTag(p);
+                        p.putLong("lsb", id.getLeastSignificantBits());
+                        p.putLong("msb", id.getMostSignificantBits());
+                        playerList.add(p);
                     }
                 }
-                tagCompound.setTag("players", playerList);
+                tagCompound.put("players", playerList);
             }
         }
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         name = tagCompound.getString("levelName");
     }
 
-    @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setString("levelName", name == null ? "" : name);
+        tagCompound.putString("levelName", name == null ? "" : name);
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -864,37 +858,37 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        clearCaches(world.getBlockState(pos).getValue(FACING_HORIZ));
+        clearCaches(world.getBlockState(pos).get(BlockStateProperties.HORIZONTAL_FACING));
     }
 
     @Override
-    public void onBlockBreak(World world, BlockPos pos, BlockState state) {
-        super.onBlockBreak(world, pos, state);
-        clearCaches(state.getValue(FACING_HORIZ));
+    public void onReplaced(World world, BlockPos pos, BlockState state) {
+        super.onReplaced(world, pos, state);
+        clearCaches(state.get(BlockStateProperties.HORIZONTAL_FACING));
     }
 
-    @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        probeInfo.text(TextFormatting.BLUE + "Name: " + getName());
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        long energy = getStoredPower();
-        currenttip.add(TextFormatting.GREEN + "RF: " + energy);
-        if (getName() != null && !getName().isEmpty()) {
-            currenttip.add(TextFormatting.BLUE + "Name: " + getName());
-        }
-    }
+//    @Override
+//    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        probeInfo.text(TextFormatting.BLUE + "Name: " + getName());
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        long energy = getStoredPower();
+//        currenttip.add(TextFormatting.GREEN + "RF: " + energy);
+//        if (getName() != null && !getName().isEmpty()) {
+//            currenttip.add(TextFormatting.BLUE + "Name: " + getName());
+//        }
+//    }
 
     @Override
     public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-        Direction direction = state.getValue(FACING_HORIZ);
+        Direction direction = state.get(BlockStateProperties.HORIZONTAL_FACING);
         if (side == direction) {
             return isPlatformHere() ? 15 : 0;
         }

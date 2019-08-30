@@ -1,5 +1,6 @@
 package mcjty.rftools.items.envmodules;
 
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -18,7 +19,7 @@ import java.util.List;
 public class FlightEModuleItem extends Item implements EnvModuleProvider {
 
     public FlightEModuleItem() {
-        super(new Item.Properties().maxStackSize(16));
+        super(new Item.Properties().maxStackSize(16).defaultMaxDamage(1).group(RFTools.setup.getTab()));
         setRegistryName("flight_module");
     }
 
@@ -28,11 +29,6 @@ public class FlightEModuleItem extends Item implements EnvModuleProvider {
         list.add(new StringTextComponent("This module gives creative type flying capabilities"));
         list.add(new StringTextComponent("when used in the environmental controller."));
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FLIGHT_RFPERTICK.get() + " RF/tick (per cubic block)"));
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
     }
 
     @Override

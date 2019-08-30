@@ -1,14 +1,15 @@
 package mcjty.rftools.items.netmonitor;
 
-import mcjty.lib.thirteen.ConfigSpec;
+
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class NetworkMonitorConfiguration {
     public static final String CATEGORY_NETWORK_MONITOR = "networkmonitor";
-    public static ConfigSpec.BooleanValue enabled;
-    public static ConfigSpec.IntValue hilightTime;
-    public static ConfigSpec.IntValue maximumBlocks;
+    public static ForgeConfigSpec.BooleanValue enabled;
+    public static ForgeConfigSpec.IntValue hilightTime;
+    public static ForgeConfigSpec.IntValue maximumBlocks;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the network monitor item").push(CATEGORY_NETWORK_MONITOR);
         CLIENT_BUILDER.comment("Settings for the network monitor item").push(CATEGORY_NETWORK_MONITOR);
 

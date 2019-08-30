@@ -2365,18 +2365,18 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
     private static long lastTime = 0;
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        if (System.currentTimeMillis() - lastTime > 250) {
-            lastTime = System.currentTimeMillis();
-            requestCurrentLevel();
-        }
-        int scan = BuilderTileEntity.getCurrentLevelClientSide();
-        currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        if (System.currentTimeMillis() - lastTime > 250) {
+//            lastTime = System.currentTimeMillis();
+//            requestCurrentLevel();
+//        }
+//        int scan = BuilderTileEntity.getCurrentLevelClientSide();
+//        currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+//    }
 
     @Override
     public void rotateBlock(Direction axis) {

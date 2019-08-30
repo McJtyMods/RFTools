@@ -3,7 +3,9 @@ package mcjty.rftools.playerprops;
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class BuffProperties {
     }
 
     private void syncBuffs(ServerPlayerEntity player) {
-        RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public void tickBuffs(ServerPlayerEntity player) {
@@ -68,7 +70,7 @@ public class BuffProperties {
         boolean enableFlight = false;
         if (onElevator) {
             enableFlight = true;
-            player.capabilities.isFlying = true;
+            player.abilities.isFlying = true;
         } else {
             for (PlayerBuff buff : buffs.keySet()) {
                 if (buff == PlayerBuff.BUFF_FLIGHT) {
@@ -78,29 +80,29 @@ public class BuffProperties {
             }
         }
 
-        boolean oldAllow = player.capabilities.allowFlying;
+        boolean oldAllow = player.abilities.allowFlying;
 
         if (enableFlight) {
             if (!allowFlying) {
                 // We were not already allowing flying.
-                oldAllowFlying = player.capabilities.allowFlying;
+                oldAllowFlying = player.abilities.allowFlying;
                 allowFlying = true;
             }
-            player.capabilities.allowFlying = true;
+            player.abilities.allowFlying = true;
         } else {
             if (allowFlying) {
                 // We were flying before.
-                player.capabilities.allowFlying = oldAllowFlying;
-                if (player.capabilities.isCreativeMode) {
-                    player.capabilities.allowFlying = true;
+                player.abilities.allowFlying = oldAllowFlying;
+                if (player.abilities.isCreativeMode) {
+                    player.abilities.allowFlying = true;
                 }
                 allowFlying = false;
             }
         }
 
-        if (player.capabilities.allowFlying != oldAllow) {
-            if (!player.capabilities.allowFlying) {
-                player.capabilities.isFlying = false;
+        if (player.abilities.allowFlying != oldAllow) {
+            if (!player.abilities.allowFlying) {
+                player.abilities.isFlying = false;
             }
         }
         player.sendPlayerAbilities();
@@ -115,7 +117,7 @@ public class BuffProperties {
     public static void disableElevatorMode(PlayerEntity player) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.onElevator = false;
-        player.capabilities.isFlying = false;
+        player.abilities.isFlying = false;
         buffProperties.performBuffs((ServerPlayerEntity) player);
     }
 
@@ -140,10 +142,10 @@ public class BuffProperties {
     }
 
     public void saveNBTData(CompoundNBT compound) {
-        compound.setBoolean("onElevator", onElevator);
-        compound.setInteger("buffTicks", buffTimeout);
-        compound.setBoolean("allowFlying", allowFlying);
-        compound.setBoolean("oldAllowFlying", oldAllowFlying);
+        compound.putBoolean("onElevator", onElevator);
+        compound.putInt("buffTicks", buffTimeout);
+        compound.putBoolean("allowFlying", allowFlying);
+        compound.putBoolean("oldAllowFlying", oldAllowFlying);
         int[] buffArray = new int[buffs.size()];
         int[] timeoutArray = new int[buffs.size()];
         int idx = 0;
@@ -153,13 +155,13 @@ public class BuffProperties {
             timeoutArray[idx] = entry.getValue();
             idx++;
         }
-        compound.setIntArray("buffs", buffArray);
-        compound.setIntArray("buffTimeouts", timeoutArray);
+        compound.putIntArray("buffs", buffArray);
+        compound.putIntArray("buffTimeouts", timeoutArray);
     }
 
     public void loadNBTData(CompoundNBT compound) {
         onElevator = compound.getBoolean("onElevator");
-        buffTimeout = compound.getInteger("buffTicks");
+        buffTimeout = compound.getInt("buffTicks");
         int[] buffArray = compound.getIntArray("buffs");
         int[] timeoutArray = compound.getIntArray("buffTimeouts");
         buffs.clear();

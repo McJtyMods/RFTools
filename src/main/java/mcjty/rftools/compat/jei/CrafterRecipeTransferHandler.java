@@ -7,6 +7,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<CrafterContainer> {
 
-    public static void register(IRecipeTransferRegistry transferRegistry) {
+    public static void register(IRecipeTransferRegistration transferRegistry) {
         transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
     }
 

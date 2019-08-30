@@ -10,14 +10,15 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScreenModule;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -66,7 +67,7 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -88,7 +89,11 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(ItemUseContext context) {
+        PlayerEntity player = context.getPlayer();
+        BlockPos pos = context.getPos();
+        World world = context.getWorld();
+        Hand hand = context.getHand();
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         CompoundNBT tagCompound = stack.getTag();
@@ -106,21 +111,21 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
             if (block != null && !block.isAir(state, world, pos)) {
                 name = BlockTools.getReadableName(world, pos);
             }
-            tagCompound.setString("elevatorname", name);
+            tagCompound.putString("elevatorname", name);
             if (world.isRemote) {
                 Logging.message(player, "Elevator module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("elevatordim");
-            tagCompound.removeTag("elevatorx");
-            tagCompound.removeTag("elevatory");
-            tagCompound.removeTag("elevatorz");
-            tagCompound.removeTag("elevatorname");
+            tagCompound.remove("elevatordim");
+            tagCompound.remove("elevatorx");
+            tagCompound.remove("elevatory");
+            tagCompound.remove("elevatorz");
+            tagCompound.remove("elevatorname");
             if (world.isRemote) {
                 Logging.message(player, "Elevator module is cleared");
             }
         }
-        stack.setTagCompound(tagCompound);
+        stack.setTag(tagCompound);
         return ActionResultType.SUCCESS;
     }
 }

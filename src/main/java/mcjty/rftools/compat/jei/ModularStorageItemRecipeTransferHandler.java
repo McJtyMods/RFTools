@@ -1,22 +1,8 @@
 package mcjty.rftools.compat.jei;
 
-import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
-import mezz.jei.api.gui.IGuiIngredient;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import mezz.jei.api.recipe.transfer.IRecipeTransferError;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+public class ModularStorageItemRecipeTransferHandler {}/*implements IRecipeTransferHandler<ModularStorageItemContainer> {
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
-
-public class ModularStorageItemRecipeTransferHandler implements IRecipeTransferHandler<ModularStorageItemContainer> {
-
-    public static void register(IRecipeTransferRegistry transferRegistry) {
+    public static void register(IRecipeTransferRegistration transferRegistry) {
         transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
     }
 
@@ -38,3 +24,4 @@ public class ModularStorageItemRecipeTransferHandler implements IRecipeTransferH
     }
 
 }
+*/

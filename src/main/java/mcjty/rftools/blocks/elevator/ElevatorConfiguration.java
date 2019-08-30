@@ -1,23 +1,23 @@
 package mcjty.rftools.blocks.elevator;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ElevatorConfiguration {
 
     public static final String CATEGORY_ELEVATOR = "elevator";
-    public static ConfigSpec.IntValue MAXENERGY;
-    public static ConfigSpec.IntValue RFPERTICK;
-    public static ConfigSpec.IntValue rfPerHeightUnit;
-    public static ConfigSpec.IntValue maxPlatformSize;
-    public static ConfigSpec.DoubleValue minimumSpeed;
-    public static ConfigSpec.DoubleValue maximumSpeed;
-    public static ConfigSpec.DoubleValue maxSpeedDistanceStart;
-    public static ConfigSpec.DoubleValue maxSpeedDistanceEnd;
+    public static ForgeConfigSpec.IntValue MAXENERGY;
+    public static ForgeConfigSpec.IntValue RFPERTICK;
+    public static ForgeConfigSpec.IntValue rfPerHeightUnit;
+    public static ForgeConfigSpec.IntValue maxPlatformSize;
+    public static ForgeConfigSpec.DoubleValue minimumSpeed;
+    public static ForgeConfigSpec.DoubleValue maximumSpeed;
+    public static ForgeConfigSpec.DoubleValue maxSpeedDistanceStart;
+    public static ForgeConfigSpec.DoubleValue maxSpeedDistanceEnd;
 
-    public static ConfigSpec.DoubleValue baseElevatorVolume;      // Use 0 to turn off elevator sounds
-    public static ConfigSpec.DoubleValue loopVolumeFactor;        // How much to decrease volume of the looping sound.
+    public static ForgeConfigSpec.DoubleValue baseElevatorVolume;      // Use 0 to turn off elevator sounds
+    public static ForgeConfigSpec.DoubleValue loopVolumeFactor;        // How much to decrease volume of the looping sound.
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the elevator").push(CATEGORY_ELEVATOR);
         CLIENT_BUILDER.comment("Settings for the elevator").push(CATEGORY_ELEVATOR);
 

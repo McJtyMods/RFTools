@@ -21,6 +21,9 @@ public class TeleporterSetup {
     @ObjectHolder("rftools:matter_receiver")
     public static TileEntityType<?> TYPE_MATTER_RECEIVER;
 
+    @ObjectHolder("rftools:matter_transmitter")
+    public static TileEntityType<?> TYPE_MATTER_TRANSMITTER;
+
 
     public static void init() {
         matterTransmitterBlock = new MatterTransmitterBlock();
