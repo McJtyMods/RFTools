@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericItemBlock;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
@@ -19,185 +19,184 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.BlockStateContainer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 
-
-import org.lwjgl.input.Keyboard;
-
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
-    public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", Direction.Plane.HORIZONTAL);
+import static net.minecraft.state.properties.BlockStateProperties.FACING;
 
-    public ScreenBlock(String name, Class<? extends ScreenTileEntity> clazz) {
-        super(Material.IRON, clazz, ScreenContainer::new, GenericItemBlock::new, name, true);
+public class ScreenBlock extends GenericRFToolsBlock {
+
+    public ScreenBlock(String name, Supplier<TileEntity> supplier) {
+        super(name, new BlockBuilder()
+            .tileEntitySupplier(supplier));
     }
 
+    @Nullable
     @Override
-    public BlockState getStateForPlacement(World worldIn, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer) {
-        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(HORIZONTAL_FACING, placer.getHorizontalFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return super.getStateForPlacement(context).with(FACING, context.getPlayer().getHorizontalFacing().getOpposite());
     }
 
-    @Override
-    public BlockState getStateFromMeta(int meta) {
-        if(meta > 5) {
-            meta -= 4;
-        } else if(meta > 1) {
-            Direction facing = Direction.VALUES[meta];
-            return getDefaultState().withProperty(FACING, facing).withProperty(HORIZONTAL_FACING, facing);
-        }
-        Direction horizontalFacing = Direction.VALUES[(meta >> 1) + 2];
-        Direction facing = (meta & 1) == 0 ? Direction.DOWN : Direction.UP;
-        return getDefaultState().withProperty(HORIZONTAL_FACING, horizontalFacing).withProperty(FACING, facing);
-    }
+//    @Override
+//    public BlockState getStateFromMeta(int meta) {
+//        if(meta > 5) {
+//            meta -= 4;
+//        } else if(meta > 1) {
+//            Direction facing = Direction.VALUES[meta];
+//            return getDefaultState().withProperty(FACING, facing).withProperty(HORIZONTAL_FACING, facing);
+//        }
+//        Direction horizontalFacing = Direction.VALUES[(meta >> 1) + 2];
+//        Direction facing = (meta & 1) == 0 ? Direction.DOWN : Direction.UP;
+//        return getDefaultState().withProperty(HORIZONTAL_FACING, horizontalFacing).withProperty(FACING, facing);
+//    }
+//
+//    @Override
+//    public int getMetaFromState(BlockState state) {
+//        Direction facing = state.getValue(FACING);
+//        Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
+//        int meta = 0;
+//        switch(facing) {
+//        case UP:
+//            meta = 1;
+//            //$FALL-THROUGH$
+//        case DOWN:
+//            meta += (horizontalFacing.getIndex() << 1);
+//            if(meta < 6) meta -= 4;
+//            return meta;
+//        default:
+//            return facing.getIndex();
+//        }
+//    }
 
-    @Override
-    public int getMetaFromState(BlockState state) {
-        Direction facing = state.getValue(FACING);
-        Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
-        int meta = 0;
-        switch(facing) {
-        case UP:
-            meta = 1;
-            //$FALL-THROUGH$
-        case DOWN:
-            meta += (horizontalFacing.getIndex() << 1);
-            if(meta < 6) meta -= 4;
-            return meta;
-        default:
-            return facing.getIndex();
-        }
-    }
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, HORIZONTAL_FACING);
-    }
-
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        BlockPos pos = data.getPos();
-        addProbeInfoScreen(mode, probeInfo, player, world, pos);
-    }
-
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfoScreen(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ScreenTileEntity) {
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-            if (!screenTileEntity.isConnected() && screenTileEntity.isControllerNeeded()) {
-                probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
-            }
-            if (!isCreative()) {
-                boolean power = screenTileEntity.isPowerOn();
-                if (!power) {
-                    probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
-                }
-                if (mode == ProbeMode.EXTENDED) {
-                    int rfPerTick = screenTileEntity.getTotalRfPerTick();
-                    probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
-                }
-            }
-            IScreenModule<?> module = screenTileEntity.getHoveringModule();
-            if (module instanceof ITooltipInfo) {
-                List<String> info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY());
-                for (String s : info) {
-                    probeInfo.text(s);
-                }
-            }
-        }
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        BlockPos pos = data.getPos();
+//        addProbeInfoScreen(mode, probeInfo, player, world, pos);
+//    }
+//
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfoScreen(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockPos pos) {
+//        TileEntity te = world.getTileEntity(pos);
+//        if (te instanceof ScreenTileEntity) {
+//            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+//            if (!screenTileEntity.isConnected() && screenTileEntity.isControllerNeeded()) {
+//                probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
+//            }
+//            if (!isCreative()) {
+//                boolean power = screenTileEntity.isPowerOn();
+//                if (!power) {
+//                    probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
+//                }
+//                if (mode == ProbeMode.EXTENDED) {
+//                    int rfPerTick = screenTileEntity.getTotalRfPerTick();
+//                    probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+//                }
+//            }
+//            IScreenModule<?> module = screenTileEntity.getHoveringModule();
+//            if (module instanceof ITooltipInfo) {
+//                List<String> info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY());
+//                for (String s : info) {
+//                    probeInfo.text(s);
+//                }
+//            }
+//        }
+//    }
 
     private static long lastTime = 0;
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof ScreenTileEntity) {
-            RayTraceResult mouseOver = accessor.getMOP();
-            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-            BlockPos pos = accessor.getPosition();
-            ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, accessor.getBlockState().getValue(ScreenBlock.HORIZONTAL_FACING));
-            return getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
-        } else {
-            return Collections.emptyList();
-        }
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof ScreenTileEntity) {
+//            RayTraceResult mouseOver = accessor.getMOP();
+//            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+//            BlockPos pos = accessor.getPosition();
+//            ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, accessor.getBlockState().getValue(ScreenBlock.HORIZONTAL_FACING));
+//            return getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
+//        } else {
+//            return Collections.emptyList();
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Optional.Method(modid = "waila")
+//    public List<String> getWailaBodyScreen(List<String> currenttip, PlayerEntity player, ScreenTileEntity te, ModuleRaytraceResult hit) {
+//        if (!te.isConnected() && te.isControllerNeeded()) {
+//            currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+//        }
+//        if (!isCreative()) {
+//            boolean power = te.isPowerOn();
+//            if (!power) {
+//                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
+//            }
+//            if (player.isSneaking()) {
+//                int rfPerTick = te.getTotalRfPerTick();
+//                currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+//            }
+//        }
+//        if (System.currentTimeMillis() - lastTime > 500) {
+//            lastTime = System.currentTimeMillis();
+//            int x, y, module;
+//            if (hit == null) {
+//                x = -1;
+//                y = -1;
+//                module = -1;
+//            } else {
+//                x = hit.getX();
+//                y = hit.getY() - hit.getCurrenty();
+//                module = hit.getModuleIndex();
+//            }
+//            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, TypedMap.builder()
+//                    .put(ScreenTileEntity.PARAM_X, x)
+//                    .put(ScreenTileEntity.PARAM_Y, y)
+//                    .put(ScreenTileEntity.PARAM_MODULE, module)
+//                    .build());
+//        }
+//        currenttip.addAll(ScreenTileEntity.infoReceived);
+//        return currenttip;
+//    }
 
-    @SideOnly(Side.CLIENT)
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBodyScreen(List<String> currenttip, PlayerEntity player, ScreenTileEntity te, ModuleRaytraceResult hit) {
-        if (!te.isConnected() && te.isControllerNeeded()) {
-            currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-        }
-        if (!isCreative()) {
-            boolean power = te.isPowerOn();
-            if (!power) {
-                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
-            }
-            if (player.isSneaking()) {
-                int rfPerTick = te.getTotalRfPerTick();
-                currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
-            }
-        }
-        if (System.currentTimeMillis() - lastTime > 500) {
-            lastTime = System.currentTimeMillis();
-            int x, y, module;
-            if (hit == null) {
-                x = -1;
-                y = -1;
-                module = -1;
-            } else {
-                x = hit.getX();
-                y = hit.getY() - hit.getCurrenty();
-                module = hit.getModuleIndex();
-            }
-            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, TypedMap.builder()
-                    .put(ScreenTileEntity.PARAM_X, x)
-                    .put(ScreenTileEntity.PARAM_Y, y)
-                    .put(ScreenTileEntity.PARAM_MODULE, module)
-                    .build());
-        }
-        currenttip.addAll(ScreenTileEntity.infoReceived);
-        return currenttip;
-    }
-
-    @Override
-    public void initModel() {
-        ScreenRenderer.register();
-        McJtyLib.proxy.initTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
-        super.initModel();
-    }
+    // @todo 1.14
+//    @Override
+//    public void initModel() {
+//        ScreenRenderer.register();
+//        McJtyLib.proxy.initTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
+//        super.initModel();
+//    }
 
     public static boolean hasModuleProvider(ItemStack stack) {
         return stack.getItem() instanceof IModuleProvider || stack.hasCapability(IModuleProvider.CAPABILITY, null);
@@ -222,7 +221,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         };
     }
 
-    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, BlockRayTraceResult result)) {
         return onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 

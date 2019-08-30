@@ -2,123 +2,95 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.container.EmptyContainer;
-import mcjty.rftools.RFTools;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcjty.lib.builder.BlockBuilder;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 
-
-
-import java.util.List;
-import java.util.Random;
-
-public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContainer> {
+public class ScreenHitBlock extends BaseBlock {
 
     public ScreenHitBlock() {
-        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer::new, null, "screen_hitblock", false);
-        setBlockUnbreakable();
-        setResistance(6000000.0F);
-//        setUnlocalizedName("rftools.screen_hitblock");
-//        setRegistryName("screen_hitblock");
-//        GameRegistry.register(this);
-//        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
+        super("screen_hitblock", new BlockBuilder()
+                .properties(Properties.create(Material.IRON).hardnessAndResistance(-1.0F, 3600000.0F)
+                    .sound(SoundType.METAL))
+                .tileEntitySupplier(ScreenHitTileEntity::new));
     }
 
     @Override
-    public ItemStack getItem(World worldIn, BlockPos pos, BlockState state) {
+    public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state) {
         BlockPos screenPos = getScreenBlockPos(worldIn, pos);
         if(screenPos == null) return ItemStack.EMPTY;
         BlockState screenState = worldIn.getBlockState(screenPos);
         return screenState.getBlock().getItem(worldIn, screenPos, screenState);
     }
 
-    @Override
-    public int getGuiID() {
-        return -1;
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        BlockPos pos = data.getPos();
+//        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+//        int dx = screenHitTileEntity.getDx();
+//        int dy = screenHitTileEntity.getDy();
+//        int dz = screenHitTileEntity.getDz();
+//        Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+//        if (block instanceof ScreenBlock) {
+//            ((ScreenBlock) block).addProbeInfoScreen(mode, probeInfo, player, world, pos.add(dx, dy, dz));
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        BlockPos pos = accessor.getPosition();
+//        World world = accessor.getWorld();
+//        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+//        int dx = screenHitTileEntity.getDx();
+//        int dy = screenHitTileEntity.getDy();
+//        int dz = screenHitTileEntity.getDz();
+//        BlockPos rpos = pos.add(dx, dy, dz);
+//        BlockState state = world.getBlockState(rpos);
+//        Block block = state.getBlock();
+//        if (block instanceof ScreenBlock) {
+//            TileEntity te = world.getTileEntity(rpos);
+//            if (te instanceof ScreenTileEntity) {
+//                RayTraceResult mouseOver = accessor.getMOP();
+//                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+//                ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
+//                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
+//            }
+//        }
+//        return currenttip;
+//    }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        BlockPos pos = data.getPos();
-        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
-        int dx = screenHitTileEntity.getDx();
-        int dy = screenHitTileEntity.getDy();
-        int dz = screenHitTileEntity.getDz();
-        Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
-        if (block instanceof ScreenBlock) {
-            ((ScreenBlock) block).addProbeInfoScreen(mode, probeInfo, player, world, pos.add(dx, dy, dz));
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        BlockPos pos = accessor.getPosition();
-        World world = accessor.getWorld();
-        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
-        int dx = screenHitTileEntity.getDx();
-        int dy = screenHitTileEntity.getDy();
-        int dz = screenHitTileEntity.getDz();
-        BlockPos rpos = pos.add(dx, dy, dz);
-        BlockState state = world.getBlockState(rpos);
-        Block block = state.getBlock();
-        if (block instanceof ScreenBlock) {
-            TileEntity te = world.getTileEntity(rpos);
-            if (te instanceof ScreenTileEntity) {
-                RayTraceResult mouseOver = accessor.getMOP();
-                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-                ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
-                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
-            }
-        }
-        return currenttip;
-    }
-
-    @Override
-    public TileEntity createTileEntity(World world, BlockState state) {
-        return new ScreenHitTileEntity();
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        return new ScreenHitTileEntity();
-    }
-
-    @Override
-    public void initModel() {
-        McJtyLib.proxy.initTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
-        super.initModel();
-    }
+//    @Override
+//    public void initModel() {
+//        McJtyLib.proxy.initTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
+//        super.initModel();
+//    }
 
 
     @Override
-    public void onBlockClicked(World world, BlockPos pos, PlayerEntity playerIn) {
+    public void onBlockClicked(BlockState s, World world, BlockPos pos, PlayerEntity player) {
         if (world.isRemote) {
             ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
             int dx = screenHitTileEntity.getDx();
@@ -130,34 +102,37 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
                 return;
             }
 
-            RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
+            RayTraceResult mouseOver = McJtyLib.proxy.getClientMouseOver();
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
+            if (mouseOver instanceof BlockRayTraceResult) {
+                screenTileEntity.hitScreenClient(mouseOver.getHitVec().x - pos.getX() - dx, mouseOver.getHitVec().y - pos.getY() - dy, mouseOver.getHitVec().z - pos.getZ() - dz,
+                        ((BlockRayTraceResult) mouseOver).getFace(), state.get(BlockStateProperties.FACING));
+            }
         }
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-        return activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+        return activate(world, pos, state, player, hand, result);
     }
 
-    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
         pos = getScreenBlockPos(world, pos);
         if (pos == null) {
             return false;
         }
         Block block = world.getBlockState(pos).getBlock();
-        return ((ScreenBlock) block).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return ((ScreenBlock) block).activate(world, pos, state, player, hand, result);
     }
 
     @Override
-    public boolean rotateBlock(World world, BlockPos pos, Direction axis) {
+    public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation rot) {
         // Doesn't make sense to rotate a potentially 3x3 screen,
         // and is incompatible with our special wrench actions.
-        return false;
+        return state;
     }
 
-    public BlockPos getScreenBlockPos(World world, BlockPos pos) {
+    public BlockPos getScreenBlockPos(IBlockReader world, BlockPos pos) {
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
@@ -178,49 +153,50 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
     public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
     public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-    @Override
-    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
-        Direction facing = state.getValue(BaseBlock.FACING);
-        if (facing == Direction.NORTH) {
-            return NORTH_AABB;
-        } else if (facing == Direction.SOUTH) {
-            return SOUTH_AABB;
-        } else if (facing == Direction.WEST) {
-            return WEST_AABB;
-        } else if (facing == Direction.EAST) {
-            return EAST_AABB;
-        } else if (facing == Direction.UP) {
-            return UP_AABB;
-        } else if (facing == Direction.DOWN) {
-            return DOWN_AABB;
-        } else {
-            return BLOCK_AABB;
-        }
-    }
+    // @todo 1.14
+//    @Override
+//    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
+//        Direction facing = state.getValue(BaseBlock.FACING);
+//        if (facing == Direction.NORTH) {
+//            return NORTH_AABB;
+//        } else if (facing == Direction.SOUTH) {
+//            return SOUTH_AABB;
+//        } else if (facing == Direction.WEST) {
+//            return WEST_AABB;
+//        } else if (facing == Direction.EAST) {
+//            return EAST_AABB;
+//        } else if (facing == Direction.UP) {
+//            return UP_AABB;
+//        } else if (facing == Direction.DOWN) {
+//            return DOWN_AABB;
+//        } else {
+//            return BLOCK_AABB;
+//        }
+//    }
+//
+//    @Override
+//    public boolean isOpaqueCube(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isBlockNormalCube(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isFullBlock(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isFullCube(BlockState state) {
+//        return false;
+//    }
 
     @Override
-    public boolean isOpaqueCube(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isBlockNormalCube(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullBlock(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(BlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public BlockRenderType getRenderType(BlockState p_149645_1_) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -229,16 +205,19 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
     }
 
     @Override
-    public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
+    public void onExplosionDestroy(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
     }
 
-    @Override
-    public int quantityDropped(Random random) {
-        return 0;
-    }
+
+    // @todo 1.14
+//    @Override
+//    public int quantityDropped(Random random) {
+//        return 0;
+//    }
+
 
     @Override
-    public EnumPushReaction getMobilityFlag(BlockState state) {
-        return EnumPushReaction.BLOCK;
+    public PushReaction getPushReaction(BlockState p_149656_1_) {
+        return PushReaction.BLOCK;
     }
 }
