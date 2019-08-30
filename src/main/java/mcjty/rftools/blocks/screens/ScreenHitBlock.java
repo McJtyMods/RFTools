@@ -12,6 +12,7 @@ import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Rotation;
@@ -106,7 +107,7 @@ public class ScreenHitBlock extends BaseBlock {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
             if (mouseOver instanceof BlockRayTraceResult) {
                 screenTileEntity.hitScreenClient(mouseOver.getHitVec().x - pos.getX() - dx, mouseOver.getHitVec().y - pos.getY() - dy, mouseOver.getHitVec().z - pos.getZ() - dz,
-                        ((BlockRayTraceResult) mouseOver).getFace(), state.get(BlockStateProperties.FACING));
+                        ((BlockRayTraceResult) mouseOver).getFace(), state.get(BlockStateProperties.HORIZONTAL_FACING));
             }
         }
     }
@@ -195,7 +196,7 @@ public class ScreenHitBlock extends BaseBlock {
 //    }
 
     @Override
-    public BlockRenderType getRenderType(BlockState p_149645_1_) {
+    public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
@@ -205,9 +206,14 @@ public class ScreenHitBlock extends BaseBlock {
     }
 
     @Override
-    public void onExplosionDestroy(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
+    public void onExplosionDestroy(World world, BlockPos pos, Explosion explosion) {
     }
 
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        super.fillStateContainer(builder);
+        builder.add(BlockStateProperties.FACING);
+    }
 
     // @todo 1.14
 //    @Override
@@ -217,7 +223,7 @@ public class ScreenHitBlock extends BaseBlock {
 
 
     @Override
-    public PushReaction getPushReaction(BlockState p_149656_1_) {
+    public PushReaction getPushReaction(BlockState state) {
         return PushReaction.BLOCK;
     }
 }

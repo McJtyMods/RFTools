@@ -4,8 +4,10 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -14,11 +16,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ShardWandItem extends GenericRFToolsItem {
+public class ShardWandItem extends Item {
 
     public ShardWandItem() {
-        super("shard_wand");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("shard_wand");
     }
 
     @Override

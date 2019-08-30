@@ -1,56 +1,44 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockBuilder;
-import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.typed.TypedMap;
-import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
-import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.screens.ScreenTileEntity.ModuleRaytraceResult;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.BlockStateContainer;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import static net.minecraft.state.properties.BlockStateProperties.FACING;
+import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class ScreenBlock extends GenericRFToolsBlock {
 
@@ -62,7 +50,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return super.getStateForPlacement(context).with(FACING, context.getPlayer().getHorizontalFacing().getOpposite());
+        return super.getStateForPlacement(context).with(HORIZONTAL_FACING, context.getPlayer().getHorizontalFacing().getOpposite());
     }
 
 //    @Override
@@ -199,45 +187,50 @@ public class ScreenBlock extends GenericRFToolsBlock {
 //    }
 
     public static boolean hasModuleProvider(ItemStack stack) {
-        return stack.getItem() instanceof IModuleProvider || stack.hasCapability(IModuleProvider.CAPABILITY, null);
+        return stack.getItem() instanceof IModuleProvider || stack.getCapability(IModuleProvider.CAPABILITY).isPresent();
     }
 
-    public static IModuleProvider getModuleProvider(ItemStack stack) {
+    public static LazyOptional<IModuleProvider> getModuleProvider(ItemStack stack) {
         Item item = stack.getItem();
         if(item instanceof IModuleProvider) {
-            return (IModuleProvider) item;
+            return LazyOptional.of(() -> (IModuleProvider)item);
         } else {
-            return stack.getCapability(IModuleProvider.CAPABILITY, null);
+            return stack.getCapability(IModuleProvider.CAPABILITY);
         }
     }
 
-    @Override
-    protected IModuleSupport getModuleSupport() {
-        return new ModuleSupport(ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1) {
-            @Override
-            public boolean isModule(ItemStack itemStack) {
-                return hasModuleProvider(itemStack);
-            }
-        };
+    // @todo 1.14
+//    @Override
+//    protected IModuleSupport getModuleSupport() {
+//        return new ModuleSupport(ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1) {
+//            @Override
+//            public boolean isModule(ItemStack itemStack) {
+//                return hasModuleProvider(itemStack);
+//            }
+//        };
+//    }
+
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+        return onBlockActivated(state, world, pos, player, hand, result);
     }
 
-    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, BlockRayTraceResult result)) {
-        return onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
-    }
-
     @Override
-    public boolean rotateBlock(World world, BlockPos pos, Direction axis) {
+    public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation rot) {
         // Doesn't make sense to rotate a potentially 3x3 screen,
         // and is incompatible with our special wrench actions.
-        return false;
+        return state;
     }
 
+
     @Override
-    public void onBlockClicked(World world, BlockPos pos, PlayerEntity playerIn) {
+    public void onBlockClicked(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         if (world.isRemote) {
-            RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
+            RayTraceResult mouseOver = McJtyLib.proxy.getClientMouseOver();
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
+            if (mouseOver instanceof BlockRayTraceResult) {
+                screenTileEntity.hitScreenClient(mouseOver.getHitVec().x - pos.getX(), mouseOver.getHitVec().y - pos.getY(), mouseOver.getHitVec().z - pos.getZ(),
+                        ((BlockRayTraceResult) mouseOver).getFace(), world.getBlockState(pos).get(HORIZONTAL_FACING));
+            }
         }
     }
 
@@ -250,7 +243,7 @@ public class ScreenBlock extends GenericRFToolsBlock {
         int zz = pos.getZ() + dz;
         BlockPos posO = new BlockPos(xx, yy, zz);
         if (world.isAirBlock(posO)) {
-            world.setBlockState(posO, ScreenSetup.screenHitBlock.getDefaultState().withProperty(BaseBlock.FACING, facing), 3);
+            world.setBlockState(posO, ScreenSetup.screenHitBlock.getDefaultState().with(FACING, facing), 3);
             ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(posO);
             screenHitTileEntity.setRelativeLocation(-dx, -dy, -dz);
         }
@@ -258,8 +251,8 @@ public class ScreenBlock extends GenericRFToolsBlock {
 
     private void setInvisibleBlocks(World world, BlockPos pos, int size) {
         BlockState state = world.getBlockState(pos);
-        Direction facing = state.getValue(BaseBlock.FACING);
-        Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
+        Direction facing = state.get(FACING);
+        Direction horizontalFacing = state.get(BlockStateProperties.HORIZONTAL_FACING);
 
         for (int i = 0 ; i <= size ; i++) {
             for (int j = 0 ; j <= size ; j++) {
@@ -303,13 +296,13 @@ public class ScreenBlock extends GenericRFToolsBlock {
             return;
         }
         if (world.getBlockState(pos).getBlock() == ScreenSetup.screenHitBlock) {
-            world.setBlockToAir(pos);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState());
         }
     }
 
     private void clearInvisibleBlocks(World world, BlockPos pos, BlockState state, int size) {
-        Direction facing = state.getValue(BaseBlock.FACING);
-        Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
+        Direction facing = state.get(FACING);
+        Direction horizontalFacing = state.get(HORIZONTAL_FACING);
         for (int i = 0 ; i <= size ; i++) {
             for (int j = 0 ; j <= size ; j++) {
                 if (i != 0 || j != 0) {
@@ -431,16 +424,16 @@ public class ScreenBlock extends GenericRFToolsBlock {
     @Override
     protected boolean openGui(World world, int x, int y, int z, PlayerEntity player) {
         ItemStack itemStack = player.getHeldItem(Hand.MAIN_HAND);
-        if (!itemStack.isEmpty() && itemStack.getItem() == Items.DYE) {
-            int damage = itemStack.getItemDamage();
+        if (!itemStack.isEmpty() && itemStack.getItem() == Items.BLACK_DYE) {   // @Todo 1.14, use tags to get all dyes
+            int damage = itemStack.getDamage(); // @todo 1.14 don't use damage!
             if (damage < 0) {
                 damage = 0;
             } else if (damage > 15) {
                 damage = 15;
             }
-            int color = ItemDye.DYE_COLORS[damage];
+            DyeColor color = DyeColor.byId(damage);
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(new BlockPos(x, y, z));
-            screenTileEntity.setColor(color);
+            screenTileEntity.setColor(color.getMapColor().colorValue); // @todo 1.14
             return true;
         }
         if (player.isSneaking()) {
@@ -454,9 +447,12 @@ public class ScreenBlock extends GenericRFToolsBlock {
     }
 
     private void activateOnClient(World world, BlockPos pos) {
-        RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
+        RayTraceResult mouseOver = McJtyLib.proxy.getClientMouseOver();
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-        screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
+        if (mouseOver instanceof BlockRayTraceResult) {
+            screenTileEntity.hitScreenClient(mouseOver.getHitVec().x - pos.getX(), mouseOver.getHitVec().y - pos.getY(), mouseOver.getHitVec().z - pos.getZ(),
+                    ((BlockRayTraceResult) mouseOver).getFace(), world.getBlockState(pos).get(HORIZONTAL_FACING));
+        }
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
@@ -467,109 +463,99 @@ public class ScreenBlock extends GenericRFToolsBlock {
     public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
     public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-    @Override
-    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
-        Direction facing = state.getValue(BaseBlock.FACING);
-        if (facing == Direction.NORTH) {
-            return NORTH_AABB;
-        } else if (facing == Direction.SOUTH) {
-            return SOUTH_AABB;
-        } else if (facing == Direction.WEST) {
-            return WEST_AABB;
-        } else if (facing == Direction.EAST) {
-            return EAST_AABB;
-        } else if (facing == Direction.UP) {
-            return UP_AABB;
-        } else if (facing == Direction.DOWN) {
-            return DOWN_AABB;
-        } else {
-            return BLOCK_AABB;
-        }
-    }
+    // @todo 1.14
+//    @Override
+//    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
+//        Direction facing = state.get(FACING);
+//        if (facing == Direction.NORTH) {
+//            return NORTH_AABB;
+//        } else if (facing == Direction.SOUTH) {
+//            return SOUTH_AABB;
+//        } else if (facing == Direction.WEST) {
+//            return WEST_AABB;
+//        } else if (facing == Direction.EAST) {
+//            return EAST_AABB;
+//        } else if (facing == Direction.UP) {
+//            return UP_AABB;
+//        } else if (facing == Direction.DOWN) {
+//            return DOWN_AABB;
+//        } else {
+//            return BLOCK_AABB;
+//        }
+//    }
 
     @Override
-    public EnumBlockRenderType getRenderType(BlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
-    @Override
-    public boolean isBlockNormalCube(BlockState state) {
-        return false;
-    }
+    // @todo 1.14
+//    @Override
+//    public boolean isBlockNormalCube(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isFullBlock(BlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isFullCube(BlockState state) {
+//        return false;
+//    }
+//
+//    /**
+//     * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
+//     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
+//     */
+//    @Override
+//    public boolean isOpaqueCube(BlockState state) {
+//        return false;
+//    }
 
     @Override
-    public boolean isFullBlock(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(BlockState state) {
-        return false;
-    }
-
-    /**
-     * Is this block (a) opaque and (b) a full 1m cube?  This determines whether or not to render the shared face of two
-     * adjacent blocks and also whether the player can attach torches, redstone wire, etc to this block.
-     */
-    @Override
-    public boolean isOpaqueCube(BlockState state) {
-        return false;
-    }
-
-    @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_SCREEN;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public BiFunction<ScreenTileEntity, ScreenContainer, GenericGuiContainer<? super ScreenTileEntity>> getGuiFactory() {
-        return GuiScreen::new;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
 
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             int size;
-            if (tagCompound.hasKey("large")) {
+            if (tagCompound.contains("large")) {
                 size = tagCompound.getBoolean("large") ? ScreenTileEntity.SIZE_LARGE : ScreenTileEntity.SIZE_NORMAL;
             } else {
                 size = tagCompound.getInt("size");
             }
             boolean transparent = tagCompound.getBoolean("transparent");
             if (size == ScreenTileEntity.SIZE_HUGE) {
-                list.add(TextFormatting.BLUE + "Huge screen.");
+                list.add(new StringTextComponent(TextFormatting.BLUE + "Huge screen."));
             } else if (size == ScreenTileEntity.SIZE_LARGE) {
-                list.add(TextFormatting.BLUE + "Large screen.");
+                list.add(new StringTextComponent(TextFormatting.BLUE + "Large screen."));
             }
             if (transparent) {
-                list.add(TextFormatting.BLUE + "Transparent screen.");
+                list.add(new StringTextComponent(TextFormatting.BLUE + "Transparent screen."));
             }
             int rc = 0;
-            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                CompoundNBT tag = bufferTagList.getCompoundTagAt(i);
+            ListNBT bufferTagList = tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < bufferTagList.size() ; i++) {
+                CompoundNBT tag = bufferTagList.getCompound(i);
                 if (tag != null) {
-                    ItemStack stack = new ItemStack(tag);
+                    ItemStack stack = ItemStack.read(tag);
                     if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
             }
-            list.add(TextFormatting.BLUE + String.valueOf(rc) + " modules");
+            list.add(new StringTextComponent(TextFormatting.BLUE + String.valueOf(rc) + " modules"));
         }
 
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
-            list.add(TextFormatting.WHITE + "You must insert modules to control what you can see.");
-            list.add(TextFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
-            list.add(TextFormatting.WHITE + "powered by a nearby Screen Controller.");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This is a modular screen. As such it doesn't show anything."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "You must insert modules to control what you can see."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "powered by a nearby Screen Controller."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
@@ -590,9 +576,8 @@ public class ScreenBlock extends GenericRFToolsBlock {
         }
     }
 
-
     @Override
-    public void breakBlock(World world, BlockPos pos, BlockState state) {
+    public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newstate, boolean isMoving) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
@@ -600,6 +585,6 @@ public class ScreenBlock extends GenericRFToolsBlock {
                 clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
             }
         }
-        super.breakBlock(world, pos, state);
+        super.onReplaced(state, world, pos, newstate, isMoving);
     }
 }

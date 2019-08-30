@@ -23,11 +23,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.setup.ModSetup;
 import mcjty.rftools.shapes.Shape;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -41,12 +37,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -74,7 +72,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class BuilderTileEntity extends GenericTileEntity implements ITickableTileEntity, IHudSupport {
@@ -1166,43 +1163,45 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                     }
 
                     List<ItemStack> drops;
-                    if(silk && block.canSilkHarvest(world, srcPos, srcState, fakePlayer)) {
-                        ItemStack drop;
-                        try {
-                            drop = (ItemStack) ModSetup.Block_getSilkTouch.invoke(block, srcState);
-                        } catch (IllegalAccessException|InvocationTargetException e) {
-                            throw new RuntimeException(e);
-                        }
-                        drops = new ArrayList<>();
-                        if (!drop.isEmpty()) {
-                            drops.add(drop);
-                        }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, srcPos, srcState, 0, 1.0f, true, fakePlayer);
-                    } else {
-                        int fortune = getCardType().isFortune() ? 3 : 0;
-                        if (block instanceof BlockShulkerBox) {
-                            // Shulker boxes drop in setBlockState, rather than anywhere sensible. Work around this.
-                            drops = new ArrayList<>();
-                            TileEntity te = world.getTileEntity(srcPos);
-                            if (te instanceof TileEntityShulkerBox) {
-                                TileEntityShulkerBox teShulkerBox = (TileEntityShulkerBox)te;
-                                ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
-                                teShulkerBox.saveToNbt(stack.getOrCreateSubCompound("BlockEntityTag"));
-                                if (teShulkerBox.hasCustomName()) {
-                                    stack.setStackDisplayName(teShulkerBox.getName());
-                                }
-                                drops.add(stack);
-                            }
-                        } else {
-                            drops = block.getDrops(world, srcPos, srcState, fortune);
-                        }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, srcPos, srcState, fortune, 1.0f, false, fakePlayer);
-                    }
-                    if (checkValidItems(block, drops) && !insertItems(drops)) {
-                        overflowItems = drops;
-                        clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
-                    }
+
+                    // @todo 1.14 needs to be totally rewritten!
+//                    if(silk && block.canSilkHarvest(world, srcPos, srcState, fakePlayer)) {
+//                        ItemStack drop;
+//                        try {
+//                            drop = (ItemStack) ModSetup.Block_getSilkTouch.invoke(block, srcState);
+//                        } catch (IllegalAccessException|InvocationTargetException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                        drops = new ArrayList<>();
+//                        if (!drop.isEmpty()) {
+//                            drops.add(drop);
+//                        }
+//                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, srcPos, srcState, 0, 1.0f, true, fakePlayer);
+//                    } else {
+//                        int fortune = getCardType().isFortune() ? 3 : 0;
+//                        if (block instanceof BlockShulkerBox) {
+//                            // Shulker boxes drop in setBlockState, rather than anywhere sensible. Work around this.
+//                            drops = new ArrayList<>();
+//                            TileEntity te = world.getTileEntity(srcPos);
+//                            if (te instanceof TileEntityShulkerBox) {
+//                                TileEntityShulkerBox teShulkerBox = (TileEntityShulkerBox)te;
+//                                ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
+//                                teShulkerBox.saveToNbt(stack.getOrCreateSubCompound("BlockEntityTag"));
+//                                if (teShulkerBox.hasCustomName()) {
+//                                    stack.setStackDisplayName(teShulkerBox.getName());
+//                                }
+//                                drops.add(stack);
+//                            }
+//                        } else {
+//                            drops = block.getDrops(world, srcPos, srcState, fortune);
+//                        }
+//                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, world, srcPos, srcState, fortune, 1.0f, false, fakePlayer);
+//                    }
+//                    if (checkValidItems(block, drops) && !insertItems(drops)) {
+//                        overflowItems = drops;
+//                        clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
+//                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
+//                    }
                 }
                 clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
             }
@@ -1541,14 +1540,12 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     private FluidStack consumeLiquid(Direction direction, World srcWorld, BlockPos srcPos) {
         TileEntity te = world.getTileEntity(getPos().offset(direction));
         if (te != null) {
-
-            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite())) {
-                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite());
-                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            LazyOptional<IFluidHandler> fluid = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite());
+            if (!fluid.isPresent()) {
+                fluid = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
             }
-            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            if (fluid.isPresent()) {
+                return fluid.map(h -> findAndConsumeLiquid(h, srcWorld, srcPos)).orElse(null);
             }
         }
         return null;
@@ -1620,9 +1617,10 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     public static boolean isEmptyOrReplacable(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block.isReplaceable(world, pos)) {
-            return true;
-        }
+        // @todo 1.14
+//        if (block.isReplaceable(world, pos)) {
+//            return true;
+//        }
         return isEmpty(state, block);
     }
 
@@ -1644,7 +1642,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         if (supportMode) {
             world.setBlockState(pos, BuilderSetup.supportBlock.getDefaultState(), 3);
         } else {
-            world.setBlockToAir(pos);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         }
     }
 
@@ -1659,48 +1657,50 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void copyBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos) {
-        long rf = getStoredPower();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        if (rfNeeded > rf) {
-            // Not enough energy.
-            return;
-        }
-
-        if (isEmptyOrReplacable(destWorld, destPos)) {
-            if (srcWorld.isAirBlock(srcPos)) {
-                return;
-            }
-            BlockState srcState = srcWorld.getBlockState(srcPos);
-            TakeableItem takeableItem = createTakeableItem(srcWorld, srcPos, srcState);
-            ItemStack consumedStack = takeableItem.peek();
-            if (consumedStack.isEmpty()) {
+        energyHandler.ifPresent(h -> {
+            long rf = h.getEnergy();
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+            if (rfNeeded > rf) {
+                // Not enough energy.
                 return;
             }
 
-            FakePlayer fakePlayer = getHarvester();
-            BlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, srcState);
-            destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
-
-            if (!ItemStack.areItemStacksEqual(consumedStack, takeableItem.peek())) { // Did we actually use up whatever we were holding?
-                if(!consumedStack.isEmpty()) { // Are we holding something else that we should put back?
-                    consumedStack = takeableItem.takeAndReplace(consumedStack); // First try to put our new item where we got what we placed
-                    if(!consumedStack.isEmpty()) { // If that didn't work, then try to put it anywhere it will fit
-                        consumedStack = insertItem(consumedStack);
-                        if(!consumedStack.isEmpty()) { // If that still didn't work, then just drop whatever we're holding
-                            world.spawnEntity(new ItemEntity(world, getPos().getX(), getPos().getY(), getPos().getZ(), consumedStack));
-                        }
-                    }
-                } else {
-                    takeableItem.take(); // If we aren't holding anything, then just consume what we placed
+            if (isEmptyOrReplacable(destWorld, destPos)) {
+                if (srcWorld.isAirBlock(srcPos)) {
+                    return;
                 }
-            }
+                BlockState srcState = srcWorld.getBlockState(srcPos);
+                TakeableItem takeableItem = createTakeableItem(srcWorld, srcPos, srcState);
+                ItemStack consumedStack = takeableItem.peek();
+                if (consumedStack.isEmpty()) {
+                    return;
+                }
 
-            if (!silent) {
-                SoundTools.playSound(destWorld, newState.getBlock().getSoundType(newState, destWorld, destPos, fakePlayer).getPlaceSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
-            }
+                FakePlayer fakePlayer = getHarvester();
+                BlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, srcState);
+                destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
-            consumeEnergy(rfNeeded);
-        }
+                if (!ItemStack.areItemStacksEqual(consumedStack, takeableItem.peek())) { // Did we actually use up whatever we were holding?
+                    if (!consumedStack.isEmpty()) { // Are we holding something else that we should put back?
+                        consumedStack = takeableItem.takeAndReplace(consumedStack); // First try to put our new item where we got what we placed
+                        if (!consumedStack.isEmpty()) { // If that didn't work, then try to put it anywhere it will fit
+                            consumedStack = insertItem(consumedStack);
+                            if (!consumedStack.isEmpty()) { // If that still didn't work, then just drop whatever we're holding
+                                world.addEntity(new ItemEntity(world, getPos().getX(), getPos().getY(), getPos().getZ(), consumedStack));
+                            }
+                        }
+                    } else {
+                        takeableItem.take(); // If we aren't holding anything, then just consume what we placed
+                    }
+                }
+
+                if (!silent) {
+                    SoundTools.playSound(destWorld, newState.getBlock().getSoundType(newState, destWorld, destPos, fakePlayer).getPlaceSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                }
+
+                h.consumeEnergy(rfNeeded);
+            }
+        });
     }
 
     private double getDimensionCostFactor(World world, World destWorld) {
@@ -1708,20 +1708,22 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
-        long rf = getStoredPower();
-        int rfn;
-        if (entity instanceof PlayerEntity) {
-            rfn = rfNeededPlayer;
-        } else {
-            rfn = rfNeeded;
-        }
-        if (rfn > rf) {
-            // Not enough energy.
-            return true;
-        } else {
-            consumeEnergy(rfn);
-        }
-        return false;
+        return energyHandler.map(h -> {
+            long rf = h.getEnergy();
+            int rfn;
+            if (entity instanceof PlayerEntity) {
+                rfn = rfNeededPlayer;
+            } else {
+                rfn = rfNeeded;
+            }
+            if (rfn > rf) {
+                // Not enough energy.
+                return true;
+            } else {
+                h.consumeEnergy(rfn);
+            }
+            return false;
+        }).orElse(false);
     }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
@@ -1807,19 +1809,24 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                 return;
             }
 
-            long rf = getStoredPower();
-            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-            if (rfNeeded > rf) {
-                // Not enough energy.
+            if (!energyHandler.map(h -> {
+                long rf = h.getEnergy();
+                int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+                if (rfNeeded > rf) {
+                    // Not enough energy.
+                    return false;
+                } else {
+                    h.consumeEnergy(rfNeeded);
+                    return true;
+                }
+            }).orElse(false)) {
                 return;
-            } else {
-                consumeEnergy(rfNeeded);
             }
 
             CompoundNBT tc = null;
             if (srcTileEntity != null) {
                 tc = new CompoundNBT();
-                srcTileEntity.writeToNBT(tc);
+                srcTileEntity.write(tc);
                 srcWorld.removeTileEntity(srcPos);
             }
             clearBlock(srcWorld, srcPos);
@@ -1836,15 +1843,16 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void setTileEntityNBT(World destWorld, CompoundNBT tc, BlockPos destpos, BlockState newDestState) {
-        tc.setInteger("x", destpos.getX());
-        tc.setInteger("y", destpos.getY());
-        tc.setInteger("z", destpos.getZ());
-        TileEntity tileEntity = TileEntity.create(destWorld, tc);
-        if (tileEntity != null) {
-            destWorld.getChunkFromBlockCoords(destpos).addTileEntity(tileEntity);
-            tileEntity.markDirty();
-            destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
-        }
+        tc.putInt("x", destpos.getX());
+        tc.putInt("y", destpos.getY());
+        tc.putInt("z", destpos.getZ());
+// @todo 1.14
+        //        TileEntity tileEntity = TileEntity.create(destWorld, tc);
+//        if (tileEntity != null) {
+//            destWorld.getChunkFromBlockCoords(destpos).addTileEntity(tileEntity);
+//            tileEntity.markDirty();
+//            destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
+//        }
     }
 
     private void swapBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos dstPos) {
@@ -1870,20 +1878,25 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             return;
         }
 
-        long rf = getStoredPower();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        if (rfNeeded > rf) {
-            // Not enough energy.
+        if (!energyHandler.map(h -> {
+            long rf = h.getEnergy();
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            if (rfNeeded > rf) {
+                // Not enough energy.
+                return false;
+            } else {
+                h.consumeEnergy(rfNeeded);
+                return true;
+            }
+        }).orElse(false)) {
             return;
-        } else {
-            consumeEnergy(rfNeeded);
         }
 
         srcWorld.removeTileEntity(srcPos);
-        srcWorld.setBlockToAir(srcPos);
+        srcWorld.setBlockState(srcPos, Blocks.AIR.getDefaultState());
         destWorld.removeTileEntity(dstPos);
-        destWorld.setBlockToAir(dstPos);
+        destWorld.setBlockState(dstPos, Blocks.AIR.getDefaultState());
 
         BlockState newDstState = oldSrcState;
         destWorld.setBlockState(dstPos, newDstState, 3);
@@ -1979,16 +1992,17 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
+    public void remove() {
+        super.remove();
         chunkUnload();
     }
 
     private void chunkUnload() {
-        if (forcedChunk != null && ticket != null) {
-            ForgeChunkManager.unforceChunk(ticket, forcedChunk);
-            forcedChunk = null;
-        }
+        // @todo 1.14
+//        if (forcedChunk != null && ticket != null) {
+//            ForgeChunkManager.unforceChunk(ticket, forcedChunk);
+//            forcedChunk = null;
+//        }
     }
 
     private boolean chunkLoad(int x, int z) {
@@ -2000,23 +2014,25 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         }
 
         if (BuilderConfiguration.quarryChunkloads.get()) {
-            if (ticket == null) {
-                ticket = ForgeChunkManager.requestTicket(RFTools.instance, world, ForgeChunkManager.Type.NORMAL);
-                if (ticket == null) {
-                    // Chunk is not loaded and we can't get a ticket.
-                    return false;
-                }
-            }
+            // @todo 1.14
+//            if (ticket == null) {
+//                ticket = ForgeChunkManager.requestTicket(RFTools.instance, world, ForgeChunkManager.Type.NORMAL);
+//                if (ticket == null) {
+//                    // Chunk is not loaded and we can't get a ticket.
+//                    return false;
+//                }
+//            }
 
             ChunkPos pair = new ChunkPos(cx, cz);
             if (pair.equals(forcedChunk)) {
                 return true;
             }
-            if (forcedChunk != null) {
-                ForgeChunkManager.unforceChunk(ticket, forcedChunk);
-            }
-            forcedChunk = pair;
-            ForgeChunkManager.forceChunk(ticket, forcedChunk);
+            // @todo 1.14
+//            if (forcedChunk != null) {
+//                ForgeChunkManager.unforceChunk(ticket, forcedChunk);
+//            }
+//            forcedChunk = pair;
+//            ForgeChunkManager.forceChunk(ticket, forcedChunk);
             return true;
         }
         // Chunk is not loaded and we don't do chunk loading so we cannot proceed.
@@ -2106,47 +2122,6 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         }
     }
 
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        return CONTAINER_FACTORY.getAccessibleSlots();
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return CONTAINER_FACTORY.isInputSlot(index);
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return CONTAINER_FACTORY.isOutputSlot(index);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int amount) {
-        if (index == SLOT_TAB && !inventoryHelper.getStackInSlot(index).isEmpty() && amount > 0) {
-            // Restart if we go from having a stack to not having stack or the other way around.
-            refreshSettings();
-        }
-        if (index == SLOT_FILTER) {
-            filterCache = null;
-        }
-        return inventoryHelper.decrStackSize(index, amount);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == SLOT_TAB && ((stack.isEmpty()
-                && !inventoryHelper.getStackInSlot(index).isEmpty())
-                || (!stack.isEmpty() && inventoryHelper.getStackInSlot(index).isEmpty()))) {
-            // Restart if we go from having a stack to not having stack or the other way around.
-            refreshSettings();
-        }
-        if (index == SLOT_FILTER) {
-            filterCache = null;
-        }
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-    }
-
     private void refreshSettings() {
         clearSupportBlocks();
         cachedBlocks = null;
@@ -2158,62 +2133,43 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public int getInventoryStackLimit() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
-    }
-
-    @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        if(tagCompound.hasKey("overflowItems")) {
-            NBTTagList overflowItemsNbt = tagCompound.getTagList("overflowItems", Constants.NBT.TAG_COMPOUND);
-            overflowItems = new ArrayList<>(overflowItemsNbt.tagCount());
-            for(NBTBase overflowNbt : overflowItemsNbt) {
-                overflowItems.add(new ItemStack((CompoundNBT)overflowNbt));
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        if(tagCompound.contains("overflowItems")) {
+            ListNBT overflowItemsNbt = tagCompound.getList("overflowItems", Constants.NBT.TAG_COMPOUND);
+            overflowItems = new ArrayList<>(overflowItemsNbt.size());
+            for(INBT overflowNbt : overflowItemsNbt) {
+                overflowItems.add(ItemStack.read((CompoundNBT)overflowNbt));
             }
         }
+        readRestorableFromNBT(tagCompound);
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         if(overflowItems != null) {
-            NBTTagList overflowItemsNbt = new NBTTagList();
+            ListNBT overflowItemsNbt = new ListNBT();
             for(ItemStack overflow : overflowItems) {
-                overflowItemsNbt.appendTag(overflow.writeToNBT(new CompoundNBT()));
+                overflowItemsNbt.add(overflow.write(new CompoundNBT()));
             }
-            tagCompound.setTag("overflowItems", overflowItemsNbt);
+            tagCompound.put("overflowItems", overflowItemsNbt);
         }
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
 
         // Workaround to get the redstone mode for old builders to default to 'on'
-        if (!tagCompound.hasKey("rsMode")) {
+        if (!tagCompound.contains("rsMode")) {
             rsMode = RedstoneMode.REDSTONE_ONREQUIRED;
         }
 
 
         readBufferFromNBT(tagCompound, inventoryHelper);
-        if (tagCompound.hasKey("lastError")) {
+        if (tagCompound.contains("lastError")) {
             lastError = tagCompound.getString("lastError");
         } else {
             lastError = null;
@@ -2225,23 +2181,22 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         supportMode = tagCompound.getBoolean("support");
         entityMode = tagCompound.getBoolean("entityMode");
         loopMode = tagCompound.getBoolean("loopMode");
-        if (tagCompound.hasKey("waitMode")) {
+        if (tagCompound.contains("waitMode")) {
             waitMode = tagCompound.getBoolean("waitMode");
         } else {
             waitMode = true;
         }
         hilightMode = tagCompound.getBoolean("hilightMode");
-        scan = BlockPosTools.readFromNBT(tagCompound, "scan");
-        minBox = BlockPosTools.readFromNBT(tagCompound, "minBox");
-        maxBox = BlockPosTools.readFromNBT(tagCompound, "maxBox");
+        scan = BlockPosTools.read(tagCompound, "scan");
+        minBox = BlockPosTools.read(tagCompound, "minBox");
+        maxBox = BlockPosTools.read(tagCompound, "maxBox");
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         if (lastError != null) {
-            tagCompound.setString("lastError", lastError);
+            tagCompound.putString("lastError", lastError);
         }
         tagCompound.putInt("mode", mode);
         tagCompound.putInt("anchor", anchor);
@@ -2252,9 +2207,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         tagCompound.putBoolean("loopMode", loopMode);
         tagCompound.putBoolean("waitMode", waitMode);
         tagCompound.putBoolean("hilightMode", hilightMode);
-        BlockPosTools.writeToNBT(tagCompound, "scan", scan);
-        BlockPosTools.writeToNBT(tagCompound, "minBox", minBox);
-        BlockPosTools.writeToNBT(tagCompound, "maxBox", maxBox);
+        BlockPosTools.write(tagCompound, "scan", scan);
+        BlockPosTools.write(tagCompound, "minBox", minBox);
+        BlockPosTools.write(tagCompound, "maxBox", maxBox);
     }
 
     // Request the current scan level.
@@ -2271,7 +2226,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -2342,26 +2297,24 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public void onBlockBreak(World world, BlockPos pos, BlockState state) {
+    public void onReplaced(World world, BlockPos pos, BlockState state) {
         if (hasSupportMode()) {
             clearSupportBlocks();
         }
     }
 
-    @SuppressWarnings("NullableProblems")
-    @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos, pos.add(1, 2, 1));
     }
 
-    @Optional.Method(modid = "theoneprobe")
-    @Override
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        int scan = getCurrentLevel();
-        probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
-    }
+//    @Optional.Method(modid = "theoneprobe")
+//    @Override
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        int scan = getCurrentLevel();
+//        probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+//    }
 
     private static long lastTime = 0;
 
@@ -2378,8 +2331,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 //        currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
 //    }
 
+
     @Override
-    public void rotateBlock(Direction axis) {
+    public void rotateBlock(Rotation axis) {
         super.rotateBlock(axis);
         if (!world.isRemote) {
             if (hasSupportMode()) {
@@ -2389,32 +2343,42 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         }
     }
 
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState metadata, int fortune) {
-        super.getDrops(drops, world, pos, metadata, fortune);
-        List<ItemStack> overflowItems = getOverflowItems();
-        if(overflowItems != null) {
-            drops.addAll(overflowItems);
-        }
-    }
+    // @todo 1.14
+//    @Override
+//    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState metadata, int fortune) {
+//        super.getDrops(drops, world, pos, metadata, fortune);
+//        List<ItemStack> overflowItems = getOverflowItems();
+//        if(overflowItems != null) {
+//            drops.addAll(overflowItems);
+//        }
+//    }
 
     private NoDirectionItemHander createItemHandler() {
         return new NoDirectionItemHander(BuilderTileEntity.this, CONTAINER_FACTORY, 2) {
-            // @todo 1.14
-//            @Override
-//            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-//                return slot != SLOT_SHARDINPUT || stack.getItem() == ModItems.DIMENSIONALSHARD;
-//            }
-//
-//            @Override
-//            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-//                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
-//            }
-//
-//            @Override
-//            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-//                return CONTAINER_FACTORY.isOutputSlot(slot);
-//            }
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                ItemStack stack = getStackInSlot(index);
+                if (index == SLOT_TAB && ((stack.isEmpty()
+                        && !inventoryHelper.getStackInSlot(index).isEmpty())
+                        || (!stack.isEmpty() && inventoryHelper.getStackInSlot(index).isEmpty()))) {
+                    // Restart if we go from having a stack to not having stack or the other way around.
+                    refreshSettings();
+                }
+                if (index == SLOT_FILTER) {
+                    filterCache = null;
+                }
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
+            }
+
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
+            }
         };
     }
 }
