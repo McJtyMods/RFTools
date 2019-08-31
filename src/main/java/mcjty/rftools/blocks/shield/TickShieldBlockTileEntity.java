@@ -3,17 +3,22 @@ package mcjty.rftools.blocks.shield;
 import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
 public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity {
 
+    public TickShieldBlockTileEntity(TileEntityType<?> type) {
+        super(type);
+    }
+
     @Override
     public void handleDamage(Entity entity) {
-        if (damageBits == 0 || getWorld().isRemote || getWorld().getTotalWorldTime() % 10 != 0) {
+        if (damageBits == 0 || getWorld().isRemote || getWorld().getGameTime() % 10 != 0) {     // @todo 1.14 was getTotalWorldTime()
             return;
         }
         if (beamBox == null) {
@@ -26,12 +31,12 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity {
         if (shieldBlock != null) {
             ShieldTEBase shieldTileEntity = (ShieldTEBase) getWorld().getTileEntity(shieldBlock);
             if (shieldTileEntity != null) {
-                if (entity.getEntityBoundingBox().intersects(beamBox)) {
+                if (entity.getBoundingBox().intersects(beamBox)) {
                     if ((damageBits & AbstractShieldBlock.META_HOSTILE) != 0 && entity instanceof IMob) {
                         if (checkEntityDamage(shieldTileEntity, HostileFilter.HOSTILE)) {
                             shieldTileEntity.applyDamageToEntity(entity);
                         }
-                    } else if ((damageBits & AbstractShieldBlock.META_PASSIVE) != 0 && entity instanceof IAnimals) {
+                    } else if ((damageBits & AbstractShieldBlock.META_PASSIVE) != 0 && entity instanceof AnimalEntity) {
                         if (checkEntityDamage(shieldTileEntity, AnimalFilter.ANIMAL)) {
                             shieldTileEntity.applyDamageToEntity(entity);
                         }

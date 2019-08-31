@@ -1,5 +1,10 @@
 package mcjty.rftools.blocks.shield;
 
-@SuppressWarnings("EmptyClass")
+import net.minecraft.tileentity.TileEntityType;
+
 public class TickShieldSolidBlockTileEntity extends TickShieldBlockTileEntity {
+
+    public TickShieldSolidBlockTileEntity(TileEntityType<?> type) {
+        super(type);
+    }
 }

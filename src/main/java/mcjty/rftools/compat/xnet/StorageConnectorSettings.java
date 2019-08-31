@@ -1,18 +1,6 @@
 package mcjty.rftools.compat.xnet;
 
-import mcjty.rftools.blocks.storagemonitor.InventoryAccessSettings;
-import mcjty.xnet.api.gui.IEditorGui;
-import mcjty.xnet.api.gui.IndicatorIcon;
-import mcjty.xnet.api.helper.AbstractConnectorSettings;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
-
-public class StorageConnectorSettings extends AbstractConnectorSettings {
+public class StorageConnectorSettings {} /* @todo 1.14 extends AbstractConnectorSettings {
 
     public static final String TAG_MODE = "mode";
     public static final String TAG_BIGUI = "bigui";
@@ -198,3 +186,4 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
 
     }
 }
+*/

@@ -1,23 +1,21 @@
 package mcjty.rftools.blocks.shield;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 public class NoTickShieldBlockTileEntity extends TileEntity {
 
     private BlockState mimic = null;
-    private int camoId = -1;
-    private int camoMeta = 0;
     private int shieldColor;
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
@@ -30,10 +28,15 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     protected AxisAlignedBB beamBox = null;
 
-    @Override
-    public boolean shouldRefresh(World world, BlockPos pos, BlockState oldState, BlockState newSate) {
-        return oldState.getBlock() != newSate.getBlock();
+    public NoTickShieldBlockTileEntity(TileEntityType<?> type) {
+        super(type);
     }
+
+    // @todo 1.14
+//    @Override
+//    public boolean shouldRefresh(World world, BlockPos pos, BlockState oldState, BlockState newSate) {
+//        return oldState.getBlock() != newSate.getBlock();
+//    }
 
     public void setDamageBits(int damageBits) {
         this.damageBits = damageBits;
@@ -42,9 +45,9 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     private void markDirtyClient() {
         markDirty();
-        if (getWorld() != null) {
-            BlockState state = getWorld().getBlockState(getPos());
-            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+        if (world != null) {
+            BlockState state = world.getBlockState(getPos());
+            world.notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
 
@@ -79,14 +82,8 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         return mimic;
     }
 
-    public void setCamoBlock(int camoId, int meta) {
-        this.camoId = camoId;
-        this.camoMeta = meta;
-        if (camoId == -1) {
-            mimic = null;
-        } else {
-            mimic = Block.getBlockById(camoId).getStateFromMeta(meta);
-        }
+    public void setCamoBlock(BlockState state) {
+        mimic = state;
         markDirtyClient();
     }
 
@@ -100,10 +97,12 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.putInt("camoId", camoId);
-        tagCompound.putInt("camoMeta", camoMeta);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        if (mimic != null) {
+            CompoundNBT stateNbt = NBTUtil.writeBlockState(mimic);
+            tagCompound.put("mimic", stateNbt);
+        }
         tagCompound.putInt("damageBits", damageBits);
         tagCompound.putInt("collisionData", collisionData);
         tagCompound.putInt("shieldColor", shieldColor);
@@ -119,19 +118,17 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT updateTag = super.getUpdateTag();
-        writeToNBT(updateTag);
+        write(updateTag);
         return updateTag;
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        camoId = tagCompound.getInt("camoId");
-        camoMeta = tagCompound.getInt("camoMeta");
-        if (camoId == -1) {
-            mimic = null;
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        if (tagCompound.contains("mimic")) {
+            mimic = NBTUtil.readBlockState(tagCompound.getCompound("mimic"));
         } else {
-            mimic = Block.getBlockById(camoId).getStateFromMeta(camoMeta);
+            mimic = null;
         }
         damageBits = tagCompound.getInt("damageBits");
         collisionData = tagCompound.getInt("collisionData");
@@ -146,23 +143,24 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         int sz = tagCompound.getInt("shieldZ");
         shieldBlock = new BlockPos(sx, sy, sz);
 
-        if (getWorld() != null && getWorld().isRemote) {
+        if (world != null && world.isRemote) {
             // For some reason this is needed to force rendering on the client when apply is pressed.
-            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+            world.func_225319_b(getPos(), null, null);
+//            world.markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbtTag = new CompoundNBT();
-        this.writeToNBT(nbtTag);
-        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
+        this.write(nbtTag);
+        return new SUpdateTileEntityPacket(getPos(), 1, nbtTag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        readFromNBT(packet.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
+        read(packet.getNbtCompound());
     }
 
     public void handleDamage(Entity entity) {

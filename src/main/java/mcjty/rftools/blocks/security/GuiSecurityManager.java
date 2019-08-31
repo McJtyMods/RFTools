@@ -17,16 +17,16 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
 import static mcjty.rftools.blocks.security.SecurityManagerTileEntity.*;
 
-public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileEntity> {
+public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileEntity, GenericContainer> {
     public static final int SECURITYMANAGER_WIDTH = 244;
     public static final int SECURITYMANAGER_HEIGHT = 206;
 
@@ -42,50 +42,51 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
     public static SecurityChannels.SecurityChannel channelFromServer = null;
 
-    public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "security");
+    public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "security");
 
         xSize = SECURITYMANAGER_WIDTH;
         ySize = SECURITYMANAGER_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        players = new WidgetList(mc, this)
+        players = new WidgetList(minecraft, this)
                 .setName("players")
                 .setEnabledFlags("card");
-        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("players");
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(players, allowedPlayerSlider).
+        Slider allowedPlayerSlider = new Slider(minecraft, this).setDesiredWidth(10).setVertical().setScrollableName("players");
+        Panel allowedPlayersPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(players, allowedPlayerSlider).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
 
-        nameField = new TextField(mc, this).setDesiredHeight(15).setName("name")
+        nameField = new TextField(minecraft, this).setDesiredHeight(15).setName("name")
             .setEnabledFlags("card");
-        Widget<?> addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list")
+        Widget<?> addButton = new Button(minecraft, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list")
                 .setEnabledFlags("card")
                 .setName("addbutton").setChannel("addbutton");
-        Widget<?> delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list")
+        Widget<?> delButton = new Button(minecraft, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list")
                 .setEnabledFlags("card")
                 .setName("delbutton").setChannel("delbutton");
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16)
+        Panel buttonPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16)
                 .setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        channelNameField = new TextField(mc, this).setLayoutHint(8, 27, 60, 14).addTextEvent((parent, newText) -> updateChannelName())
+        channelNameField = new TextField(minecraft, this).setLayoutHint(8, 27, 60, 14).addTextEvent((parent, newText) -> updateChannelName())
                 .setName("channelname")
                 .setEnabledFlags("card");
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(10, 44, 16, 16).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings())
+        blacklistMode = new ImageChoiceLabel(minecraft, this).setLayoutHint(10, 44, 16, 16).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings())
                 .setName("blacklistmode")
                 .setEnabledFlags("card");
         blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
         blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
 
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(allowedPlayersPanel, buttonPanel, channelNameField, blacklistMode);
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(allowedPlayersPanel, buttonPanel, channelNameField, blacklistMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
-        Keyboard.enableRepeatEvents(true);
+        // @todo 1.14
+//        Keyboard.enableRepeatEvents(true);
 
         window.event("addbutton", (source, params) -> addPlayer());
         window.event("delbutton", (source, params) -> delPlayer());
@@ -150,7 +151,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 //        players = new ArrayList<String>(newPlayers);
 //        allowedPlayers.removeChildren();
 //        for (String player : players) {
-//            allowedPlayers.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+//            allowedPlayers.addChild(new Label(minecraft, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
 //        }
     }
 
@@ -169,13 +170,13 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private int getCardID() {
-        Slot slot = inventorySlots.inventorySlots.get(SecurityManagerTileEntity.SLOT_CARD);
+        Slot slot = container.inventorySlots.get(SecurityManagerTileEntity.SLOT_CARD);
         if (slot.getHasStack()) {
             CompoundNBT tagCompound = slot.getStack().getTag();
             if (tagCompound == null) {
                 return -1;
             }
-            if (tagCompound.hasKey("channel")) {
+            if (tagCompound.contains("channel")) {
                 return tagCompound.getInt("channel");
             }
         }
@@ -193,7 +194,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
             channelNameField.setText(channelFromServer.getName());
             blacklistMode.setCurrentChoice(channelFromServer.isWhitelist() ? 0 : 1);
             for (String player : channelFromServer.getPlayers()) {
-                players.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+                players.addChild(new Label(minecraft, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
             }
         } else {
             channelNameField.setText("");

@@ -2,8 +2,9 @@ package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
+import net.minecraftforge.registries.ObjectHolder;
 
 
 public class ShieldSetup {
@@ -28,6 +29,12 @@ public class ShieldSetup {
     public static NoTickCamoShieldBlock noTickCamoShieldBlockOpaque;
 
     public static ShieldTemplateBlock shieldTemplateBlock;
+
+    @ObjectHolder("rftools:shield_inv_block")
+    public static TileEntityType<?> TYPE_SHIELD_INV_BLOCK;
+    @ObjectHolder("rftools:shield_solid")
+    public static TileEntityType<?> TYPE_SHIELD_SOLID;
+
 
     public static void init() {
         shieldBlock1 = new ShieldBlock("shield_block1", ShieldTileEntity.class, ShieldTileEntity.MAX_SHIELD_SIZE);

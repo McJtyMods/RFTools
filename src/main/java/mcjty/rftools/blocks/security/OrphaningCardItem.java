@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,12 +13,11 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
-
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -24,25 +25,19 @@ import java.util.List;
 public class OrphaningCardItem extends Item {
 
     public OrphaningCardItem() {
-        super("orphaning_card");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("orphaning_card");
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "Sneak right-click on an RFTools machine to clear");
-            list.add(TextFormatting.WHITE + "the owner. You can only do this on blocks you own");
-            list.add(TextFormatting.WHITE + "(unless you are admin)");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Sneak right-click on an RFTools machine to clear"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "the owner. You can only do this on blocks you own"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "(unless you are admin)"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 

@@ -9,20 +9,21 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.varia.NamedEnum;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
+public class GuiSensor extends GenericGuiContainer<SensorTileEntity, GenericContainer> {
 
     private ChoiceLabel typeLabel;
 
-    public GuiSensor(SensorTileEntity sensorTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, sensorTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "sensor");
+    public GuiSensor(SensorTileEntity sensorTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, sensorTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "sensor");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/sensor.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
     }

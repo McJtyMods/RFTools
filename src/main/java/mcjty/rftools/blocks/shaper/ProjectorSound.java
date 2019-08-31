@@ -2,15 +2,13 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import net.minecraft.block.Block;
-import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 
-
-@SideOnly(Side.CLIENT)
-public class ProjectorSound extends MovingSound {
+public class ProjectorSound extends TickableSound {
     private final World world;
     private final BlockPos pos;
 
@@ -19,9 +17,9 @@ public class ProjectorSound extends MovingSound {
         this.world = world;
         this.pos = new BlockPos(x, y, z);
 
-        this.xPosF = x;
-        this.yPosF = y;
-        this.zPosF = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
 
         this.attenuationType = AttenuationType.LINEAR;
         this.repeat = true;
@@ -33,18 +31,18 @@ public class ProjectorSound extends MovingSound {
     }
 
     public void move(float x, float y, float z) {
-        xPosF = x;
-        yPosF = y;
-        zPosF = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Override
-    public void update() {
+    public void tick() {
         Block block = world.getBlockState(pos).getBlock();
         if (block != BuilderSetup.projectorBlock) {
             donePlaying = true;
             return;
         }
-        volume = (float) ScannerConfiguration.baseProjectorVolume.get();
+        volume = (float) (double) ScannerConfiguration.baseProjectorVolume.get();
     }
 }

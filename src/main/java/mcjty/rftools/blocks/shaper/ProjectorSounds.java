@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ProjectorSounds {
 
-    private static final Map<BlockPos, MovingSound> sounds = new HashMap<>();
+    private static final Map<BlockPos, TickableSound> sounds = new HashMap<>();
 
     public static SoundEvent scanSound;
 
@@ -30,27 +30,27 @@ public class ProjectorSounds {
 
     public static void stopSound(BlockPos pos) {
         if (sounds.containsKey(pos)) {
-            MovingSound movingSound = sounds.get(pos);
+            TickableSound movingSound = sounds.get(pos);
             ((ProjectorSound)movingSound).stop();
-            Minecraft.getInstance().getSoundHandler().stopSound(movingSound);
+            Minecraft.getInstance().getSoundHandler().stop(movingSound);
             sounds.remove(pos);
         }
     }
 
-    private static void playSound(BlockPos pos, MovingSound sound) {
+    private static void playSound(BlockPos pos, TickableSound sound) {
         stopSound(pos);
-        Minecraft.getInstance().getSoundHandler().playSound(sound);
+        Minecraft.getInstance().getSoundHandler().play(sound);
         sounds.put(pos, sound);
     }
 
 
     public static void playScan(World worldObj, BlockPos pos) {
-        MovingSound sound = new ProjectorSound(worldObj, pos.getX(), pos.getY(), pos.getZ());
+        TickableSound sound = new ProjectorSound(worldObj, pos.getX(), pos.getY(), pos.getZ());
         playSound(pos, sound);
     }
 
     public static boolean isScanPlaying(BlockPos pos) {
-        MovingSound movingSound = sounds.get(pos);
+        TickableSound movingSound = sounds.get(pos);
         return movingSound instanceof ProjectorSound;
     }
 }
