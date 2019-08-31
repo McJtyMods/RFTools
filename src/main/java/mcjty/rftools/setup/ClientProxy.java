@@ -23,9 +23,6 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 
@@ -34,6 +31,7 @@ public class ClientProxy extends DefaultClientProxy {
     private static final ResourceLocation VILLAGER_TEXTURE = new ResourceLocation(RFTools.MODID, "textures/entities/rftoolsvillager.png");
 
     public static TrueTypeFont font;
+
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
