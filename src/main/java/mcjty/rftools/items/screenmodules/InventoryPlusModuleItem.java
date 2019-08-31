@@ -10,16 +10,15 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -35,8 +34,9 @@ public class InventoryPlusModuleItem extends Item implements IModuleProvider {
         setRegistryName("inventoryplus_module");
     }
 
+
     @Override
-    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ITEMSTACK_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -67,8 +67,11 @@ public class InventoryPlusModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        ItemStack stack = context.getItem();
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
+        PlayerEntity player = context.getPlayer();
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
             if (world.isRemote) {
@@ -80,7 +83,7 @@ public class InventoryPlusModuleItem extends Item implements IModuleProvider {
         if (tagCompound == null) {
             tagCompound = new CompoundNBT();
         }
-        if (CapabilityTools.hasItemCapabilitySafe(te) || te instanceof IInventory) {
+        if (CapabilityTools.getItemCapabilitySafe(te).isPresent()) {
             tagCompound.putInt("monitordim", world.getDimension().getType().getId());
             tagCompound.putInt("monitorx", pos.getX());
             tagCompound.putInt("monitory", pos.getY());
@@ -91,27 +94,22 @@ public class InventoryPlusModuleItem extends Item implements IModuleProvider {
             if (block != null && !block.isAir(state, world, pos)) {
                 name = BlockTools.getReadableName(world, pos);
             }
-            tagCompound.setString("monitorname", name);
+            tagCompound.putString("monitorname", name);
             if (world.isRemote) {
                 Logging.message(player, "Inventory module is set to block '" + name + "'");
             }
         } else {
-            tagCompound.removeTag("monitordim");
-            tagCompound.removeTag("monitorx");
-            tagCompound.removeTag("monitory");
-            tagCompound.removeTag("monitorz");
-            tagCompound.removeTag("monitorname");
+            tagCompound.remove("monitordim");
+            tagCompound.remove("monitorx");
+            tagCompound.remove("monitory");
+            tagCompound.remove("monitorz");
+            tagCompound.remove("monitorname");
             if (world.isRemote) {
                 Logging.message(player, "Inventory module is cleared");
             }
         }
-        stack.setTagCompound(tagCompound);
+        stack.setTag(tagCompound);
         return ActionResultType.SUCCESS;
-    }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
     }
 
     @Override

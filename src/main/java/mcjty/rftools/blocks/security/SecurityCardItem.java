@@ -1,8 +1,10 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
@@ -10,19 +12,18 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-
-import org.lwjgl.input.Keyboard;
-
 import java.util.List;
+
 
 public class SecurityCardItem extends Item {
 
@@ -30,22 +31,16 @@ public class SecurityCardItem extends Item {
     private static long lastTime = 0;
 
     public SecurityCardItem() {
-        super("security_card");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("security_card");
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
-        if (tagCompound != null && tagCompound.hasKey("channel")) {
+        if (tagCompound != null && tagCompound.contains("channel")) {
             channel = tagCompound.getInt("channel");
         }
         if (channel != -1) {
@@ -53,25 +48,28 @@ public class SecurityCardItem extends Item {
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.sendToServer(CommandHandler.CMD_GET_SECURITY_NAME, TypedMap.builder().put(CommandHandler.PARAM_ID, channel));
             }
-            list.add(TextFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")"));
         } else {
-            list.add(TextFormatting.YELLOW + "Channel is not set!");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Channel is not set!"));
         }
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "Manage security channels in the Security Manager");
-            list.add(TextFormatting.WHITE + "and link this card to a channel. Sneak right-click");
-            list.add(TextFormatting.WHITE + "a block to link the channel to that block.");
-            list.add(TextFormatting.WHITE + "If you want to copy the channel from a block to");
-            list.add(TextFormatting.WHITE + "a card you can right click with an unlinked card");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Manage security channels in the Security Manager"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "and link this card to a channel. Sneak right-click"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "a block to link the channel to that block."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "If you want to copy the channel from a block to"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "a card you can right click with an unlinked card"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
         if (!world.isRemote) {
+            BlockPos pos = context.getPos();
+            PlayerEntity player = context.getPlayer();
+            ItemStack stack = context.getItem();
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof GenericTileEntity) {
                 // @tod security api
@@ -81,14 +79,14 @@ public class SecurityCardItem extends Item {
                 } else {
                     if (OrphaningCardItem.isPrivileged(player, world) || isOwner(player, genericTileEntity)) {
                         CompoundNBT tagCompound = stack.getTag();
-                        if (tagCompound == null || !tagCompound.hasKey("channel")) {
+                        if (tagCompound == null || !tagCompound.contains("channel")) {
                             int blockSecurity = genericTileEntity.getSecurityChannel();
                             if (blockSecurity == -1) {
                                 Logging.message(player, TextFormatting.RED + "This security card is not setup correctly!");
                             } else {
                                 if (tagCompound == null) {
                                     tagCompound = new CompoundNBT();
-                                    stack.setTagCompound(tagCompound);
+                                    stack.setTag(tagCompound);
                                 }
                                 tagCompound.putInt("channel", blockSecurity);
                                 Logging.message(player, TextFormatting.RED + "Copied security channel from block to card!");
@@ -110,14 +108,14 @@ public class SecurityCardItem extends Item {
     }
 
     private boolean isOwner(PlayerEntity player, GenericTileEntity genericTileEntity) {
-        return genericTileEntity.getOwnerUUID().equals(player.getPersistentID());
+        return genericTileEntity.getOwnerUUID().equals(player.getUniqueID());
     }
 
 //    @SideOnly(Side.CLIENT)
 //    @Override
 //    public IIcon getIconIndex(ItemStack stack) {
 //        CompoundNBT tagCompound = stack.getTag();
-//        if (tagCompound != null && tagCompound.hasKey("channel")) {
+//        if (tagCompound != null && tagCompound.contains("channel")) {
 //            return activeIcon;
 //        } else {
 //            return itemIcon;

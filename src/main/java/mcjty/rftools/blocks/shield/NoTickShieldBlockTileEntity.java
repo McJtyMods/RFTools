@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;

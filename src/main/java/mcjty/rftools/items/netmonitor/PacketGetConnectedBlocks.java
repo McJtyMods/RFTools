@@ -1,46 +1,40 @@
 package mcjty.rftools.items.netmonitor;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.BlockInfo;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class PacketGetConnectedBlocks implements IMessage {
+public class PacketGetConnectedBlocks {
     private BlockPos pos;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
     }
 
     public PacketGetConnectedBlocks() {
     }
 
-    public PacketGetConnectedBlocks(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketGetConnectedBlocks(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
     }
 
     public PacketGetConnectedBlocks(BlockPos pos) {
         this.pos = pos;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             PlayerEntity player = ctx.getSender();
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
@@ -58,7 +52,7 @@ public class PacketGetConnectedBlocks implements IMessage {
                 miny = Math.min(miny, coordinate.getY());
                 minz = Math.min(minz, coordinate.getZ());
             }
-            RFToolsMessages.INSTANCE.sendTo(new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz), ctx.getSender());
+            RFToolsMessages.INSTANCE.sendTo(new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz), ctx.getSender().connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
         });
         ctx.setPacketHandled(true);
     }

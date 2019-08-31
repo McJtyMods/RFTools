@@ -8,23 +8,24 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
+public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity, GenericContainer> {
 
     public static final String OREDICT_USE = "Use";
     public static final String OREDICT_IGNORE = "Ignore";
     public static final String META_MATCH = "Match";
     public static final String META_IGNORE = "Ignore";
 
-    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "invchecker");
+    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "invchecker");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/invchecker.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
     }

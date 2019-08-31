@@ -5,7 +5,6 @@ import mcjty.rftools.blocks.shield.filters.PlayerFilter;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractShieldBlock extends Block implements ITileEntityProvider {
+public abstract class AbstractShieldBlock extends Block {
 
     public static final int META_ITEMS = 1;             // If set then blocked for items
     public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs

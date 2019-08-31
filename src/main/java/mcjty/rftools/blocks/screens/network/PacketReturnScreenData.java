@@ -1,39 +1,22 @@
 package mcjty.rftools.blocks.screens.network;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataFactory;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketReturnScreenData implements IMessage {
+public class PacketReturnScreenData {
     private GlobalCoordinate pos;
     private Map<Integer, IModuleData> screenData;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
-        int size = buf.readInt();
-        screenData = new HashMap<>(size);
-        for (int i = 0 ; i < size ; i++) {
-            int key = buf.readInt();
-            int shortId = buf.readInt();
-            String id = RFTools.screenModuleRegistry.getNormalId(shortId);
-            IModuleDataFactory<?> dataFactory = RFTools.screenModuleRegistry.getModuleDataFactory(id);
-            IModuleData data = dataFactory.createData(buf);
-            screenData.put(key, data);
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos.getCoordinate());
         buf.writeInt(pos.getDimension());
 
@@ -57,8 +40,18 @@ public class PacketReturnScreenData implements IMessage {
     public PacketReturnScreenData() {
     }
 
-    public PacketReturnScreenData(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketReturnScreenData(PacketBuffer buf) {
+        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
+        int size = buf.readInt();
+        screenData = new HashMap<>(size);
+        for (int i = 0 ; i < size ; i++) {
+            int key = buf.readInt();
+            int shortId = buf.readInt();
+            String id = RFTools.screenModuleRegistry.getNormalId(shortId);
+            IModuleDataFactory<?> dataFactory = RFTools.screenModuleRegistry.getModuleDataFactory(id);
+            IModuleData data = dataFactory.createData(buf);
+            screenData.put(key, data);
+        }
     }
 
     public PacketReturnScreenData(GlobalCoordinate pos, Map<Integer, IModuleData> screenData) {
@@ -66,8 +59,8 @@ public class PacketReturnScreenData implements IMessage {
         this.screenData = screenData;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             PacketGetScreenDataHelper.setScreenData(this);
         });

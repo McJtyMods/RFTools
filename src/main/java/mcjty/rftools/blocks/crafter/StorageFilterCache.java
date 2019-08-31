@@ -1,4 +1,4 @@
-package mcjty.rftools.items.storage;
+package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.varia.ItemStackList;
 import net.minecraft.item.ItemStack;
@@ -61,21 +61,22 @@ public class StorageFilterCache {
             boolean match = false;
             String modName = "";
             if (modMode) {
-                modName = ModItemSorter.getMod(stack);
+                modName = stack.getItem().getRegistryName().getNamespace();
             }
 
             if (oredictMode) {
-                int[] oreIDs = OreDictionary.getOreIDs(stack);
-                if (oreIDs.length == 0) {
-                    match = itemMatches(stack, modName);
-                } else {
-                    for (int id : oreIDs) {
-                        if (oredictMatches.contains(id)) {
-                            match = true;
-                            break;
-                        }
-                    }
-                }
+// @todo 1.14
+//                int[] oreIDs = OreDictionary.getOreIDs(stack);
+//                if (oreIDs.length == 0) {
+//                    match = itemMatches(stack, modName);
+//                } else {
+//                    for (int id : oreIDs) {
+//                        if (oredictMatches.contains(id)) {
+//                            match = true;
+//                            break;
+//                        }
+//                    }
+//                }
             } else {
                 match = itemMatches(stack, modName);
             }
@@ -87,14 +88,14 @@ public class StorageFilterCache {
     private boolean itemMatches(ItemStack stack, String modName) {
         if (stacks != null) {
             for (ItemStack itemStack : stacks) {
-                if (matchDamage && itemStack.getMetadata() != stack.getMetadata()) {
+                if (matchDamage && itemStack.getDamage() != stack.getDamage()) {
                     continue;
                 }
                 if (nbtMode && !ItemStack.areItemStackTagsEqual(itemStack, stack)) {
                     continue;
                 }
                 if (modMode) {
-                    if (modName.equals(ModItemSorter.getMod(itemStack))) {
+                    if (modName.equals(itemStack.getItem().getRegistryName().getNamespace())) {
                         return true;
                     }
                 } else if (itemStack.getItem().equals(stack.getItem())) {

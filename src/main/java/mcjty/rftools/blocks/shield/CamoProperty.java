@@ -1,12 +1,22 @@
 package mcjty.rftools.blocks.shield;
 
-import net.minecraftforge.common.property.IUnlistedProperty;
 
-public class CamoProperty implements IUnlistedProperty<CamoBlockId> {
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.Property;
+
+import java.util.Collection;
+import java.util.Optional;
+
+public class CamoProperty extends Property<CamoBlockId> {
 
     private final String name;
 
     public CamoProperty(String name) {
+        super(name, CamoBlockId.class);
         this.name = name;
     }
 
@@ -16,17 +26,24 @@ public class CamoProperty implements IUnlistedProperty<CamoBlockId> {
     }
 
     @Override
-    public boolean isValid(CamoBlockId value) {
-        return true;
+    public Collection<CamoBlockId> getAllowedValues() {
+        return null;
     }
 
     @Override
-    public Class<CamoBlockId> getType() {
-        return CamoBlockId.class;
+    public Optional<CamoBlockId> parseValue(String s) {
+        CompoundNBT tag = null;
+        try {
+            tag = JsonToNBT.getTagFromJson(s);
+        } catch (CommandSyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+        BlockState state = NBTUtil.readBlockState(tag);
+        return Optional.of(new CamoBlockId(state));
     }
 
     @Override
-    public String valueToString(CamoBlockId value) {
-        return value.toString();
+    public String getName(CamoBlockId camoBlockId) {
+        return camoBlockId.toString();
     }
 }

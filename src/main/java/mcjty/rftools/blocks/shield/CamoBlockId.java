@@ -1,25 +1,27 @@
 package mcjty.rftools.blocks.shield;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.NBTUtil;
 
-public class CamoBlockId {
-    private final String registryName;
-    private final int meta;
+public class CamoBlockId implements Comparable<CamoBlockId> {
+    private final BlockState state;
 
     public CamoBlockId(BlockState mimicBlock) {
-        Block block = mimicBlock.getBlock();
-        this.registryName = block.getRegistryName().toString();
-        this.meta = block.getMetaFromState(mimicBlock);
+        state = mimicBlock;
     }
 
     public BlockState getBlockState() {
-        return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(registryName)).getStateFromMeta(meta);
+        return state;
     }
 
     @Override
     public String toString() {
-        return registryName + '@' + meta;
+        return NBTUtil.writeBlockState(state).toString();
+    }
+
+    @Override
+    public int compareTo(CamoBlockId camoBlockId) {
+        // @todo 1.14, is this ok?
+        return getBlockState().getBlock().getRegistryName().compareTo(camoBlockId.getBlockState().getBlock().getRegistryName());
     }
 }
