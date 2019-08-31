@@ -8,11 +8,9 @@ import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -23,22 +21,21 @@ public class ShardWandItem extends Item {
         setRegistryName("shard_wand");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
         if (!world.isRemote) {
+            BlockPos pos = context.getPos();
+            PlayerEntity player = context.getPlayer();
             Block block = world.getBlockState(pos).getBlock();
             if (block instanceof Infusable) {
                 TileEntity te = world.getTileEntity(pos);
                 if (te instanceof GenericTileEntity) {
                     GenericTileEntity genericTileEntity = (GenericTileEntity) te;
                     int infused = genericTileEntity.getInfused();
-                    if (infused < GeneralConfig.maxInfuse) {
-                        infused = GeneralConfig.maxInfuse;
+                    if (infused < GeneralConfig.maxInfuse.get()) {
+                        infused = GeneralConfig.maxInfuse.get();
                         Logging.message(player, "Maximized infusion level!");
                     } else {
                         infused = 0;

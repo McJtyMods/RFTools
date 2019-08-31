@@ -1,43 +1,28 @@
 package mcjty.rftools.blocks.screens.network;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.io.IOException;
 import java.util.function.Supplier;
 
-public class PacketModuleUpdate implements IMessage {
+public class PacketModuleUpdate {
     private BlockPos pos;
 
     private int slotIndex;
     private CompoundNBT tagCompound;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-        slotIndex = buf.readInt();
-        PacketBuffer buffer = new PacketBuffer(buf);
-        try {
-            tagCompound = buffer.readCompoundTag();
-        } catch (IOException e) {
-            Logging.logError("Error updating module", e);
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
         buf.writeInt(slotIndex);
         PacketBuffer buffer = new PacketBuffer(buf);
@@ -47,8 +32,11 @@ public class PacketModuleUpdate implements IMessage {
     public PacketModuleUpdate() {
     }
 
-    public PacketModuleUpdate(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketModuleUpdate(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
+        slotIndex = buf.readInt();
+        PacketBuffer buffer = new PacketBuffer(buf);
+        tagCompound = buffer.readCompoundTag();
     }
 
     public PacketModuleUpdate(BlockPos pos, int slotIndex, CompoundNBT tagCompound) {
@@ -57,14 +45,14 @@ public class PacketModuleUpdate implements IMessage {
         this.tagCompound = tagCompound;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity player = ctx.getSender();
             World world = player.getEntityWorld();
             Block block = world.getBlockState(pos).getBlock();
             // adapted from NetHandlerPlayServer.processTryUseItemOnBlock
-            double dist = player.getEntityAttribute(PlayerEntity.REACH_DISTANCE).getAttributeValue() + 3;
+            double dist = player.getAttribute(PlayerEntity.REACH_DISTANCE).getValue() + 3;
             if(player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) >= dist * dist) {
                 return;
             }

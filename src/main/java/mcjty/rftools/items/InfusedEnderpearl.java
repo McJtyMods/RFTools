@@ -1,9 +1,12 @@
 package mcjty.rftools.items;
 
-public class InfusedEnderpearl extends GenericRFToolsItem {
+import mcjty.rftools.RFTools;
+import net.minecraft.item.Item;
+
+public class InfusedEnderpearl extends Item {
 
     public InfusedEnderpearl() {
-        super("infused_enderpearl");
-        setMaxStackSize(16);
+        super(new Properties().maxStackSize(16).group(RFTools.setup.getTab()));
+        setRegistryName("infused_enderpearl");
     }
 }

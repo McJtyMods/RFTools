@@ -15,12 +15,11 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.crafter.StorageFilterCache;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.ShapeCardType;
-import mcjty.rftools.items.storage.StorageFilterCache;
-import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.Shape;
@@ -51,7 +50,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -338,7 +336,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel != null) {
             int dimension = chamberChannel.getDimension();
-            World world = DimensionManager.getWorld(dimension);
+            World world = WorldTools.getWorld(dimension);
             if (world == null) {
                 return;
             }

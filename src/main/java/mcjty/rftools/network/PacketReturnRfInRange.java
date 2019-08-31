@@ -1,39 +1,21 @@
 package mcjty.rftools.network;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketReturnRfInRange implements IMessage {
+public class PacketReturnRfInRange {
     private Map<BlockPos, MachineInfo> levels;
 
     // Clientside
     public static Map<BlockPos, MachineInfo> clientLevels;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        int size = buf.readInt();
-        levels = new HashMap<>(size);
-        for (int i = 0 ; i < size ; i++) {
-            BlockPos pos = NetworkTools.readPos(buf);
-            long e = buf.readLong();
-            long m = buf.readLong();
-            Long usage = null;
-            if (buf.readBoolean()) {
-                usage = buf.readLong();
-            }
-            levels.put(pos, new MachineInfo(e, m, usage));
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(levels.size());
         for (Map.Entry<BlockPos, MachineInfo> entry : levels.entrySet()) {
             NetworkTools.writePos(buf, entry.getKey());
@@ -56,16 +38,27 @@ public class PacketReturnRfInRange implements IMessage {
     public PacketReturnRfInRange() {
     }
 
-    public PacketReturnRfInRange(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketReturnRfInRange(PacketBuffer buf) {
+        int size = buf.readInt();
+        levels = new HashMap<>(size);
+        for (int i = 0 ; i < size ; i++) {
+            BlockPos pos = NetworkTools.readPos(buf);
+            long e = buf.readLong();
+            long m = buf.readLong();
+            Long usage = null;
+            if (buf.readBoolean()) {
+                usage = buf.readLong();
+            }
+            levels.put(pos, new MachineInfo(e, m, usage));
+        }
     }
 
     public PacketReturnRfInRange(Map<BlockPos, MachineInfo> levels) {
         this.levels = levels;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             clientLevels = levels;
         });

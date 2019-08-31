@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class PowerCellCardItem extends GenericRFToolsItem {
+public class PowerCellCardItem extends Item {
 
     public PowerCellCardItem() {
         super("powercell_card");

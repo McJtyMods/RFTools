@@ -1,16 +1,15 @@
 package mcjty.rftools.blocks.monitor;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketContentsMonitor implements IMessage {
+public class PacketContentsMonitor {
     private BlockPos pos;
     private BlockPos monitor;
 
@@ -23,8 +22,14 @@ public class PacketContentsMonitor implements IMessage {
         alarmMode = RFMonitorMode.MODE_OFF;
     }
 
-    public PacketContentsMonitor(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketContentsMonitor(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
+        boolean r = buf.readBoolean();
+        if (r) {
+            monitor = NetworkTools.readPos(buf);
+        }
+        alarmLevel = buf.readByte();
+        alarmMode = RFMonitorMode.getModeFromIndex(buf.readByte());
     }
 
     public PacketContentsMonitor(BlockPos pos, BlockPos monitor) {
@@ -40,19 +45,7 @@ public class PacketContentsMonitor implements IMessage {
         this.alarmMode = alarmMode;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-        boolean r = buf.readBoolean();
-        if (r) {
-            monitor = NetworkTools.readPos(buf);
-        }
-        alarmLevel = buf.readByte();
-        alarmMode = RFMonitorMode.getModeFromIndex(buf.readByte());
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
         if (monitor == null) {
             buf.writeBoolean(false);
@@ -64,8 +57,8 @@ public class PacketContentsMonitor implements IMessage {
         buf.writeByte(alarmMode.getIndex());
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if (te instanceof RFMonitorBlockTileEntity) {

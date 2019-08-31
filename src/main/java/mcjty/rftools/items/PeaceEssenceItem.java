@@ -1,32 +1,33 @@
 package mcjty.rftools.items;
 
+import mcjty.lib.McJtyLib;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-
-import org.lwjgl.input.Keyboard;
-
 import java.util.List;
 
-public class PeaceEssenceItem extends GenericRFToolsItem {
+public class PeaceEssenceItem extends Item {
     public PeaceEssenceItem() {
-        super("peace_essence");
-        setMaxStackSize(64);
+        super(new Properties().maxStackSize(64).group(RFTools.setup.getTab()));
+        setRegistryName("peace_essence");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "This essence item is the main ingredient for");
-            list.add(TextFormatting.WHITE + "the peaceful dimlet in the Dimlet Workbench.");
-            list.add(TextFormatting.WHITE + "Getting this essence is somewhat harder though.");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This essence item is the main ingredient for"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "the peaceful dimlet in the Dimlet Workbench."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Getting this essence is somewhat harder though."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 }

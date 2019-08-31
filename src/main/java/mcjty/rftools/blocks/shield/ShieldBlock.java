@@ -8,8 +8,8 @@ import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.setup.GuiProxy;
+import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -27,6 +27,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 //@Optional.InterfaceList({
@@ -64,6 +65,11 @@ public class ShieldBlock extends BaseBlock implements Infusable, INBTPreservingI
         } else {
             list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
+    }
+
+    @Override
+    public Collection<String> getTagsToPreserve() {
+        return null;    // @todo 1.14
     }
 
     // @todo 1.14

@@ -1,24 +1,24 @@
 package mcjty.rftools.blocks.teleporter;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ICommandHandler;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.TypedMapTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 import static mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity.PARAM_PLAYER;
 
-public class PacketGetReceivers implements IMessage {
+public class PacketGetReceivers {
 
     protected BlockPos pos;
     protected TypedMap params;
@@ -26,8 +26,9 @@ public class PacketGetReceivers implements IMessage {
     public PacketGetReceivers() {
     }
 
-    public PacketGetReceivers(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketGetReceivers(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
+        params = TypedMapTools.readArguments(buf);
     }
 
     public PacketGetReceivers(BlockPos pos, String playerName) {
@@ -35,20 +36,13 @@ public class PacketGetReceivers implements IMessage {
         this.params = TypedMap.builder().put(PARAM_PLAYER, playerName).build();
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-        params = TypedMapTools.readArguments(buf);
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
         TypedMapTools.writeArguments(buf, params);
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if (!(te instanceof ICommandHandler)) {
@@ -58,7 +52,7 @@ public class PacketGetReceivers implements IMessage {
             ICommandHandler commandHandler = (ICommandHandler) te;
             List<TeleportDestinationClientInfo> list = commandHandler.executeWithResultList(DialingDeviceTileEntity.CMD_GETRECEIVERS, params, Type.create(TeleportDestinationClientInfo.class));
             PacketReceiversReady msg = new PacketReceiversReady(pos, DialingDeviceTileEntity.CLIENTCMD_GETRECEIVERS, list);
-            RFToolsMessages.INSTANCE.sendTo(msg, ctx.getSender());
+            RFToolsMessages.INSTANCE.sendTo(msg, ctx.getSender().connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
         });
         ctx.setPacketHandled(true);
     }

@@ -1,32 +1,17 @@
 package mcjty.rftools.blocks.security;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PacketSecurityInfoReady implements IMessage {
+public class PacketSecurityInfoReady {
 
     private SecurityChannels.SecurityChannel channel;
 
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        channel = new SecurityChannels.SecurityChannel();
-        channel.setName(NetworkTools.readString(buf));
-        channel.setWhitelist(buf.readBoolean());
-        int size = buf.readInt();
-        channel.clearPlayers();
-        for (int i = 0 ; i < size ; i++) {
-            channel.addPlayer(NetworkTools.readString(buf));
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writeString(buf, channel.getName());
         buf.writeBoolean(channel.isWhitelist());
         List<String> players = channel.getPlayers();
@@ -40,16 +25,23 @@ public class PacketSecurityInfoReady implements IMessage {
     public PacketSecurityInfoReady() {
     }
 
-    public PacketSecurityInfoReady(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketSecurityInfoReady(PacketBuffer buf) {
+        channel = new SecurityChannels.SecurityChannel();
+        channel.setName(NetworkTools.readString(buf));
+        channel.setWhitelist(buf.readBoolean());
+        int size = buf.readInt();
+        channel.clearPlayers();
+        for (int i = 0 ; i < size ; i++) {
+            channel.addPlayer(NetworkTools.readString(buf));
+        }
     }
 
     public PacketSecurityInfoReady(SecurityChannels.SecurityChannel channel) {
         this.channel = channel;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             GuiSecurityManager.channelFromServer = channel;
         });

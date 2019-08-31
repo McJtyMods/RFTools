@@ -1,35 +1,27 @@
 package mcjty.rftools.blocks.screens.network;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketHandler;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketGetScreenData implements IMessage {
+public class PacketGetScreenData {
     private String modid;
     private GlobalCoordinate pos;
     private long millis;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        modid = NetworkTools.readString(buf);
-        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
-        millis = buf.readLong();
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writeString(buf, modid);
         NetworkTools.writePos(buf, pos.getCoordinate());
         buf.writeInt(pos.getDimension());
@@ -39,8 +31,10 @@ public class PacketGetScreenData implements IMessage {
     public PacketGetScreenData() {
     }
 
-    public PacketGetScreenData(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketGetScreenData(PacketBuffer buf) {
+        modid = NetworkTools.readString(buf);
+        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
+        millis = buf.readLong();
     }
 
     public PacketGetScreenData(String modid, GlobalCoordinate pos, long millis) {
@@ -49,8 +43,8 @@ public class PacketGetScreenData implements IMessage {
         this.millis = millis;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             World world = ctx.getSender().getEntityWorld();
             if (pos.getDimension() != world.getDimension().getType().getId()) {
@@ -65,7 +59,7 @@ public class PacketGetScreenData implements IMessage {
 
             SimpleChannel wrapper = PacketHandler.modNetworking.get(modid);
             PacketReturnScreenData msg = new PacketReturnScreenData(pos, screenData);
-            wrapper.sendTo(msg, ctx.getSender());
+            wrapper.sendTo(msg, ctx.getSender().connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
         });
         ctx.setPacketHandled(true);
     }

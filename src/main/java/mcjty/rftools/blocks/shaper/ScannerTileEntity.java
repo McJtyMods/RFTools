@@ -15,13 +15,12 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.blocks.crafter.StorageFilterCache;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
 import mcjty.rftools.items.modifier.ModifierFilterOperation;
 import mcjty.rftools.items.modifier.ModifierItem;
-import mcjty.rftools.items.storage.StorageFilterCache;
-import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
@@ -160,7 +159,8 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
     private void getFilterCache() {
         if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY));
+            // @todo 1.14
+//            filterCache = StorageFilterItem.getCache(itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY));
         }
     }
 

@@ -22,7 +22,6 @@ import mcjty.rftools.blocks.teleporter.PacketGetTransmitters;
 import mcjty.rftools.blocks.teleporter.PacketReceiversReady;
 import mcjty.rftools.blocks.teleporter.PacketTransmittersReady;
 import mcjty.rftools.compat.jei.PacketSendRecipe;
-import mcjty.rftools.craftinggrid.PacketCraftTestResultToClient;
 import mcjty.rftools.craftinggrid.PacketGridToClient;
 import mcjty.rftools.craftinggrid.PacketGridToServer;
 import mcjty.rftools.items.builder.PacketUpdateNBTItemInventoryShape;

@@ -1,9 +1,8 @@
 package mcjty.rftools.items.creativeonly;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,14 +10,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketDelightingInfoReady implements IMessage {
+public class PacketDelightingInfoReady {
     private List<String> blockClasses;
     private List<String> teClasses;
     private Map<String,DelightingInfoHelper.NBTDescription> nbtData;
     private int metadata;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
+        buf.writeInt(blockClasses.size());
+        for (String c : blockClasses) {
+            NetworkTools.writeString(buf, c);
+        }
+        buf.writeInt(teClasses.size());
+        for (String c : teClasses) {
+            NetworkTools.writeString(buf, c);
+        }
+        buf.writeInt(nbtData.size());
+        for (Map.Entry<String,DelightingInfoHelper.NBTDescription> me : nbtData.entrySet()) {
+            String key = me.getKey();
+            DelightingInfoHelper.NBTDescription value = me.getValue();
+            NetworkTools.writeString(buf, key);
+            NetworkTools.writeString(buf, value.getType());
+            NetworkTools.writeString(buf, value.getValue());
+        }
+        buf.writeInt(metadata);
+    }
+
+    public PacketDelightingInfoReady() {
+    }
+
+    public PacketDelightingInfoReady(PacketBuffer buf) {
         int size = buf.readInt();
         blockClasses = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
@@ -44,34 +65,6 @@ public class PacketDelightingInfoReady implements IMessage {
         metadata = buf.readInt();
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(blockClasses.size());
-        for (String c : blockClasses) {
-            NetworkTools.writeString(buf, c);
-        }
-        buf.writeInt(teClasses.size());
-        for (String c : teClasses) {
-            NetworkTools.writeString(buf, c);
-        }
-        buf.writeInt(nbtData.size());
-        for (Map.Entry<String,DelightingInfoHelper.NBTDescription> me : nbtData.entrySet()) {
-            String key = me.getKey();
-            DelightingInfoHelper.NBTDescription value = me.getValue();
-            NetworkTools.writeString(buf, key);
-            NetworkTools.writeString(buf, value.getType());
-            NetworkTools.writeString(buf, value.getValue());
-        }
-        buf.writeInt(metadata);
-    }
-
-    public PacketDelightingInfoReady() {
-    }
-
-    public PacketDelightingInfoReady(ByteBuf buf) {
-        fromBytes(buf);
-    }
-
     public PacketDelightingInfoReady(List<String> blockClasses, List<String> teClasses, Map<String,DelightingInfoHelper.NBTDescription> nbtData, int metadata) {
         this.blockClasses = new ArrayList<>(blockClasses);
         this.teClasses = new ArrayList<>(teClasses);
@@ -79,8 +72,8 @@ public class PacketDelightingInfoReady implements IMessage {
         this.metadata = metadata;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             GuiDevelopersDelight.setServerBlockClasses(blockClasses);
             GuiDevelopersDelight.setServerTEClasses(teClasses);

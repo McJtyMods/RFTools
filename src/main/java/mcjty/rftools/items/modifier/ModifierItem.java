@@ -1,5 +1,6 @@
 package mcjty.rftools.items.modifier;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
@@ -13,12 +14,11 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-
-
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,21 +28,21 @@ import java.util.List;
 public class ModifierItem extends Item {
 
     public ModifierItem() {
-        super("modifier_module");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).group(RFTools.setup.getTab()));
+        setRegistryName("modifier_module");
     }
 
     private static ListNBT getOpList(ItemStack item) {
         if (!item.isEmpty() && item.getItem() == ModItems.modifierItem) {
-            if (!item.hasTagCompound()) {
-                item.setTagCompound(new CompoundNBT());
+            if (!item.hasTag()) {
+                item.setTag(new CompoundNBT());
             }
             CompoundNBT tag = item.getTag();
-            if (tag.hasKey("ops")) {
-                return tag.getTagList("ops", Constants.NBT.TAG_COMPOUND);
+            if (tag.contains("ops")) {
+                return tag.getList("ops", Constants.NBT.TAG_COMPOUND);
             } else {
                 ListNBT taglist = new ListNBT();
-                tag.setTag("ops", taglist);
+                tag.put("ops", taglist);
                 return taglist;
             }
         }
@@ -69,26 +69,26 @@ public class ModifierItem extends Item {
         player.openContainer.detectAndSendChanges();
     }
 
-    private static ListNBT getTagList(List<ModifierEntry> modifiers) {
+    private static ListNBT getList(List<ModifierEntry> modifiers) {
         ListNBT taglist = new ListNBT();
         for (ModifierEntry modifier : modifiers) {
             CompoundNBT tag = new CompoundNBT();
 
             if (!modifier.getIn().isEmpty()) {
                 CompoundNBT tc = new CompoundNBT();
-                modifier.getIn().writeToNBT(tc);
-                tag.setTag("in", tc);
+                modifier.getIn().write(tc);
+                tag.put("in", tc);
             }
             if (!modifier.getOut().isEmpty()) {
                 CompoundNBT tc = new CompoundNBT();
-                modifier.getOut().writeToNBT(tc);
-                tag.setTag("out", tc);
+                modifier.getOut().write(tc);
+                tag.put("out", tc);
             }
 
-            tag.setString("type", modifier.getType().getCode());
-            tag.setString("op", modifier.getOp().getCode());
+            tag.putString("type", modifier.getType().getCode());
+            tag.putString("op", modifier.getOp().getCode());
 
-            taglist.appendTag(tag);
+            taglist.add(tag);
 
         }
 
@@ -96,17 +96,17 @@ public class ModifierItem extends Item {
     }
 
     private static void updateModifiers(ItemStack stack, List<ModifierEntry> modifiers) {
-        ListNBT tagList = getTagList(modifiers);
-        stack.getTag().setTag("ops", tagList);
+        ListNBT tagList = getList(modifiers);
+        stack.getTag().put("ops", tagList);
     }
 
     public static ItemStackList getItemStacks(@Nullable CompoundNBT tagCompound) {
         ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
         if (tagCompound != null) {
-            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < bufferTagList.tagCount(); i++) {
-                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
-                stacks.set(i, new ItemStack(CompoundNBT));
+            ListNBT bufferTagList = tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < bufferTagList.size(); i++) {
+                CompoundNBT CompoundNBT = bufferTagList.getCompound(i);
+                stacks.set(i, ItemStack.read(CompoundNBT));
             }
         }
         return stacks;
@@ -173,10 +173,10 @@ public class ModifierItem extends Item {
         if (taglist == null) {
             return Collections.emptyList();
         }
-        for (int i = 0 ; i < taglist.tagCount() ; i++) {
-            CompoundNBT compound = taglist.getCompoundTagAt(i);
-            ItemStack stackIn = new ItemStack(compound.getCompoundTag("in"));
-            ItemStack stackOut = new ItemStack(compound.getCompoundTag("out"));
+        for (int i = 0 ; i < taglist.size() ; i++) {
+            CompoundNBT compound = taglist.getCompound(i);
+            ItemStack stackIn = ItemStack.read(compound.getCompound("in"));
+            ItemStack stackOut = ItemStack.read(compound.getCompound("out"));
             ModifierFilterType type = ModifierFilterType.getByCode(compound.getString("type"));
             ModifierFilterOperation op = ModifierFilterOperation.getByCode(compound.getString("op"));
             modifiers.add(new ModifierEntry(stackIn, stackOut, type, op));
@@ -184,15 +184,14 @@ public class ModifierItem extends Item {
         return modifiers;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "This module can be used by the area scanner to");
-            list.add(TextFormatting.WHITE + "modify the scanned output");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This module can be used by the area scanner to"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "modify the scanned output"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
@@ -201,7 +200,8 @@ public class ModifierItem extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
-            player.openGui(RFTools.instance, GuiProxy.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            // @todo 1.14
+//            player.openGui(RFTools.instance, GuiProxy.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);

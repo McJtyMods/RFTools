@@ -1,9 +1,12 @@
 package mcjty.rftools.items;
 
-public class InfusedDiamond extends GenericRFToolsItem {
+import mcjty.rftools.RFTools;
+import net.minecraft.item.Item;
+
+public class InfusedDiamond extends Item {
 
     public InfusedDiamond() {
-        super("infused_diamond");
-        setMaxStackSize(64);
+        super(new Properties().maxStackSize(64).group(RFTools.setup.getTab()));
+        setRegistryName("infused_diamond");
     }
 }

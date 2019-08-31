@@ -1,31 +1,21 @@
 package mcjty.rftools.items.modifier;
 
-import io.netty.buffer.ByteBuf;
-import mcjty.lib.thirteen.Context;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketUpdateModifier implements IMessage {
+public class PacketUpdateModifier {
     private ModifierCommand cmd = ModifierCommand.ADD;
     private int index;
     private ModifierFilterType type;
     private ModifierFilterOperation op;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        cmd = ModifierCommand.values()[buf.readByte()];
-        index = buf.readInt();
-        type = ModifierFilterType.values()[buf.readByte()];
-        op = ModifierFilterOperation.values()[buf.readByte()];
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeByte(cmd == null ? 0 : cmd.ordinal());
         buf.writeInt(index);
         buf.writeByte(type == null ? 0 : type.ordinal());
@@ -35,8 +25,11 @@ public class PacketUpdateModifier implements IMessage {
     public PacketUpdateModifier() {
     }
 
-    public PacketUpdateModifier(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketUpdateModifier(PacketBuffer buf) {
+        cmd = ModifierCommand.values()[buf.readByte()];
+        index = buf.readInt();
+        type = ModifierFilterType.values()[buf.readByte()];
+        op = ModifierFilterOperation.values()[buf.readByte()];
     }
 
     public PacketUpdateModifier(ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
@@ -46,8 +39,8 @@ public class PacketUpdateModifier implements IMessage {
         this.op = op;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             PlayerEntity player = ctx.getSender();
             ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);

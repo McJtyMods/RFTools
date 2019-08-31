@@ -1,32 +1,18 @@
 package mcjty.rftools.items.teleportprobe;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketTargetsReady implements IMessage {
+public class PacketTargetsReady {
 
     private int target;
     private int[] targets;
     private String[] names;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        target = buf.readInt();
-        int size = buf.readInt();
-        targets = new int[size];
-        names = new String[size];
-        for (int i = 0 ; i < size ; i++) {
-            targets[i] = buf.readInt();
-            names[i] = NetworkTools.readString(buf);
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(target);
         buf.writeInt(targets.length);
         for (int i = 0 ; i < targets.length ; i++) {
@@ -38,8 +24,15 @@ public class PacketTargetsReady implements IMessage {
     public PacketTargetsReady() {
     }
 
-    public PacketTargetsReady(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketTargetsReady(PacketBuffer buf) {
+        target = buf.readInt();
+        int size = buf.readInt();
+        targets = new int[size];
+        names = new String[size];
+        for (int i = 0 ; i < size ; i++) {
+            targets[i] = buf.readInt();
+            names[i] = NetworkTools.readString(buf);
+        }
     }
 
     public PacketTargetsReady(int target, int[] targets, String[] names) {
@@ -48,8 +41,8 @@ public class PacketTargetsReady implements IMessage {
         this.names = names;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             GuiAdvancedPorter.setInfo(target, targets, names);
         });

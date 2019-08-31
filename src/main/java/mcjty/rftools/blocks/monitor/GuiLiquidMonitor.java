@@ -8,22 +8,24 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTileEntity> {
+public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTileEntity, GenericContainer> {
     private WidgetList list;
     private ChoiceLabel alarmModeChoiceLabel;
     private ScrollableLabel alarmLabel;
@@ -38,45 +40,45 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
     public static List<BlockPos> fromServer_clientAdjacentBlocks = null;
 
 
-    public GuiLiquidMonitor(LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, liquidMonitorBlockTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "liqmonitor");
+    public GuiLiquidMonitor(LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, liquidMonitorBlockTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "liqmonitor");
         xSize = 256;
         ySize = 180;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(minecraft, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget<?> parent, int index) {
                 setSelectedBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("list");
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(list, listSlider);
+        Slider listSlider = new Slider(minecraft, this).setDesiredWidth(10).setVertical().setScrollableName("list");
+        Panel listPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(list, listSlider);
 
-        alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
+        alarmModeChoiceLabel = new ChoiceLabel(minecraft, this).addChoices(
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
                 setDesiredWidth(60).setDesiredHeight(15).
                 setTooltips("Control when a redstone", "signal should be sent").
                 addChoiceEvent((parent, newChoice) -> changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice)));
         alarmModeChoiceLabel.setChoice(tileEntity.getAlarmMode().getDescription());
 
-        alarmLabel = new ScrollableLabel(mc, this).setName("alarm").setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
+        alarmLabel = new ScrollableLabel(minecraft, this).setName("alarm").setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
                 setRealValue(tileEntity.getAlarmLevel()).
                 addValueEvent((parent, newValue) -> changeAlarmValue(newValue));
-        Slider alarmSlider = new Slider(mc, this).
+        Slider alarmSlider = new Slider(minecraft, this).
                 setDesiredHeight(15).
                 setMinimumKnobSize(15).
                 setHorizontal().
                 setTooltips("Alarm level").
                 setScrollableName("alarm");
-        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(alarmModeChoiceLabel, alarmSlider, alarmLabel).setDesiredHeight(20);
+        Panel alarmPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChildren(alarmModeChoiceLabel, alarmSlider, alarmLabel).setDesiredHeight(20);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(listPanel, alarmPanel);
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(listPanel, alarmPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
 
@@ -126,22 +128,22 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
         int index = 0;
         int sel = -1;
         for (BlockPos coordinate : adjacentBlocks) {
-            BlockState state = mc.world.getBlockState(coordinate);
+            BlockState state = minecraft.world.getBlockState(coordinate);
             Block block = state.getBlock();
 
             int color = StyleConfig.colorTextInListNormal;
 
-            String displayName = BlockTools.getReadableName(mc.world, coordinate);
+            String displayName = BlockTools.getReadableName(minecraft.world, coordinate);
 
             if (coordinate.equals(tileEntity.getMonitor())) {
                 sel = index;
                 color = TEXT_COLOR_SELECTED;
             }
 
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(90));
-            panel.addChild(new Label(mc, this).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setColor(color));
+            Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout());
+            panel.addChild(new BlockRender(minecraft, this).setRenderItem(block));
+            panel.addChild(new Label(minecraft, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(90));
+            panel.addChild(new Label(minecraft, this).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setColor(color));
             list.addChild(panel);
 
             index++;

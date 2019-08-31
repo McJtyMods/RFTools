@@ -4,8 +4,10 @@ import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RLE;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.*;
 
@@ -95,7 +97,8 @@ public class ShapeDataManagerServer {
                 int cnt = ShapeCardItem.getRenderPositions(card, solid, positions, statePalette, unit.getFormula(), unit.getOffsetY());
 
                 for (ServerPlayerEntity player : unit.getPlayers()) {
-                    RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(shapeID, positions, statePalette, dimension, cnt, unit.getOffsetY(), ""), player);
+                    RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(shapeID, positions, statePalette, dimension, cnt, unit.getOffsetY(), ""),
+                            player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 }
                 if (cnt > 0) {
                     pertick -= dimension.getX() * dimension.getZ();

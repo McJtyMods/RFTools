@@ -1,29 +1,18 @@
 package mcjty.rftools.playerprops;
 
-import io.netty.buffer.ByteBuf;
-import mcjty.lib.thirteen.Context;
 import mcjty.rftools.PlayerBuff;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class PacketSendBuffsToClient implements IMessage {
+public class PacketSendBuffsToClient {
     private List<PlayerBuff> buffs;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        int size = buf.readByte();
-        buffs = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            buffs.add(PlayerBuff.values()[buf.readByte()]);
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeByte(buffs.size());
         for (PlayerBuff buff : buffs) {
             buf.writeByte(buff.ordinal());
@@ -34,8 +23,12 @@ public class PacketSendBuffsToClient implements IMessage {
         buffs = null;
     }
 
-    public PacketSendBuffsToClient(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketSendBuffsToClient(PacketBuffer buf) {
+        int size = buf.readByte();
+        buffs = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            buffs.add(PlayerBuff.values()[buf.readByte()]);
+        }
     }
 
     public PacketSendBuffsToClient(Map<PlayerBuff, Integer> buffs) {
@@ -46,8 +39,8 @@ public class PacketSendBuffsToClient implements IMessage {
         return buffs;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             SendBuffsToClientHelper.setBuffs(this);
         });

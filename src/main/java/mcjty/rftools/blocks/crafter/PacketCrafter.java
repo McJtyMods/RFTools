@@ -1,19 +1,18 @@
 package mcjty.rftools.blocks.crafter;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketCrafter implements IMessage {
+public class PacketCrafter {
     private BlockPos pos;
 
     private int recipeIndex;
@@ -21,32 +20,7 @@ public class PacketCrafter implements IMessage {
     private boolean keepOne;
     private CraftingRecipe.CraftMode craftInternal;
 
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-        keepOne = buf.readBoolean();
-        craftInternal = CraftingRecipe.CraftMode.values()[buf.readByte()];
-
-        recipeIndex = buf.readByte();
-        int l = buf.readByte();
-        if (l == 0) {
-            items = null;
-        } else {
-            items = new ItemStack[l];
-            for (int i = 0 ; i < l ; i++) {
-                boolean b = buf.readBoolean();
-                if (b) {
-                    items[i] = NetworkTools.readItemStack(buf);
-                } else {
-                    items[i] = ItemStack.EMPTY;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
         buf.writeBoolean(keepOne);
         buf.writeByte(craftInternal.ordinal());
@@ -70,8 +44,26 @@ public class PacketCrafter implements IMessage {
     public PacketCrafter() {
     }
 
-    public PacketCrafter(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketCrafter(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
+        keepOne = buf.readBoolean();
+        craftInternal = CraftingRecipe.CraftMode.values()[buf.readByte()];
+
+        recipeIndex = buf.readByte();
+        int l = buf.readByte();
+        if (l == 0) {
+            items = null;
+        } else {
+            items = new ItemStack[l];
+            for (int i = 0 ; i < l ; i++) {
+                boolean b = buf.readBoolean();
+                if (b) {
+                    items[i] = NetworkTools.readItemStack(buf);
+                } else {
+                    items[i] = ItemStack.EMPTY;
+                }
+            }
+        }
     }
 
     public PacketCrafter(BlockPos pos, int recipeIndex, CraftingInventory inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
@@ -97,8 +89,8 @@ public class PacketCrafter implements IMessage {
         this.craftInternal = craftInternal;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if(!(te instanceof CrafterBaseTE)) {

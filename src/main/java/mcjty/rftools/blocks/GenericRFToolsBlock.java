@@ -32,7 +32,7 @@ public abstract class GenericRFToolsBlock extends BaseBlock {
 
 
     @Override
-    protected boolean checkAccess(World world, PlayerEntity player, TileEntity te) {
+    public boolean checkAccess(World world, PlayerEntity player, TileEntity te) {
         if (SecurityConfiguration.enabled.get() && te instanceof GenericTileEntity) {
             GenericTileEntity genericTileEntity = (GenericTileEntity) te;
             if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getUniqueID().equals(genericTileEntity.getOwnerUUID()))) {

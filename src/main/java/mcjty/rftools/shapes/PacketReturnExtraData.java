@@ -1,38 +1,19 @@
 package mcjty.rftools.shapes;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PacketReturnExtraData implements IMessage {
+public class PacketReturnExtraData {
 
     private int scanId;
     private ScanExtraData data;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        scanId = buf.readInt();
-        int size = buf.readInt();
-        if (size == -1) {
-            data = null;
-        } else {
-            data = new ScanExtraData();
-            for (int i = 0; i < size; i++) {
-                BlockPos pos = NetworkTools.readPos(buf);
-                BeaconType type = BeaconType.VALUES[buf.readByte()];
-                boolean doBeacon = buf.readBoolean();
-                data.addBeacon(pos, type, doBeacon);
-            }
-        }
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(scanId);
         if (data == null) {
             buf.writeInt(-1);
@@ -50,8 +31,20 @@ public class PacketReturnExtraData implements IMessage {
     public PacketReturnExtraData() {
     }
 
-    public PacketReturnExtraData(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketReturnExtraData(PacketBuffer buf) {
+        scanId = buf.readInt();
+        int size = buf.readInt();
+        if (size == -1) {
+            data = null;
+        } else {
+            data = new ScanExtraData();
+            for (int i = 0; i < size; i++) {
+                BlockPos pos = NetworkTools.readPos(buf);
+                BeaconType type = BeaconType.VALUES[buf.readByte()];
+                boolean doBeacon = buf.readBoolean();
+                data.addBeacon(pos, type, doBeacon);
+            }
+        }
     }
 
     public PacketReturnExtraData(int scanId, ScanExtraData extraData) {
@@ -59,8 +52,8 @@ public class PacketReturnExtraData implements IMessage {
         this.data = extraData;
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             ScanDataManagerClient.getScansClient().registerExtraDataFromServer(scanId, data);
         });
