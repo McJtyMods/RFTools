@@ -1,17 +1,6 @@
 package mcjty.rftools.commands;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
-import java.util.*;
-
-public abstract class DefaultCommand implements ICommand {
+public abstract class DefaultCommand {}/* @todo 1.14 implements ICommand {
     protected final Map<String,RfToolsCommand> commands = new HashMap<>();
 
     public DefaultCommand() {
@@ -144,3 +133,4 @@ public abstract class DefaultCommand implements ICommand {
         return getName().compareTo(o.getName());
     }
 }
+*/

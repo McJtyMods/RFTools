@@ -8,21 +8,22 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
 import static mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity.PARAM_INDEX;
 import static mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity.PARAM_STATE;
 
-public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
+public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity, GenericContainer> {
 
-    public GuiThreeLogic(ThreeLogicTileEntity threeLogicTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, threeLogicTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "threelogic");
+    public GuiThreeLogic(ThreeLogicTileEntity threeLogicTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, threeLogicTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "threelogic");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/threelogic.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
         setupEvents();

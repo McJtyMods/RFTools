@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -11,17 +12,19 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.input.Keyboard;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.List;
 
 import static mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity.*;
 
-public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntity> {
+public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntity, GenericContainer> {
 
     public static final int DIALER_WIDTH = 256;
     public static final int DIALER_HEIGHT = 224;
@@ -65,21 +68,19 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private int listDirty = 10;
 
 
-    public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "tpdialer");
-        GenericEnergyStorageTileEntity.setCurrentRF(dialingDeviceTileEntity.getStoredPower());
+    public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "tpdialer");
 
         xSize = DIALER_WIDTH;
         ySize = DIALER_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        Minecraft mc = minecraft;
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setShowText(false);
 
         Panel transmitterPanel = setupTransmitterPanel();
         Panel receiverPanel = setupReceiverPanel();
@@ -123,7 +124,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         window.event("favorite", (source, params) -> changeShowFavorite());
         window.event("check", (source, params) -> checkStatus());
 
-        Keyboard.enableRepeatEvents(true);
+        // @todo 1.14
+//        Keyboard.enableRepeatEvents(true);
 
         fromServer_receivers = null;
         fromServer_transmitters = null;
@@ -133,11 +135,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         requestReceivers();
         requestTransmitters();
-        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     private Panel setupReceiverPanel() {
-        receiverList = new WidgetList(mc, this).setName("receivers").setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
+        receiverList = new WidgetList(minecraft, this).setName("receivers").setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget<?> parent, int index) {
                 clearSelectedStatus();
@@ -148,13 +149,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedReceiver(index);
             }
         });
-        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollableName("receivers");
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(receiverList, receiverSlider).setDesiredHeight(106)
+        Slider receiverSlider = new Slider(minecraft, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollableName("receivers");
+        return new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(receiverList, receiverSlider).setDesiredHeight(106)
                 .setFilledBackground(0xff9e9e9e);
     }
 
     private Panel setupTransmitterPanel() {
-        transmitterList = new WidgetList(mc, this).setName("transmitters").setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = new WidgetList(minecraft, this).setName("transmitters").setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget<?> parent, int index) {
                 clearSelectedStatus();
@@ -166,8 +167,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedTransmitter(index);
             }
         });
-        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollableName("transmitters");
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(transmitterList, transmitterSlider).setDesiredHeight(64)
+        Slider transmitterSlider = new Slider(minecraft, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollableName("transmitters");
+        return new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(transmitterList, transmitterSlider).setDesiredHeight(64)
                 .setFilledBackground(0xff9e9e9e);
     }
 
@@ -183,7 +184,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         BlockPos c = transmitterInfo.getCoordinate();
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis() + 1000 * 5);//@todo StorageScannerConfiguration.hilightTime);
-        mc.player.closeScreen();
+        minecraft.player.closeScreen();
     }
 
     private void hilightSelectedReceiver(int index) {
@@ -193,16 +194,16 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
 
         BlockPos c = destination.getCoordinate();
-        double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(mc.player.getPositionVector());
+        double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(minecraft.player.getPositionVector());
 
-        if (destination.getDimension() != mc.world.getDimension().getType().getId() || distance > 150) {
-            Logging.warn(mc.player, "Receiver is too far to hilight!");
-            mc.player.closeScreen();
+        if (destination.getDimension() != minecraft.world.getDimension().getType().getId() || distance > 150) {
+            Logging.warn(minecraft.player, "Receiver is too far to hilight!");
+            minecraft.player.closeScreen();
             return;
         }
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*5);// @todo StorageScannerConfiguration.hilightTime);
-        Logging.message(mc.player, "The receiver is now highlighted");
-        mc.player.closeScreen();
+        Logging.message(minecraft.player, "The receiver is now highlighted");
+        minecraft.player.closeScreen();
     }
 
     private void setStatusError(String message) {
@@ -315,9 +316,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         tileEntity.requestDataFromServer(RFTools.MODID,
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 TypedMap.builder()
-                        .put(PARAM_PLAYER, mc.player.getName())
+                        .put(PARAM_PLAYER, minecraft.player.getName().getFormattedText())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
-                        .put(PARAM_TRANS_DIMENSION, mc.world.getDimension().getType().getId())
+                        .put(PARAM_TRANS_DIMENSION, minecraft.world.getDimension().getType().getId())
                         .put(PARAM_POS, destination.getCoordinate())
                         .put(PARAM_DIMENSION, destination.getDimension())
                         .build());
@@ -344,9 +345,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         tileEntity.requestDataFromServer(RFTools.MODID, DialingDeviceTileEntity.CMD_DIAL,
                 TypedMap.builder()
-                        .put(PARAM_PLAYER, mc.player.getName())
+                        .put(PARAM_PLAYER, minecraft.player.getName().getFormattedText())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
-                        .put(PARAM_TRANS_DIMENSION, mc.world.getDimension().getType().getId())
+                        .put(PARAM_TRANS_DIMENSION, minecraft.world.getDimension().getType().getId())
                         .put(PARAM_POS, null)
                         .put(PARAM_DIMENSION, 0)
                         .build());
@@ -356,7 +357,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void requestReceivers() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), mc.player.getName()));
+        // @todo 1.14 use UUID!!!
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), minecraft.player.getName().getFormattedText()));
     }
 
     private void requestTransmitters() {
@@ -384,7 +386,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         destination.setFavorite(!favorite);
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
                 TypedMap.builder()
-                    .put(PARAM_PLAYER, mc.player.getName())
+                    .put(PARAM_PLAYER, minecraft.player.getName().getFormattedText())
                     .put(PARAM_POS, destination.getCoordinate())
                     .put(PARAM_DIMENSION, destination.getDimension())
                     .put(PARAM_FAVORITE, !favorite)
@@ -429,13 +431,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
 
             boolean favorite = destination.isFavorite();
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(96).
+            Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setText(destination.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(96).
                     setTooltips("The name of the", "destination receiver:", destination.getName() + " (" + BlockPosTools.toString(coordinate) + ")"));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setText(dimName).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                     .setDynamic(true).setTooltips("The name of the", "destination dimension:", dimName)
                     .setDesiredWidth(110));
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeFavorite()).setDesiredWidth(10);
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(minecraft, this).addChoiceEvent((parent, newChoice) -> changeFavorite()).setDesiredWidth(10);
             choiceLabel.addChoice("No", "Not favorited", guielements, 131, 19);
             choiceLabel.addChoice("Yes", "Favorited", guielements, 115, 19);
             choiceLabel.setCurrentChoice(favorite ? 1 : 0);
@@ -474,10 +476,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             BlockPos coordinate = transmitterInfo.getCoordinate();
             TeleportDestination destination = transmitterInfo.getTeleportDestination();
 
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(102));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(90));
-            panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
+            Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(3));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setText(transmitterInfo.getName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(102));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(90));
+            panel.addChild(new ImageLabel(minecraft, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }
 
@@ -507,9 +509,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         enableButtons();
 
         drawWindow();
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
     }
 
     private void requestListsIfNeeded() {
@@ -534,7 +537,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return "?";
         }
 
-        return DialingDeviceTileEntity.calculateDistance(mc.world, transmitterInfo, teleportDestination);
+        return DialingDeviceTileEntity.calculateDistance(minecraft.world, transmitterInfo, teleportDestination);
     }
 
     private TransmitterInfo getSelectedTransmitter(int transmitterSelected) {

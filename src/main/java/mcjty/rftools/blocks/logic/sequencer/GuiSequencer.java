@@ -10,23 +10,24 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
+public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity, GenericContainer> {
 
     private List<ImageChoiceLabel> bits = new ArrayList<>();
 
-    public GuiSequencer(SequencerTileEntity sequencerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, sequencerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "sequencer");
+    public GuiSequencer(SequencerTileEntity sequencerTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, sequencerTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "sequencer");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/sequencer.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
         setupEvents();

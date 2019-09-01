@@ -1,8 +1,9 @@
 package mcjty.rftools.compat.wheelsupport;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,7 +26,7 @@ public class FindBlockClient {
 
         int slot = player.inventory.getSlotFor(result);
         if (slot != -1) {
-            if (InventoryPlayer.isHotbar(slot)) {
+            if (PlayerInventory.isHotbar(slot)) {
                 player.inventory.currentItem = slot;
             } else {
                 Minecraft.getInstance().playerController.pickItem(slot);

@@ -4,7 +4,7 @@ import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.varia.BlockPosTools;
@@ -24,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 
 
 
-public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity {
+public class MatterBeamerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final int TICKTIME = 20;
 

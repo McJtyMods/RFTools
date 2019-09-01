@@ -1,15 +1,16 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EnergyTools;
-import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
@@ -18,13 +19,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static mcjty.rftools.blocks.monitor.MonitorSetup.TYPE_ENERGY_MONITOR;
+
 public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITickableTileEntity {
     // Data that is saved
     private BlockPos monitor;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
     private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
 
-    public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
+    public static IntegerProperty LEVEL = IntegerProperty.create("level", 0, 5);
 
     public static final String CMD_GETADJACENTBLOCKS = "getAdj";
     public static final String CLIENTCMD_ADJACENTBLOCKSREADY = "adjReady";
@@ -34,6 +37,10 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
 
     private int rflevel = 0;
     private boolean inAlarm = false;
+
+    public RFMonitorBlockTileEntity() {
+        super(TYPE_ENERGY_MONITOR);
+    }
 
     public RFMonitorMode getAlarmMode() {
         return alarmMode;
@@ -91,13 +98,13 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         List<BlockPos> adjacentBlocks = new ArrayList<>();
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < getWorld().getHeight()) {
+            if (yy >= 0 && yy < world.getHeight()) {
                 for (int dz = -1 ; dz <= 1 ; dz++) {
                     int zz = z + dz;
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
+                            TileEntity tileEntity = world.getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null) {
                                 if (EnergyTools.isEnergyTE(tileEntity, null)) {
                                     adjacentBlocks.add(new BlockPos(xx, yy, zz));
@@ -112,8 +119,8 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -130,7 +137,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         }
         counter = 20;
 
-        TileEntity tileEntity = getWorld().getTileEntity(monitor);
+        TileEntity tileEntity = world.getTileEntity(monitor);
         if (!EnergyTools.isEnergyTE(tileEntity, null)) {
             setInvalid();
             return;
@@ -175,47 +182,47 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     private void setRedstoneOut(boolean a) {
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
+        world.notifyNeighborsOfStateChange(this.pos, MonitorSetup.monitorBlock);
     }
 
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         if (tagCompound.contains("monitorX")) {
             monitor = new BlockPos(tagCompound.getInt("monitorX"), tagCompound.getInt("monitorY"), tagCompound.getInt("monitorZ"));
         } else {
             monitor = null;
         }
         inAlarm = tagCompound.getBoolean("inAlarm");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         rflevel = tagCompound.getInt("rflevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
         alarmLevel = tagCompound.getByte("alarmLevel");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         if (monitor != null) {
             tagCompound.putInt("monitorX", monitor.getX());
             tagCompound.putInt("monitorY", monitor.getY());
             tagCompound.putInt("monitorZ", monitor.getZ());
         }
         tagCompound.putBoolean("inAlarm", inAlarm);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putInt("rflevel", getRflevel());
-        tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
-        tagCompound.setByte("alarmLevel", (byte) alarmLevel);
+        tagCompound.putByte("alarmMode", (byte) alarmMode.getIndex());
+        tagCompound.putByte("alarmLevel", (byte) alarmLevel);
     }
 
     @Nonnull
@@ -244,16 +251,16 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         return false;
     }
 
-
-    @Override
-    public BlockState getActualState(BlockState state) {
-        int level = getRflevel();
-        return state.withProperty(LEVEL, level);
-    }
+// @todo 1.14
+//    @Override
+//    public BlockState getActualState(BlockState state) {
+//        int level = getRflevel();
+//        return state.withProperty(LEVEL, level);
+//    }
 
     @Override
     public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-        Direction direction = state.getValue(BaseBlock.FACING);
+        Direction direction = state.get(BlockStateProperties.FACING);
         if (side == direction) {
             return isPowered() ? 15 : 0;
         }

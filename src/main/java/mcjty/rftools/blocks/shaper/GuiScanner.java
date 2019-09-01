@@ -9,7 +9,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
@@ -20,15 +20,15 @@ import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Mouse;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.awt.*;
-import java.io.IOException;
 
-public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implements IShapeParentGui {
+public class GuiScanner extends GenericGuiContainer<ScannerTileEntity, GenericContainer> implements IShapeParentGui {
 
     public static final int SCANNER_WIDTH = 256;
     public static final int SCANNER_HEIGHT = 238;
@@ -51,15 +51,15 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private ShapeRenderer shapeRenderer = null;
     private int filterCnt = 0;
 
-    public GuiScanner(ScannerTileEntity shaperTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "scanner");
+    public GuiScanner(ScannerTileEntity shaperTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, inventory, GuiProxy.GUI_MANUAL_SHAPE, "scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;
     }
 
-    public GuiScanner(RemoteScannerTileEntity shaperTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "remote_scanner");
+    public GuiScanner(RemoteScannerTileEntity shaperTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, inventory, GuiProxy.GUI_MANUAL_SHAPE, "remote_scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;
@@ -79,16 +79,14 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(8, 120, 70, 10).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        energyBar = new EnergyBar(minecraft, this).setHorizontal().setLayoutHint(8, 120, 70, 10).setShowText(false);
         toplevel.addChild(energyBar);
 
         ImageChoiceLabel redstoneMode = initRedstoneMode();
@@ -98,34 +96,34 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         showOuter = ShapeGuiTools.createBoxButton(this, toplevel, 31, 176);
         showScan = ShapeGuiTools.createScanButton(this, toplevel, 57, 176);
 
-        scanButton = new Button(mc, this)
+        scanButton = new Button(minecraft, this)
                 .setName("scan")
                 .setText("Scan")
                 .setLayoutHint(5, 156, 40, 16);
         toplevel.addChild(scanButton);
 
-        toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(4, 30, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(20, 30, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(45, 30, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("E").addButtonEvent(parent -> move(16, 0, 0)).setLayoutHint(61, 30, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(4, 30, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(20, 30, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(45, 30, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("E").addButtonEvent(parent -> move(16, 0, 0)).setLayoutHint(61, 30, 16, 15));
 
-        toplevel.addChild(new Button(mc, this).setText("S").addButtonEvent(parent -> move(0, 0, -16)).setLayoutHint(4, 50, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("s").addButtonEvent(parent -> move(0, 0, -1)).setLayoutHint(20, 50, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("n").addButtonEvent(parent -> move(0, 0, 1)).setLayoutHint(45, 50, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("N").addButtonEvent(parent -> move(0, 0, 16)).setLayoutHint(61, 50, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("S").addButtonEvent(parent -> move(0, 0, -16)).setLayoutHint(4, 50, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("s").addButtonEvent(parent -> move(0, 0, -1)).setLayoutHint(20, 50, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("n").addButtonEvent(parent -> move(0, 0, 1)).setLayoutHint(45, 50, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("N").addButtonEvent(parent -> move(0, 0, 16)).setLayoutHint(61, 50, 16, 15));
 
-        toplevel.addChild(new Button(mc, this).setText("D").addButtonEvent(parent -> move(0, -16, 0)).setLayoutHint(4, 70, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("d").addButtonEvent(parent -> move(0, -1, 0)).setLayoutHint(20, 70, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(45, 70, 16, 15));
-        toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(61, 70, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("D").addButtonEvent(parent -> move(0, -16, 0)).setLayoutHint(4, 70, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("d").addButtonEvent(parent -> move(0, -1, 0)).setLayoutHint(20, 70, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(45, 70, 16, 15));
+        toplevel.addChild(new Button(minecraft, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(61, 70, 16, 15));
 
-        offsetLabel = new Label(mc, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+        offsetLabel = new Label(minecraft, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         offsetLabel.setLayoutHint(4, 90, 80, 14);
         toplevel.addChild(offsetLabel);
-        dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+        dimensionLabel = new Label(minecraft, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         dimensionLabel.setLayoutHint(4, 105, 80, 14);
         toplevel.addChild(dimensionLabel);
-        progressLabel = new Label(mc, this).setText("");
+        progressLabel = new Label(minecraft, this).setText("");
         progressLabel.setLayoutHint(4, 135, 80, 14);
         toplevel.addChild(progressLabel);
 
@@ -136,7 +134,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         move(0, 0, 0);
 
         filterCnt = countFilters();
-        tileEntity.requestRfFromServer(RFTools.MODID);
 
         window.action(RFToolsMessages.INSTANCE, "scan", tileEntity, ScannerTileEntity.ACTION_SCAN);
         window.bind(RFToolsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
@@ -144,7 +141,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     }
 
     private ImageChoiceLabel initRedstoneMode() {
-        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(minecraft, this).
                 setName("redstone").
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
@@ -155,13 +152,13 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     private int countFilters() {
         int cnt = 0;
-        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_IN).getHasStack()) {
+        if (container.getSlot(ScannerTileEntity.SLOT_IN).getHasStack()) {
             cnt++;
         }
-        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_FILTER).getHasStack()) {
+        if (container.getSlot(ScannerTileEntity.SLOT_FILTER).getHasStack()) {
             cnt++;
         }
-        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_MODIFIER).getHasStack()) {
+        if (container.getSlot(ScannerTileEntity.SLOT_MODIFIER).getHasStack()) {
             cnt++;
         }
         return cnt;
@@ -175,16 +172,17 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         tileEntity.valueToServer(network, ScannerTileEntity.VALUE_OFFSET, new BlockPos(offsetX, offsetY, offsetZ));
     }
 
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        x -= guiLeft;
-        y -= guiTop;
-
-        getShapeRenderer().handleShapeDragging(x, y);
-    }
+    // @todo 1.14 what replaces this?
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        super.handleMouseInput();
+//        int x = Mouse.getEventX() * width / mc.displayWidth;
+//        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+//        x -= guiLeft;
+//        y -= guiTop;
+//
+//        getShapeRenderer().handleShapeDragging(x, y);
+//    }
 
     @Override
     public int getPreviewLeft() {
@@ -206,11 +204,14 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
         drawWindow();
 
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        Long currentRF = tileEntity.getCapability(CapabilityEnergy.ENERGY).map(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage) e).getCapacity());
+            long energy = ((GenericEnergyStorage) e).getEnergy();
+            energyBar.setValue(energy);
+            return energy;
+        }).orElse(0L);
 
-        boolean instack = inventorySlots.getSlot(ScannerTileEntity.SLOT_IN).getHasStack();
+        boolean instack = container.getSlot(ScannerTileEntity.SLOT_IN).getHasStack();
         if (currentRF < ScannerConfiguration.SCANNER_PERTICK.get()) {
             instack = false;
         }

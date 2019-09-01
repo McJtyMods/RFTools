@@ -1,17 +1,6 @@
 package mcjty.rftools.compat.wheelsupport;
 
-import mcjty.intwheel.api.IWheelAction;
-import mcjty.intwheel.api.WheelActionElement;
-import mcjty.rftools.blocks.screens.ScreenBlock;
-import mcjty.rftools.blocks.screens.ScreenHitBlock;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
-
-public class ToggleScreenTransparentAction implements IWheelAction {
+public class ToggleScreenTransparentAction {} /* @todo 1.14 implements IWheelAction {
 
     public static final String ACTION_TOGGLESCREENTRANSPARENT = "rftools.toggletransp";
 
@@ -48,3 +37,4 @@ public class ToggleScreenTransparentAction implements IWheelAction {
         }
     }
 }
+*/

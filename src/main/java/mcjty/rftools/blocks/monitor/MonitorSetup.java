@@ -16,6 +16,9 @@ public class MonitorSetup {
     @ObjectHolder("rftools:liquid_monitor")
     public static TileEntityType<?> TYPE_LIQUID_MONITOR;
 
+    @ObjectHolder("rftools:energy_monitor")
+    public static TileEntityType<?> TYPE_ENERGY_MONITOR;
+
     public static void init() {
         monitorBlock = ModBlocks.builderFactory.<RFMonitorBlockTileEntity> builder("rf_monitor")
                 .tileEntityClass(RFMonitorBlockTileEntity.class)
