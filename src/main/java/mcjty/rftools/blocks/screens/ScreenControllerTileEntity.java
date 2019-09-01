@@ -1,29 +1,26 @@
 package mcjty.rftools.blocks.screens;
 
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.IAction;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
+import static mcjty.rftools.blocks.screens.ScreenSetup.TYPE_SCREEN_CONTROLLER;
+
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft"),
-})
-public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity, SimpleComponent { // implements IPeripheral {
+//})
+public class ScreenControllerTileEntity extends GenericTileEntity implements ITickableTileEntity { // implements IPeripheral {
 
     public static final String ACTION_SCAN = "scan";
     public static final String ACTION_DETACH = "detach";
@@ -38,11 +35,13 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     public static final String COMPONENT_NAME = "screen_controller";
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScreenConfiguration.CONTROLLER_MAXENERGY.get(), ScreenConfiguration.CONTROLLER_RECEIVEPERTICK.get()));
+
     private List<BlockPos> connectedScreens = new ArrayList<>();
     private int tickCounter = 20;
 
     public ScreenControllerTileEntity() {
-        super(ScreenConfiguration.CONTROLLER_MAXENERGY.get(), ScreenConfiguration.CONTROLLER_RECEIVEPERTICK.get());
+        super(TYPE_SCREEN_CONTROLLER);
     }
 
 //    @Override
@@ -89,43 +88,43 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //        return false;
 //    }
 
-    @Override
-    @Optional.Method(modid = "opencomputers")
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
+//    @Override
+//    @Optional.Method(modid = "opencomputers")
+//    public String getComponentName() {
+//        return COMPONENT_NAME;
+//    }
+//
+//    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] getScreenCount(Context context, Arguments args) {
+//        return new Object[] { connectedScreens.size() };
+//    }
+//
+//    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] getScreens(Context context, Arguments args) {
+//        List<Map<String,Integer>> result = new ArrayList<>();
+//        for (BlockPos screen : connectedScreens) {
+//            Map<String,Integer> coordinate = new HashMap<>();
+//            coordinate.put("x", screen.getX());
+//            coordinate.put("y", screen.getY());
+//            coordinate.put("z", screen.getZ());
+//            result.add(coordinate);
+//        }
+//
+//        return new Object[] { result };
+//    }
 
-    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] getScreenCount(Context context, Arguments args) {
-        return new Object[] { connectedScreens.size() };
-    }
-
-    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] getScreens(Context context, Arguments args) {
-        List<Map<String,Integer>> result = new ArrayList<>();
-        for (BlockPos screen : connectedScreens) {
-            Map<String,Integer> coordinate = new HashMap<>();
-            coordinate.put("x", screen.getX());
-            coordinate.put("y", screen.getY());
-            coordinate.put("z", screen.getZ());
-            result.add(coordinate);
-        }
-
-        return new Object[] { result };
-    }
-
-    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
-        Map screen = args.checkTable(0);
-        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
-            throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
-        }
-        BlockPos recC = new BlockPos(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
-        return getScreenIndex(recC);
-    }
+//    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
+//        Map screen = args.checkTable(0);
+//        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
+//            throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
+//        }
+//        BlockPos recC = new BlockPos(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
+//        return getScreenIndex(recC);
+//    }
 
     private Object[] getScreenIndex(BlockPos coordinate) {
         int i = 0;
@@ -139,43 +138,43 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
-        int index = args.checkInteger(0);
-        if (index < 0 || index >= connectedScreens.size()) {
-            throw new IllegalArgumentException("Screen index out of range!");
-        }
-        BlockPos screen = connectedScreens.get(index);
-        Map<String,Integer> coordinate = new HashMap<>();
-        coordinate.put("x", screen.getX());
-        coordinate.put("y", screen.getY());
-        coordinate.put("z", screen.getZ());
+//    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
+//        int index = args.checkInteger(0);
+//        if (index < 0 || index >= connectedScreens.size()) {
+//            throw new IllegalArgumentException("Screen index out of range!");
+//        }
+//        BlockPos screen = connectedScreens.get(index);
+//        Map<String,Integer> coordinate = new HashMap<>();
+//        coordinate.put("x", screen.getX());
+//        coordinate.put("y", screen.getY());
+//        coordinate.put("z", screen.getZ());
+//
+//        return new Object[] { coordinate };
+//    }
 
-        return new Object[] { coordinate };
-    }
 
+//    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] addText(Context context, Arguments args) {
+//        String tag = args.checkString(0);
+//        String text = args.checkString(1);
+//        int color = args.checkInteger(2);
+//
+//        return addText(tag, text, color);
+//    }
 
-    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] addText(Context context, Arguments args) {
-        String tag = args.checkString(0);
-        String text = args.checkString(1);
-        int color = args.checkInteger(2);
-
-        return addText(tag, text, color);
-    }
-
-    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] setText(Context context, Arguments args) {
-        String tag = args.checkString(0);
-        String text = args.checkString(1);
-        int color = args.checkInteger(2);
-
-        clearText(tag);
-        return addText(tag, text, color);
-    }
+//    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] setText(Context context, Arguments args) {
+//        String tag = args.checkString(0);
+//        String text = args.checkString(1);
+//        int color = args.checkInteger(2);
+//
+//        clearText(tag);
+//        return addText(tag, text, color);
+//    }
 
     private Object[] setText(String tag, String text, int color) {
         clearText(tag);
@@ -184,7 +183,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     private Object[] addText(String tag, String text, int color) {
         for (BlockPos screen : connectedScreens) {
-            TileEntity te = getWorld().getTileEntity(screen);
+            TileEntity te = world.getTileEntity(screen);
             if (te instanceof ScreenTileEntity) {
                 ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
@@ -198,17 +197,17 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] clearText(Context context, Arguments args) {
-        String tag = args.checkString(0);
-
-        return clearText(tag);
-    }
+//    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] clearText(Context context, Arguments args) {
+//        String tag = args.checkString(0);
+//
+//        return clearText(tag);
+//    }
 
     private Object[] clearText(String tag) {
         for (BlockPos screen : connectedScreens) {
-            TileEntity te = getWorld().getTileEntity(screen);
+            TileEntity te = world.getTileEntity(screen);
             if (te instanceof ScreenTileEntity) {
                 ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
@@ -222,24 +221,24 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         return null;
     }
 
-    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] getTags(Context context, Arguments args) {
-        List<String> tags = new ArrayList<>();
-        for (BlockPos screen : connectedScreens) {
-            TileEntity te = getWorld().getTileEntity(screen);
-            if (te instanceof ScreenTileEntity) {
-                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-                tags.addAll(screenTileEntity.getTags());
-            }
-        }
-        return new Object[] { tags };
-    }
+//    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] getTags(Context context, Arguments args) {
+//        List<String> tags = new ArrayList<>();
+//        for (BlockPos screen : connectedScreens) {
+//            TileEntity te = world.getTileEntity(screen);
+//            if (te instanceof ScreenTileEntity) {
+//                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+//                tags.addAll(screenTileEntity.getTags());
+//            }
+//        }
+//        return new Object[] { tags };
+//    }
 
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         int[] xes = tagCompound.getIntArray("screensx");
         int[] yes = tagCompound.getIntArray("screensy");
         int[] zes = tagCompound.getIntArray("screensz");
@@ -247,16 +246,12 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         for (int i = 0 ; i < xes.length ; i++) {
             connectedScreens.add(new BlockPos(xes[i], yes[i], zes[i]));
         }
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
     }
 
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-    }
-
-    @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         int[] xes = new int[connectedScreens.size()];
         int[] yes = new int[connectedScreens.size()];
         int[] zes = new int[connectedScreens.size()];
@@ -266,20 +261,16 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             yes[i] = c.getY();
             zes[i] = c.getZ();
         }
-        tagCompound.setIntArray("screensx", xes);
-        tagCompound.setIntArray("screensy", yes);
-        tagCompound.setIntArray("screensz", zes);
+        tagCompound.putIntArray("screensx", xes);
+        tagCompound.putIntArray("screensy", yes);
+        tagCompound.putIntArray("screensz", zes);
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         return tagCompound;
     }
 
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-    }
-
-    @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -290,41 +281,43 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             return;
         }
         tickCounter = 20;
-        long rf = getStoredPower();
-        long rememberRf = rf;
-        boolean fixesAreNeeded = false;
-        for (BlockPos c : connectedScreens) {
-            TileEntity te = getWorld().getTileEntity(c);
-            if (te instanceof ScreenTileEntity) {
-                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-                int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
-
-                if (rfModule > rf) {
-                    screenTileEntity.setPower(false);
-                } else {
-                    rf -= rfModule;
-                    screenTileEntity.setPower(true);
-                }
-            } else {
-                // This coordinate is no longer a valid screen. We need to update.
-                fixesAreNeeded = true;
-            }
-        }
-        if (rf < rememberRf) {
-            consumeEnergy(rememberRf - rf);
-        }
-
-        if (fixesAreNeeded) {
-            List<BlockPos> newScreens = new ArrayList<>();
+        energyHandler.ifPresent(h -> {
+            long rf = h.getEnergy();
+            long rememberRf = rf;
+            boolean fixesAreNeeded = false;
             for (BlockPos c : connectedScreens) {
-                TileEntity te = getWorld().getTileEntity(c);
+                TileEntity te = world.getTileEntity(c);
                 if (te instanceof ScreenTileEntity) {
-                    newScreens.add(c);
+                    ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                    int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
+
+                    if (rfModule > rf) {
+                        screenTileEntity.setPower(false);
+                    } else {
+                        rf -= rfModule;
+                        screenTileEntity.setPower(true);
+                    }
+                } else {
+                    // This coordinate is no longer a valid screen. We need to update.
+                    fixesAreNeeded = true;
                 }
             }
-            connectedScreens = newScreens;
-            markDirtyClient();
-        }
+            if (rf < rememberRf) {
+                h.consumeEnergy(rememberRf - rf);
+            }
+
+            if (fixesAreNeeded) {
+                List<BlockPos> newScreens = new ArrayList<>();
+                for (BlockPos c : connectedScreens) {
+                    TileEntity te = world.getTileEntity(c);
+                    if (te instanceof ScreenTileEntity) {
+                        newScreens.add(c);
+                    }
+                }
+                connectedScreens = newScreens;
+                markDirtyClient();
+            }
+        });
     }
 
     private void scan() {
@@ -339,8 +332,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
                 for (int x = xCoord - radius; x <= xCoord + radius; x++) {
                     for (int z = zCoord - radius; z <= zCoord + radius; z++) {
                         BlockPos spos = new BlockPos(x, y, z);
-                        if (getWorld().getBlockState(spos).getBlock() instanceof ScreenBlock) {
-                            TileEntity te = getWorld().getTileEntity(spos);
+                        if (world.getBlockState(spos).getBlock() instanceof ScreenBlock) {
+                            TileEntity te = world.getTileEntity(spos);
                             if (te instanceof ScreenTileEntity) {
                                 ScreenTileEntity ste = (ScreenTileEntity)te;
                                 if (!ste.isConnected() && ste.isControllerNeeded()) {
@@ -358,7 +351,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     public void detach() {
         for (BlockPos c : connectedScreens) {
-            TileEntity te = getWorld().getTileEntity(c);
+            TileEntity te = world.getTileEntity(c);
             if (te instanceof ScreenTileEntity) {
                 ((ScreenTileEntity) te).setPower(false);
                 ((ScreenTileEntity) te).setConnected(false);

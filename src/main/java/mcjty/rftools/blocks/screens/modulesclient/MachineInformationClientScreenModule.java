@@ -61,12 +61,12 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 labcolor = tagCompound.getInt("color");
             } else {
                 labcolor = 0xffffff;
             }
-            if (tagCompound.hasKey("txtcolor")) {
+            if (tagCompound.contains("txtcolor")) {
                 txtcolor = tagCompound.getInt("txtcolor");
             } else {
                 txtcolor = 0xffffff;
@@ -78,8 +78,8 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
 
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

@@ -1,65 +1,62 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.gui.GenericGuiContainer;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
-
-import org.lwjgl.input.Keyboard;
-
+import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.function.BiFunction;
 
-public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerTileEntity, ScreenControllerContainer> implements Infusable {
+public class ScreenControllerBlock extends GenericRFToolsBlock implements Infusable {
 
     public ScreenControllerBlock() {
-        super(Material.IRON, ScreenControllerTileEntity.class, ScreenControllerContainer::new, "screen_controller", false);
+        super("screen_controller", new BlockBuilder()
+            .tileEntitySupplier(ScreenControllerTileEntity::new));
     }
 
-    @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_SCREENCONTROLLER;
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public BiFunction<ScreenControllerTileEntity, ScreenControllerContainer, GenericGuiContainer<? super ScreenControllerTileEntity>> getGuiFactory() {
+//        return GuiScreenController::new;
+//    }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public BiFunction<ScreenControllerTileEntity, ScreenControllerContainer, GenericGuiContainer<? super ScreenControllerTileEntity>> getGuiFactory() {
-        return GuiScreenController::new;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
 
         if (McJtyLib.proxy.isShiftKeyDown()) {
-            list.add(TextFormatting.WHITE + "Before screens can work they need to get power from");
-            list.add(TextFormatting.WHITE + "this controller. Even a screen that has only modules");
-            list.add(TextFormatting.WHITE + "that require no power will need to have a controller.");
-            list.add(TextFormatting.WHITE + "One controller can power many screens as long as they");
-            list.add(TextFormatting.WHITE + "are in range.");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: increased range for screens.");
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Before screens can work they need to get power from"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "this controller. Even a screen that has only modules"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "that require no power will need to have a controller."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "One controller can power many screens as long as they"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "are in range."));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Infusing bonus: increased range for screens."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, BlockState state) {
+    public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newstate, boolean isMoving) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof ScreenControllerTileEntity) {
                 ((ScreenControllerTileEntity) tileEntity).detach();
             }
         }
-        super.breakBlock(world, pos, state);
+        super.onReplaced(state, world, pos, newstate, isMoving);
     }
 }

@@ -57,13 +57,13 @@ public class TextClientScreenModule implements IClientScreenModule<IModuleData> 
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
             cache.large(tagCompound.getBoolean("large"));
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 cache.align(TextAlign.get(alignment));
             } else {

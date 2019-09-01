@@ -27,7 +27,7 @@ public class ClockModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag advanced) {
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag advanced) {
         super.addInformation(itemStack, world, list, advanced);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.CLOCK_RFPERTICK.get() + " RF/tick"));
     }

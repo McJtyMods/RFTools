@@ -60,26 +60,26 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
             int rfcolor;
-            if (tagCompound.hasKey("rfcolor")) {
+            if (tagCompound.contains("rfcolor")) {
                 rfcolor = tagCompound.getInt("rfcolor");
             } else {
                 rfcolor = 0xffffff;
             }
             int rfcolorNeg;
-            if (tagCompound.hasKey("rfcolor_neg")) {
+            if (tagCompound.contains("rfcolor_neg")) {
                 rfcolorNeg = tagCompound.getInt("rfcolor_neg");
             } else {
                 rfcolorNeg = 0xffffff;
             }
             rfRenderer.color(rfcolor, rfcolorNeg);
 
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 labelCache.align(TextAlign.get(alignment));
             } else {
@@ -101,8 +101,8 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
 
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

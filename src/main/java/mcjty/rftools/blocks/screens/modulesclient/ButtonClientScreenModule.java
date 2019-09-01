@@ -82,18 +82,18 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         if (tagCompound != null) {
             line = tagCompound.getString("text");
             button = tagCompound.getString("button");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
-            if (tagCompound.hasKey("buttonColor")) {
+            if (tagCompound.contains("buttonColor")) {
                 buttonColor = tagCompound.getInt("buttonColor");
             } else {
                 buttonColor = 0xffffff;
             }
             toggle = tagCompound.getBoolean("toggle");
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 labelCache.align(TextAlign.get(alignment));
             } else {

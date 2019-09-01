@@ -4,12 +4,13 @@ import mcjty.lib.varia.Check32;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class Formulas {
         @Override
         public void getCheckSumClient(CompoundNBT tc, Check32 crc) {
             ShapeCardItem.getLocalChecksum(tc, crc);
-            int scanId = tc.getInteger("scanid");
+            int scanId = tc.getInt("scanid");
             crc.add(scanId);
             crc.add(ScanDataManagerClient.getScansClient().getScanDirtyCounterClient(scanId));
         }
@@ -94,7 +95,7 @@ public class Formulas {
 
             palette.clear();
 
-            int scanId = card.getInteger("scanid");
+            int scanId = card.getInt("scanid");
             if (scanId != 0) {
                 Scan scan = ScanDataManager.getScans().loadScan(scanId);
                 palette = new ArrayList<>(scan.getMaterialPalette());
@@ -207,9 +208,9 @@ public class Formulas {
                 return;
             }
 
-            ListNBT children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < children.tagCount() ; i++) {
-                CompoundNBT childTag = children.getCompoundTagAt(i);
+            ListNBT children = card.getList("children", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < children.size() ; i++) {
+                CompoundNBT childTag = children.getCompound(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
 
                 String op = childTag.getString("mod_op");
@@ -230,11 +231,10 @@ public class Formulas {
                 bounds.add(new Bounds(tl, tl.add(dim), o));
 
                 BlockState state = null;
-                if (childTag.hasKey("ghost_block")) {
+                if (childTag.contains("ghost_block")) {
                     Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
                     if (block != null) {
-                        int meta = childTag.getInteger("ghost_meta");
-                        state = block.getStateFromMeta(meta);
+                        state = block.getDefaultState();
                     }
                 }
                 blockStates.add(state);
@@ -244,9 +244,9 @@ public class Formulas {
         @Override
         public void getCheckSumClient(CompoundNBT tc, Check32 crc) {
             ShapeCardItem.getLocalChecksum(tc, crc);
-            ListNBT children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < children.tagCount() ; i++) {
-                CompoundNBT childTag = children.getCompoundTagAt(i);
+            ListNBT children = tc.getList("children", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < children.size() ; i++) {
+                CompoundNBT childTag = children.getCompound(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
                 formula.getCheckSumClient(childTag, crc);
                 crc.add(childTag.getBoolean("mod_flipy") ? 1 : 0);
@@ -259,13 +259,11 @@ public class Formulas {
                 ShapeOperation operation = ShapeOperation.getByName(op);
                 crc.add(operation.ordinal());
 
-                if (childTag.hasKey("ghost_block")) {
+                if (childTag.contains("ghost_block")) {
                     BlockState state = null;
                     Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
                     if (block != null) {
-                        crc.add(Block.getIdFromBlock(block));
-                        int meta = childTag.getInteger("ghost_meta");
-                        crc.add(meta);
+                        crc.add(Block.getStateId(block.getDefaultState()));
                     }
                 }
             }

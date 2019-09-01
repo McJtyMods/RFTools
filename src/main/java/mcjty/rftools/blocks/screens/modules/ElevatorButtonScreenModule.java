@@ -122,8 +122,8 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("elevatorx")) {
-                if (tagCompound.hasKey("elevatordim")) {
+            if (tagCompound.contains("elevatorx")) {
+                if (tagCompound.contains("elevatordim")) {
                     this.dim = tagCompound.getInt("elevatordim");
                 } else {
                     // Compatibility reasons

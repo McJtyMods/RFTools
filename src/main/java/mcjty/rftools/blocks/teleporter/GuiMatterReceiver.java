@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -12,13 +13,14 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.awt.*;
 import java.util.*;
@@ -26,7 +28,7 @@ import java.util.List;
 
 import static mcjty.rftools.blocks.teleporter.MatterReceiverTileEntity.PARAM_PLAYER;
 
-public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEntity> {
+public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEntity, GenericContainer> {
     public static final int MATTER_WIDTH = 180;
     public static final int MATTER_HEIGHT = 160;
     public static final String ACCESS_PRIVATE = "Private";
@@ -49,52 +51,49 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
     }
 
 
-    public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, matterReceiverTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "tpreceiver");
-        GenericEnergyStorageTileEntity.setCurrentRF(matterReceiverTileEntity.getStoredPower());
+    public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, matterReceiverTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "tpreceiver");
 
         xSize = MATTER_WIDTH;
         ySize = MATTER_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setMaxValue(maxEnergyStored).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        energyBar = new EnergyBar(minecraft, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setShowText(false);
 
-        TextField textField = new TextField(mc, this)
+        TextField textField = new TextField(minecraft, this)
                 .setName("name")
                 .setTooltips("Use this name to", "identify this receiver", "in the dialer");
-        Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
+        Panel namePanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChild(new Label(minecraft, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
-        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
+        privateSetting = new ChoiceLabel(minecraft, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
                 setName("private").
                 setChoiceTooltip(ACCESS_PUBLIC, "Everyone can dial to this receiver").
                 setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can dial to this receiver");
-        Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
+        Panel privatePanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChild(new Label(minecraft, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
 
-        allowedPlayers = new WidgetList(mc, this).setName("allowedplayers");
-        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("allowedplayers");
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
+        allowedPlayers = new WidgetList(minecraft, this).setName("allowedplayers");
+        Slider allowedPlayerSlider = new Slider(minecraft, this).setDesiredWidth(10).setVertical().setScrollableName("allowedplayers");
+        Panel allowedPlayersPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
                 .setFilledBackground(0xff9e9e9e);
 
-        nameField = new TextField(mc, this);
-        addButton = new Button(mc, this).setChannel("addplayer").setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list");
-        delButton = new Button(mc, this).setChannel("delplayer").setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list");
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(nameField, addButton, delButton).setDesiredHeight(16);
+        nameField = new TextField(minecraft, this);
+        addButton = new Button(minecraft, this).setChannel("addplayer").setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list");
+        delButton = new Button(minecraft, this).setChannel("delplayer").setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list");
+        Panel buttonPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChildren(nameField, addButton, delButton).setDesiredHeight(16);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
                 addChildren(energyBar, namePanel, privatePanel, allowedPlayersPanel, buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);
-        Keyboard.enableRepeatEvents(true);
+        // @todo 1.14
+//        Keyboard.enableRepeatEvents(true);
 
         listDirty = 0;
         requestPlayers();
-        tileEntity.requestRfFromServer(RFTools.MODID);
 
         window.bind(RFToolsMessages.INSTANCE, "name", tileEntity, MatterReceiverTileEntity.VALUE_NAME.getName());
         window.bind(RFToolsMessages.INSTANCE, "private", tileEntity, MatterReceiverTileEntity.VALUE_PRIVATE.getName());
@@ -133,7 +132,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         players = new ArrayList<>(newPlayers);
         allowedPlayers.removeChildren();
         for (String player : players) {
-            allowedPlayers.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+            allowedPlayers.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
     }
 
@@ -152,9 +151,10 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         enableButtons();
 
         drawWindow();
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
     }
 
     private void enableButtons() {

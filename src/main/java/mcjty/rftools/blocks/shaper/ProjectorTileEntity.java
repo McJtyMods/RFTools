@@ -313,9 +313,9 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        verticalOffset = tagCompound.hasKey("offs") ? tagCompound.getFloat("offs") : .2f;
-        scale = tagCompound.hasKey("scale") ? tagCompound.getFloat("scale") : .01f;
-        angle = tagCompound.hasKey("angle") ? tagCompound.getFloat("angle") : .0f;
+        verticalOffset = tagCompound.contains("offs") ? tagCompound.getFloat("offs") : .2f;
+        scale = tagCompound.contains("scale") ? tagCompound.getFloat("scale") : .01f;
+        angle = tagCompound.contains("angle") ? tagCompound.getFloat("angle") : .0f;
         autoRotate = tagCompound.getBoolean("rot");
         scanline = tagCompound.getBoolean("scan");
         sound = tagCompound.getBoolean("sound");
@@ -329,7 +329,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInt("counter");
         for (Direction facing : Direction.HORIZONTALS) {
-            if (tagCompound.hasKey("op_"+facing.getName())) {
+            if (tagCompound.contains("op_"+facing.getName())) {
                 int index = facing.ordinal() - 2;
                 ProjectorOperation op = operations[index];
                 CompoundNBT tc = (CompoundNBT) tagCompound.getTag("op_" + facing.getName());

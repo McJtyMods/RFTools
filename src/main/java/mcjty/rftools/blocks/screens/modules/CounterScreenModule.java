@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
     protected int dim = 0;
@@ -20,7 +19,7 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
 
     @Override
     public IModuleDataInteger getData(IScreenDataHelper helper, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }
@@ -43,8 +42,8 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                if (tagCompound.hasKey("monitordim")) {
+            if (tagCompound.contains("monitorx")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons

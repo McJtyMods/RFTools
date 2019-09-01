@@ -492,7 +492,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         volume = -1;
 
         // Compatibility
-        if (tagCompound.hasKey("whitelist")) {
+        if (tagCompound.contains("whitelist")) {
             boolean wl = tagCompound.getBoolean("whitelist");
             mode = wl ? EnvironmentalMode.MODE_WHITELIST : EnvironmentalMode.MODE_BLACKLIST;
         } else {

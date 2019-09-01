@@ -67,17 +67,17 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
-            if (tagCompound.hasKey("cntcolor")) {
+            if (tagCompound.contains("cntcolor")) {
                 cntcolor = tagCompound.getInt("cntcolor");
             } else {
                 cntcolor = 0xffffff;
             }
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 labelCache.align(TextAlign.get(alignment));
             } else {
@@ -92,8 +92,8 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
 
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

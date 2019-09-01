@@ -68,7 +68,7 @@ public class RedstoneReceiverTileEntity extends RedstoneChannelTileEntity implem
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        if(tagCompound.hasKey("rs", 3 /* int */)) {
+        if(tagCompound.contains("rs", 3 /* int */)) {
             powerOutput = tagCompound.getInteger("rs");
         } else {
             powerOutput = tagCompound.getBoolean("rs") ? 15 : 0; // backwards compatibility

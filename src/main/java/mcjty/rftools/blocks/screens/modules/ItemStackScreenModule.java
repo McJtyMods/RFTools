@@ -150,16 +150,16 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
-            if (tagCompound.hasKey("slot1")) {
+            if (tagCompound.contains("slot1")) {
                 slot1 = tagCompound.getInt("slot1");
             }
-            if (tagCompound.hasKey("slot2")) {
+            if (tagCompound.contains("slot2")) {
                 slot2 = tagCompound.getInt("slot2");
             }
-            if (tagCompound.hasKey("slot3")) {
+            if (tagCompound.contains("slot3")) {
                 slot3 = tagCompound.getInt("slot3");
             }
-            if (tagCompound.hasKey("slot4")) {
+            if (tagCompound.contains("slot4")) {
                 slot4 = tagCompound.getInt("slot4");
             }
         }
@@ -167,8 +167,8 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

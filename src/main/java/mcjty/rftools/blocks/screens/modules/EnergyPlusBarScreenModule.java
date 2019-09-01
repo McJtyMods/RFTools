@@ -15,15 +15,15 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                if (tagCompound.hasKey("monitordim")) {
+            if (tagCompound.contains("monitorx")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons
                     this.dim = tagCompound.getInt("dim");
                 }
                 coordinate = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
-                if(tagCompound.hasKey("monitorside")) {
+                if(tagCompound.contains("monitorside")) {
                     side = Direction.VALUES[tagCompound.getInt("monitorside")];
                 }
             }

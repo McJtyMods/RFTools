@@ -56,8 +56,8 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                if (tagCompound.hasKey("monitordim")) {
+            if (tagCompound.contains("monitorx")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons

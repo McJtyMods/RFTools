@@ -53,7 +53,7 @@ public class ComputerModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK.get() + " RF/tick"));
     }

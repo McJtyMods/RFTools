@@ -13,8 +13,8 @@ public class CounterPlusScreenModule extends CounterScreenModule {
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                if (tagCompound.hasKey("monitordim")) {
+            if (tagCompound.contains("monitorx")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons

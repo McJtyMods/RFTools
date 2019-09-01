@@ -72,28 +72,28 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("yestext")) {
+            if (tagCompound.contains("yestext")) {
                 yestext = tagCompound.getString("yestext");
             }
-            if (tagCompound.hasKey("notext")) {
+            if (tagCompound.contains("notext")) {
                 notext = tagCompound.getString("notext");
             }
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
-            if (tagCompound.hasKey("yescolor")) {
+            if (tagCompound.contains("yescolor")) {
                 yescolor = tagCompound.getInt("yescolor");
             } else {
                 yescolor = 0xffffff;
             }
-            if (tagCompound.hasKey("nocolor")) {
+            if (tagCompound.contains("nocolor")) {
                 nocolor = tagCompound.getInt("nocolor");
             } else {
                 nocolor = 0xffffff;
             }
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 labelCache.align(TextAlign.get(alignment));
             } else {

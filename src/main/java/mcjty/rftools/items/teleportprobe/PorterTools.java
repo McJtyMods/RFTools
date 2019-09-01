@@ -27,9 +27,9 @@ public class PorterTools {
         if (tagCompound == null) {
             return;
         }
-        if (tagCompound.hasKey("target"+ index)) {
+        if (tagCompound.contains("target"+ index)) {
             int id = tagCompound.getInt("target"+ index);
-            if (tagCompound.hasKey("target") && tagCompound.getInt("target") == id) {
+            if (tagCompound.contains("target") && tagCompound.getInt("target") == id) {
                 tagCompound.removeTag("target");
             }
             tagCompound.removeTag("target"+ index);
@@ -83,7 +83,7 @@ public class PorterTools {
     }
 
     private static int checkTarget(PlayerEntity playerEntity, CompoundNBT tagCompound, TeleportDestinations destinations, int curtarget, int donext, int tgt) {
-        if (tagCompound.hasKey("target" + tgt)) {
+        if (tagCompound.contains("target" + tgt)) {
             int target = tagCompound.getInt("target" + tgt);
             GlobalCoordinate gc = destinations.getCoordinateForId(target);
             if (gc != null) {
@@ -140,14 +140,14 @@ public class PorterTools {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
 
         if (tagCompound != null) {
-            if (tagCompound.hasKey("target")) {
+            if (tagCompound.contains("target")) {
                 target = tagCompound.getInt("target");
             } else {
                 target = -1;
             }
             for (int i = 0 ; i < AdvancedChargedPorterItem.MAXTARGETS ; i++) {
                 names[i] = "";
-                if (tagCompound.hasKey("target" + i)) {
+                if (tagCompound.contains("target" + i)) {
                     targets[i] = tagCompound.getInt("target" + i);
                     GlobalCoordinate gc = destinations.getCoordinateForId(targets[i]);
                     if (gc != null) {

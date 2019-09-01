@@ -1,7 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.rftools.items.screenmodules.*;
-
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 
 public class ScreenSetup {
@@ -27,6 +28,11 @@ public class ScreenSetup {
     public static CounterPlusModuleItem counterPlusModuleItem;
     public static StorageControlModuleItem storageControlModuleItem;
     public static DumpModuleItem dumpModuleItem;
+
+    @ObjectHolder("rftools:screen")
+    public static TileEntityType<?> TYPE_SCREEN;
+    @ObjectHolder("rftools:screen_controller")
+    public static TileEntityType<?> TYPE_SCREEN_CONTROLLER;
 
     public static void init() {
         screenBlock = new ScreenBlock("screen", ScreenTileEntity.class);

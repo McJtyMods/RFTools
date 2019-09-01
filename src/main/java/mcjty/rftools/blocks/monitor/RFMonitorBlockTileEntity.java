@@ -182,7 +182,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        if (tagCompound.hasKey("monitorX")) {
+        if (tagCompound.contains("monitorX")) {
             monitor = new BlockPos(tagCompound.getInt("monitorX"), tagCompound.getInt("monitorY"), tagCompound.getInt("monitorZ"));
         } else {
             monitor = null;

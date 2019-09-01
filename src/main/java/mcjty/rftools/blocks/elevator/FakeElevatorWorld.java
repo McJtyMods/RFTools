@@ -1,15 +1,12 @@
 package mcjty.rftools.blocks.elevator;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
-
-
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -28,12 +25,6 @@ public class FakeElevatorWorld implements IBlockReader {
         positions = elevatorTileEntity.getPositions();
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return realWorld.getCombinedLight(pos, lightValue);
-    }
-
     @Nullable
     @Override
     public TileEntity getTileEntity(BlockPos pos) {
@@ -47,27 +38,7 @@ public class FakeElevatorWorld implements IBlockReader {
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
-        return !positions.contains(pos);
-    }
-
-    @Override
-    public Biome getBiome(BlockPos pos) {
-        return realWorld.getBiome(pos);
-    }
-
-    @Override
-    public int getStrongPower(BlockPos pos, Direction direction) {
-        return 0;
-    }
-
-    @Override
-    public WorldType getWorldType() {
-        return realWorld.getWorldType();
-    }
-
-    @Override
-    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
-        return getBlockState(pos).isSideSolid(this, pos, side);
+    public IFluidState getFluidState(BlockPos blockPos) {
+        return null;
     }
 }

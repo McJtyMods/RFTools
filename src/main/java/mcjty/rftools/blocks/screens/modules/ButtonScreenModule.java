@@ -31,7 +31,7 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("channel")) {
+            if (tagCompound.contains("channel")) {
                 channel = tagCompound.getInt("channel");
             }
             toggle = tagCompound.getBoolean("toggle");

@@ -12,16 +12,11 @@ import mcjty.rftools.items.envmodules.*;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 
 
@@ -29,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnvironmentalSetup {
-    public static BaseBlock<EnvironmentalControllerTileEntity, GenericContainer> environmentalControllerBlock;
+    public static BaseBlock environmentalControllerBlock;
 
     public static RegenerationEModuleItem regenerationEModuleItem;
     public static RegenerationPlusEModuleItem regenerationPlusEModuleItem;

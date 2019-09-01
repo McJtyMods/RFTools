@@ -52,13 +52,13 @@ public class DumpClientScreenModule implements IClientScreenModule<IModuleData> 
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
             }
             for (int i = 0 ; i < stacks.length ; i++) {
-                if (tagCompound.hasKey("stack"+i)) {
+                if (tagCompound.contains("stack"+i)) {
                     stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
                 }
             }

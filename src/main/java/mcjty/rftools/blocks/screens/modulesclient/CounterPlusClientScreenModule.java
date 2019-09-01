@@ -10,8 +10,8 @@ public class CounterPlusClientScreenModule extends CounterClientScreenModule {
     @Override
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

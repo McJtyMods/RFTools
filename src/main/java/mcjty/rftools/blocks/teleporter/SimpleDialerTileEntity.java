@@ -67,12 +67,12 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        if (tagCompound.hasKey("transX")) {
+        if (tagCompound.contains("transX")) {
             transmitter = new GlobalCoordinate(new BlockPos(tagCompound.getInt("transX"), tagCompound.getInt("transY"), tagCompound.getInt("transZ")), tagCompound.getInt("transDim"));
         } else {
             transmitter = null;
         }
-        if (tagCompound.hasKey("receiver")) {
+        if (tagCompound.contains("receiver")) {
             receiver = tagCompound.getInt("receiver");
         } else {
             receiver = null;

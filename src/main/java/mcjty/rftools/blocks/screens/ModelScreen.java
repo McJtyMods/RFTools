@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.model.Model;
 
 
 
-@SideOnly(Side.CLIENT)
 public class ModelScreen extends Model {
 
     private RendererModel renderer = new RendererModel(this, 0, 0);

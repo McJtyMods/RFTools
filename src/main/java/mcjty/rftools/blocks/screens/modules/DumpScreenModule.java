@@ -7,7 +7,6 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -36,8 +35,8 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.size(); i++) {
-                if (tagCompound.hasKey("stack" + i)) {
-                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
+                if (tagCompound.contains("stack" + i)) {
+                    stacks.set(i, ItemStack.read(tagCompound.getCompound("stack" + i)));
                 }
             }
         }
@@ -46,8 +45,8 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         oredict = tagCompound.getBoolean("oredict");
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons
@@ -69,11 +68,12 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
         if (stack.isEmpty()) {
             return false;
         }
-        for (ItemStack s : stacks) {
-            if (StorageScannerTileEntity.isItemEqual(stack, s, oredict)) {
-                return true;
-            }
-        }
+// @todo 1.14
+        //        for (ItemStack s : stacks) {
+//            if (StorageScannerTileEntity.isItemEqual(stack, s, oredict)) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
@@ -87,21 +87,22 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
             return;
         }
 
-        StorageScannerTileEntity scannerTileEntity = StorageControlScreenModule.getStorageScanner(dim, coordinate);
-        if (scannerTileEntity == null) {
-            return;
-        }
-        int xoffset = 5;
-        if (x >= xoffset) {
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                if (isShown(player.inventory.getStackInSlot(i))) {
-                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.inventory.getStackInSlot(i), player);
-                    player.inventory.setInventorySlotContents(i, stack);
-                }
-            }
-            player.openContainer.detectAndSendChanges();
-            return;
-        }
+        // @todo 1.14
+//        StorageScannerTileEntity scannerTileEntity = StorageControlScreenModule.getStorageScanner(dim, coordinate);
+//        if (scannerTileEntity == null) {
+//            return;
+//        }
+//        int xoffset = 5;
+//        if (x >= xoffset) {
+//            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+//                if (isShown(player.inventory.getStackInSlot(i))) {
+//                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.inventory.getStackInSlot(i), player);
+//                    player.inventory.setInventorySlotContents(i, stack);
+//                }
+//            }
+//            player.openContainer.detectAndSendChanges();
+//            return;
+//        }
     }
 
     @Override

@@ -369,7 +369,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         matter[0] = tagCompound.getFloat("matter0");
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
-        if (tagCompound.hasKey("mobId")) {
+        if (tagCompound.contains("mobId")) {
             mobId = EntityTools.fixEntityId(tagCompound.getString("mobId"));
         } else {
             mobId = null;

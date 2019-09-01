@@ -60,7 +60,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");
-            if (tagCompound.hasKey("color")) {
+            if (tagCompound.contains("color")) {
                 color = tagCompound.getInt("color");
             } else {
                 color = 0xffffff;
@@ -68,14 +68,14 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
             int mbcolor;
             int mbcolorNeg = 0xffffff;
-            if (tagCompound.hasKey("mbcolor")) {
+            if (tagCompound.contains("mbcolor")) {
                 mbcolor = tagCompound.getInt("mbcolor");
             } else {
                 mbcolor = 0xffffff;
             }
             mbRenderer.color(mbcolor, mbcolorNeg);
 
-            if (tagCompound.hasKey("align")) {
+            if (tagCompound.contains("align")) {
                 String alignment = tagCompound.getString("align");
                 labelCache.align(TextAlign.get(alignment));
             } else {
@@ -96,8 +96,8 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
     protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
-        if (tagCompound.hasKey("monitorx")) {
-            if (tagCompound.hasKey("monitordim")) {
+        if (tagCompound.contains("monitorx")) {
+            if (tagCompound.contains("monitordim")) {
                 this.dim = tagCompound.getInt("monitordim");
             } else {
                 // Compatibility reasons

@@ -13,7 +13,7 @@ public class ScreenContainer extends GenericContainer {
     public static final int SLOT_MODULES = 0;
     public static final int SCREEN_MODULES = 11;
 
-    public static final ContainerFactory factory = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULES, 7, 8, 1, 18, SCREEN_MODULES, 18);
@@ -23,7 +23,7 @@ public class ScreenContainer extends GenericContainer {
 
 
     public ScreenContainer(PlayerEntity player, IInventory containerInventory) {
-        super(factory);
+        super(CONTAINER_FACTORY);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

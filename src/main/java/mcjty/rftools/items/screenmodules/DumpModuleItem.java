@@ -2,27 +2,21 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.lib.varia.BlockTools;
-import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.DumpClientScreenModule;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.varia.RFToolsTools;
-import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -74,7 +68,7 @@ public class DumpModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.DUMP_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -110,26 +104,29 @@ public class DumpModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        ItemStack stack = context.getItem();
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof StorageScannerTileEntity) {
-            BlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-            String name = "<invalid>";
-            if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockTools.getReadableName(world, pos);
-            }
-            RFToolsTools.setPositionInModule(stack, world.getDimension().getType().getId(), pos, name);
-            if (world.isRemote) {
-                Logging.message(player, "Storage module is set to block '" + name + "'");
-            }
-        } else {
-            RFToolsTools.clearPositionInModule(stack);
-            if (world.isRemote) {
-                Logging.message(player, "Storage module is cleared");
-            }
-        }
+        // @todo 1.14
+//        if (te instanceof StorageScannerTileEntity) {
+//            BlockState state = world.getBlockState(pos);
+//            Block block = state.getBlock();
+//            String name = "<invalid>";
+//            if (block != null && !block.isAir(state, world, pos)) {
+//                name = BlockTools.getReadableName(world, pos);
+//            }
+//            RFToolsTools.setPositionInModule(stack, world.getDimension().getType().getId(), pos, name);
+//            if (world.isRemote) {
+//                Logging.message(player, "Storage module is set to block '" + name + "'");
+//            }
+//        } else {
+//            RFToolsTools.clearPositionInModule(stack);
+//            if (world.isRemote) {
+//                Logging.message(player, "Storage module is cleared");
+//            }
+//        }
         return ActionResultType.SUCCESS;
     }
 }

@@ -11,23 +11,23 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeRenderer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.awt.*;
-import java.io.IOException;
 
 import static mcjty.rftools.blocks.shaper.ProjectorTileEntity.*;
 
-public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> implements IShapeParentGui {
+public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity, GenericContainer> implements IShapeParentGui {
 
     public static final int SIDEWIDTH = 80;
     public static final int PROJECTOR_WIDTH = 256;
@@ -63,8 +63,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private ShapeRenderer shapeRenderer = null;
 
-    public GuiProjector(ProjectorTileEntity te, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, GuiProxy.GUI_MANUAL_SHAPE, "projector");
+    public GuiProjector(ProjectorTileEntity te, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, inventory, GuiProxy.GUI_MANUAL_SHAPE, "projector");
 
         xSize = PROJECTOR_WIDTH;
         ySize = PROJECTOR_HEIGHT;
@@ -78,76 +78,74 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(6, 184, 75, 10).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        energyBar = new EnergyBar(minecraft, this).setHorizontal().setLayoutHint(6, 184, 75, 10).setShowText(false);
         toplevel.addChild(energyBar);
 
-        Label angleI = new Label(mc, this).setText("Angle");
+        Label angleI = new Label(minecraft, this).setText("Angle");
         angleI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         angleI.setLayoutHint(16, 30, 32, 15);
-        angleLabel = new ScrollableLabel(mc, this).setName("angle").setRealMinimum(0).setRealMaximum(360)
+        angleLabel = new ScrollableLabel(minecraft, this).setName("angle").setRealMinimum(0).setRealMaximum(360)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 30, 24, 15);
         angleLabel.setRealValue(tileEntity.getAngleInt());
-        Button angleM = new Button(mc, this).setChannel("anglemin").setText("-").setLayoutHint(5, 30, 10, 15);
-        Button angleP = new Button(mc, this).setChannel("angleplus").setText("+").setLayoutHint(70, 30, 10, 15);
-        angleSlider = new Slider(mc, this).setHorizontal().setScrollableName("angle")
+        Button angleM = new Button(minecraft, this).setChannel("anglemin").setText("-").setLayoutHint(5, 30, 10, 15);
+        Button angleP = new Button(minecraft, this).setChannel("angleplus").setText("+").setLayoutHint(70, 30, 10, 15);
+        angleSlider = new Slider(minecraft, this).setHorizontal().setScrollableName("angle")
                 .setLayoutHint(5, 46, 76, 15);
         toplevel.addChildren(angleI, angleLabel, angleSlider, angleM, angleP);
 
-        Label scaleI = new Label(mc, this).setText("Scale");
+        Label scaleI = new Label(minecraft, this).setText("Scale");
         scaleI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         scaleI.setLayoutHint(16, 62, 32, 15);
-        scaleLabel = new ScrollableLabel(mc, this).setName("scale").setRealMinimum(0).setRealMaximum(100)
+        scaleLabel = new ScrollableLabel(minecraft, this).setName("scale").setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 62, 24, 15);
         scaleLabel.setRealValue(tileEntity.getScaleInt());
-        Button scaleM = new Button(mc, this).setChannel("scalemin").setText("-").setLayoutHint(5, 62, 10, 15);
-        Button scaleP = new Button(mc, this).setChannel("scaleplus").setText("+").setLayoutHint(70, 62, 10, 15);
-        scaleSlider = new Slider(mc, this).setHorizontal().setScrollableName("scale")
+        Button scaleM = new Button(minecraft, this).setChannel("scalemin").setText("-").setLayoutHint(5, 62, 10, 15);
+        Button scaleP = new Button(minecraft, this).setChannel("scaleplus").setText("+").setLayoutHint(70, 62, 10, 15);
+        scaleSlider = new Slider(minecraft, this).setHorizontal().setScrollableName("scale")
                 .setLayoutHint(5, 78, 76, 15);
         toplevel.addChildren(scaleI, scaleLabel, scaleSlider, scaleM, scaleP);
 
-        Label offsetI = new Label(mc, this).setText("Offset");
+        Label offsetI = new Label(minecraft, this).setText("Offset");
         offsetI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         offsetI.setLayoutHint(16, 94, 32, 15);
-        offsetLabel = new ScrollableLabel(mc, this).setName("offset").setRealMinimum(0).setRealMaximum(100)
+        offsetLabel = new ScrollableLabel(minecraft, this).setName("offset").setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 94, 24, 15);
         offsetLabel.setRealValue(tileEntity.getOffsetInt());
-        Button offsetM = new Button(mc, this).setChannel("offsetmin").setText("-").setLayoutHint(5, 94, 10, 15);
-        Button offsetP = new Button(mc, this).setChannel("offsetplus").setText("+").setLayoutHint(70, 94, 10, 15);
-        offsetSlider = new Slider(mc, this).setHorizontal().setScrollableName("offset")
+        Button offsetM = new Button(minecraft, this).setChannel("offsetmin").setText("-").setLayoutHint(5, 94, 10, 15);
+        Button offsetP = new Button(minecraft, this).setChannel("offsetplus").setText("+").setLayoutHint(70, 94, 10, 15);
+        offsetSlider = new Slider(minecraft, this).setHorizontal().setScrollableName("offset")
                 .setLayoutHint(5, 110, 76, 15);
         toplevel.addChildren(offsetI, offsetLabel, offsetSlider, offsetM, offsetP);
 
-        autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
+        autoRotate = new ToggleButton(minecraft, this).setCheckMarker(true)
                 .setText("Auto")
                 .setTooltips("Automatic client-side rotation")
                 .setLayoutHint(2, 128, 39, 16);
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
-        scanline = new ToggleButton(mc, this).setCheckMarker(true)
+        scanline = new ToggleButton(minecraft, this).setCheckMarker(true)
                 .setText("SL")
                 .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
                 .setLayoutHint(42, 128, 39, 16);
         scanline.setPressed(tileEntity.isScanline());
         toplevel.addChild(scanline);
-        sound = new ToggleButton(mc, this).setCheckMarker(true)
+        sound = new ToggleButton(minecraft, this).setCheckMarker(true)
                 .setText("Snd")
                 .setTooltips("Enable/disable sound during", "visual scan")
                 .setLayoutHint(2, 146, 39, 16);
         sound.setPressed(tileEntity.isSound());
         toplevel.addChild(sound);
-        grayScale = new ToggleButton(mc, this).setCheckMarker(true)
+        grayScale = new ToggleButton(minecraft, this).setCheckMarker(true)
                 .setText("Gray")
                 .setTooltips("Enable/disable grayscale", "mode")
                 .setLayoutHint(42, 146, 39, 16);
@@ -172,8 +170,6 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         window = new Window(this, toplevel);
 
-        tileEntity.requestRfFromServer(RFTools.MODID);
-
         window.event("anglemin", (source, params) -> min(angleLabel));
         window.event("angleplus", (source, params) -> plus(angleLabel));
         window.event("scalemin", (source, params) -> min(scaleLabel));
@@ -183,7 +179,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     }
 
     private void initSidePanel() {
-        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
+        Panel sidePanel = new Panel(minecraft, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
         initRsPanel(sidePanel, 0, "S");
         initRsPanel(sidePanel, 1, "N");
         initRsPanel(sidePanel, 2, "E");
@@ -194,18 +190,18 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private void initRsPanel(Panel sidePanel, int o, String label) {
         int dy = o * 53;
-        sidePanel.addChild(new Label(mc, this)
+        sidePanel.addChild(new Label(minecraft, this)
                 .setText(label)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, dy+8, 12, 13)));
 
-        ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 16, 96);
+        ImageLabel redstoneOn = new ImageLabel(minecraft, this).setImage(iconGuiElements, 16, 96);
         redstoneOn.setLayoutHint(new PositionalLayout.PositionalHint(20, dy+8, 16, 16));
-        ImageLabel redstoneOff = new ImageLabel(mc, this).setImage(iconGuiElements, 0, 96);
+        ImageLabel redstoneOff = new ImageLabel(minecraft, this).setImage(iconGuiElements, 0, 96);
         redstoneOff.setLayoutHint(new PositionalLayout.PositionalHint(54, dy+8, 16, 16));
         sidePanel.addChild(redstoneOn).addChild(redstoneOff);
 
-        rsLabelOn[o] = new ChoiceLabel(mc, this);
+        rsLabelOn[o] = new ChoiceLabel(minecraft, this);
         rsLabelOn[o].addChoices(ProjectorOpcode.getChoices());
         rsLabelOn[o].setLayoutHint(new PositionalLayout.PositionalHint(8, dy+26, 32, 14));
         for (ProjectorOpcode operation : ProjectorOpcode.values()) {
@@ -213,7 +209,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         }
         sidePanel.addChild(rsLabelOn[o]);
 
-        rsLabelOff[o] = new ChoiceLabel(mc, this);
+        rsLabelOff[o] = new ChoiceLabel(minecraft, this);
         rsLabelOff[o].addChoices(ProjectorOpcode.getChoices());
         rsLabelOff[o].setLayoutHint(new PositionalLayout.PositionalHint(42, dy+26, 32, 14));
         for (ProjectorOpcode operation : ProjectorOpcode.values()) {
@@ -221,10 +217,10 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         }
         sidePanel.addChild(rsLabelOff[o]);
 
-        valOn[o] = new TextField(mc, this);
+        valOn[o] = new TextField(minecraft, this);
         valOn[o].setLayoutHint(new PositionalLayout.PositionalHint(8, dy+41, 32, 14));
         sidePanel.addChild(valOn[o]);
-        valOff[o] = new TextField(mc, this);
+        valOff[o] = new TextField(minecraft, this);
         valOff[o].setLayoutHint(new PositionalLayout.PositionalHint(42, dy+41, 32, 14));
         sidePanel.addChild(valOff[o]);
         rsLabelOn[o].addChoiceEvent((parent, newChoice) -> updateRs());
@@ -294,10 +290,14 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+    public void mouseMoved(double xx, double yy) {
+        // @todo 1.14 used to be handleMouseInput
+        super.mouseMoved(xx, yy);
+        // @todo 1.14 is this right?
+//        int x = MouseH.getEventX() * width / mc.displayWidth;
+//        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+        int x = (int) xx;
+        int y = (int) yy;
         x -= guiLeft;
         y -= guiTop;
 
@@ -328,9 +328,10 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         drawWindow();
 
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
 
         ItemStack stack = tileEntity.getRenderStack();
         if (!stack.isEmpty()) {

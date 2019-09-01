@@ -47,8 +47,8 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
-            if (tagCompound.hasKey("monitorx")) {
-                if (tagCompound.hasKey("monitordim")) {
+            if (tagCompound.contains("monitorx")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons
@@ -61,7 +61,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
                     int dz = Math.abs(c.getZ() - pos.getZ());
                     if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
-                        if(tagCompound.hasKey("monitorside")) {
+                        if(tagCompound.contains("monitorside")) {
                             side = Direction.VALUES[tagCompound.getInt("monitorside")];
                         }
                     }

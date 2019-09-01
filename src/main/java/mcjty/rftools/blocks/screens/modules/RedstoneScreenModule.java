@@ -49,12 +49,12 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             channel = -1;
-            if (tagCompound.hasKey("channel")) {
+            if (tagCompound.contains("channel")) {
                 channel = tagCompound.getInt("channel");
             }
-            if (tagCompound.hasKey("monitorx")) {
+            if (tagCompound.contains("monitorx")) {
                 side = Direction.VALUES[tagCompound.getInt("monitorside")];
-                if (tagCompound.hasKey("monitordim")) {
+                if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons

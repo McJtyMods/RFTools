@@ -1,20 +1,25 @@
 package mcjty.rftools.blocks.elevator;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.crash.ReportedException;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -28,19 +33,19 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
     private final FakeElevatorWorld fakeWorld = new FakeElevatorWorld();
 
     @Override
-    public void render(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
             AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = Minecraft.getInstance().player.getEntityBoundingBox().intersects(aabb);
+            boolean on = Minecraft.getInstance().player.getBoundingBox().intersects(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 
             GlStateManager.pushMatrix();
 
             RenderHelper.disableStandardItemLighting();
-            this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            this.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
             if (Minecraft.isAmbientOcclusionEnabled()) {
                 GlStateManager.shadeModel(GL11.GL_SMOOTH);
             } else {
@@ -49,7 +54,7 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
 
             BlockState movingState = te.getMovingState();
 
-            GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
+            GlStateManager.translatef(0f, (float) (te.getMovingY() - te.getPos().getY() + diff), 0f);
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
             BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
@@ -94,14 +99,15 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
 
     private static boolean renderBlock(BlockRendererDispatcher dispatcher, BlockState state, BlockPos pos, IBlockReader blockAccess, BufferBuilder worldRendererIn) {
         try {
-            EnumBlockRenderType enumblockrendertype = state.getRenderType();
+            BlockRenderType enumblockrendertype = state.getRenderType();
 
-            if (enumblockrendertype == EnumBlockRenderType.INVISIBLE) {
+            if (enumblockrendertype == BlockRenderType.INVISIBLE) {
                 return false;
             } else {
-                if (blockAccess.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
+                if (((World)blockAccess).getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {
-                        state = state.getActualState(blockAccess, pos);
+                        state = state.getExtendedState(blockAccess, pos);   // @todo 1.14 is this right?
+//                        state = state.getActualState(blockAccess, pos);
                     } catch (Exception var8) {
                     }
                 }
@@ -110,7 +116,7 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
                     case MODEL:
                         IBakedModel model = dispatcher.getModelForState(state);
                         state = state.getBlock().getExtendedState(state, blockAccess, pos);
-                        return dispatcher.getBlockModelRenderer().renderModel(blockAccess, model, state, pos, worldRendererIn, false);
+                        return dispatcher.getBlockModelRenderer().renderModel((World)blockAccess, model, state, pos, worldRendererIn, false, ((World) blockAccess).rand, 0 /*1.4 what?*/);  // @todo 1.14 check?
                     case ENTITYBLOCK_ANIMATED:
                         return false;
                     default:
@@ -120,7 +126,7 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Tesselating block in world");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being tesselated");
-            CrashReportCategory.addBlockInfo(crashreportcategory, pos, state.getBlock(), state.getBlock().getMetaFromState(state));
+            CrashReportCategory.addBlockInfo(crashreportcategory, pos, state);
             throw new ReportedException(crashreport);
         }
     }

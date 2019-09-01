@@ -79,7 +79,7 @@ public class FindBlockAction implements IWheelAction {
             }
 
             CompoundNBT tagCompound = storage.getTag();
-            if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
+            if (tagCompound == null || !tagCompound.contains("childDamage")) {
                 player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "No storage module in tablet!"), false);
                 return;
             }
@@ -94,7 +94,7 @@ public class FindBlockAction implements IWheelAction {
             ItemStack extracted = ItemStack.EMPTY;
 
             if (moduleDamage == META_FOR_SCANNER) {
-                if (tagCompound.hasKey("monitorx")) {
+                if (tagCompound.contains("monitorx")) {
                     int monitordim = tagCompound.getInt("monitordim");
                     int monitorx = tagCompound.getInt("monitorx");
                     int monitory = tagCompound.getInt("monitory");
@@ -117,7 +117,7 @@ public class FindBlockAction implements IWheelAction {
                     player.sendStatusMessage(new StringTextComponent(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
-                if (!tagCompound.hasKey("id")) {
+                if (!tagCompound.contains("id")) {
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                 } else {
                     RemoteStorageItemInventory storageInv = new RemoteStorageItemInventory(player, storage);

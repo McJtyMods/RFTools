@@ -37,7 +37,7 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
-        if(tagCompound.hasKey("prevIn", 3 /* int */)) {
+        if(tagCompound.contains("prevIn", 3 /* int */)) {
             prevIn = tagCompound.getInteger("prevIn");
         } else {
             prevIn = tagCompound.getBoolean("prevIn") ? 15 : 0; // backwards compatibility

@@ -175,16 +175,16 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     @Override
     public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
-            if (tagCompound.hasKey("slot1")) {
+            if (tagCompound.contains("slot1")) {
                 slot1 = tagCompound.getInt("slot1");
             }
-            if (tagCompound.hasKey("slot2")) {
+            if (tagCompound.contains("slot2")) {
                 slot2 = tagCompound.getInt("slot2");
             }
-            if (tagCompound.hasKey("slot3")) {
+            if (tagCompound.contains("slot3")) {
                 slot3 = tagCompound.getInt("slot3");
             }
-            if (tagCompound.hasKey("slot4")) {
+            if (tagCompound.contains("slot4")) {
                 slot4 = tagCompound.getInt("slot4");
             }
         }

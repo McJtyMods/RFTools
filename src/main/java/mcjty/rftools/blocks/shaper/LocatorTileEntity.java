@@ -319,12 +319,12 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
         playerBeacon = tagCompound.getBoolean("playerBeacon");
         energyBeacon = tagCompound.getBoolean("energyBeacon");
         filter = tagCompound.getString("filter");
-        if (tagCompound.hasKey("minEnergy")) {
+        if (tagCompound.contains("minEnergy")) {
             minEnergy = tagCompound.getInt("minEnergy");
         } else {
             minEnergy = null;
         }
-        if (tagCompound.hasKey("maxEnergy")) {
+        if (tagCompound.contains("maxEnergy")) {
             maxEnergy = tagCompound.getInt("maxEnergy");
         } else {
             maxEnergy = null;

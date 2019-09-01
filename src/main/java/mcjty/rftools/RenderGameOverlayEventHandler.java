@@ -2,11 +2,10 @@ package mcjty.rftools;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.client.RenderHelper;
-import mcjty.lib.preferences.PreferencesProperties;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -33,30 +32,31 @@ public class RenderGameOverlayEventHandler {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getInstance().player;
-        PreferencesProperties preferences = McJtyLib.getPreferencesProperties(player);
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        McJtyLib.getPreferencesProperties(player).ifPresent(preferences -> {
 
-        int x = preferences.getBuffX();
-        int y = preferences.getBuffY();
+            int x = preferences.getBuffX();
+            int y = preferences.getBuffY();
 
-        if (x == -1 || y == -1) {
-            return;
-        }
+            if (x == -1 || y == -1) {
+                return;
+            }
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glDisable(GL11.GL_LIGHTING);
 
 //        Minecraft.getInstance().renderEngine.bindTexture(texture);
 
-        for (PlayerBuff buff : buffs) {
-            Item item = getBuffItem(buff);
-            if (item != null) {
-                RenderItem itemRender = Minecraft.getInstance().getRenderItem();
-                RenderHelper.renderItemStack(Minecraft.getInstance(), itemRender, new ItemStack(item), x, y, "", false);
+            for (PlayerBuff buff : buffs) {
+                Item item = getBuffItem(buff);
+                if (item != null) {
+                    ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
+                    RenderHelper.renderItemStack(Minecraft.getInstance(), itemRender, new ItemStack(item), x, y, "", false);
 //                itemRender.renderItem(new ItemStack(item), player, ItemCameraTransforms.TransformType.FIXED, true);
-                x += BUFF_ICON_SIZE;
+                    x += BUFF_ICON_SIZE;
+                }
             }
-        }
+        });
     }
 
     private static Item getBuffItem(PlayerBuff buff) {
