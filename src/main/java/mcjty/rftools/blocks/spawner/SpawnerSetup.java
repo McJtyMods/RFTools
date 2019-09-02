@@ -1,34 +1,36 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.setup.GuiProxy;
-
+import mcjty.lib.builder.BlockBuilder;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 
 public class SpawnerSetup {
-    public static BaseBlock<SpawnerTileEntity, GenericContainer> spawnerBlock;
+    public static BaseBlock spawnerBlock;
     public static MatterBeamerBlock matterBeamerBlock;
 
+    @ObjectHolder("rftools:matter_beamer")
+    public static TileEntityType<?> TYPE_MATTER_BEAMER;
+    @ObjectHolder("rftools:spawner")
+    public static TileEntityType<?> TYPE_SPAWNER;
+
     public static void init() {
-        spawnerBlock = ModBlocks.builderFactory.<SpawnerTileEntity> builder("spawner")
-                .tileEntityClass(SpawnerTileEntity.class)
-                .container(SpawnerTileEntity.CONTAINER_FACTORY)
+        spawnerBlock = new BaseBlock("spawner", new BlockBuilder()
+                .tileEntitySupplier(SpawnerTileEntity::new)
                 .infusable()
-                .guiId(GuiProxy.GUI_SPAWNER)
-                .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)
+//                .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)  // @todo 1.14
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.spawner")
-                .build();
+        );
         matterBeamerBlock = new MatterBeamerBlock();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        spawnerBlock.initModel();
-        spawnerBlock.setGuiFactory(GuiSpawner::new);
-
-        matterBeamerBlock.initModel();
-    }
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        spawnerBlock.initModel();
+//        spawnerBlock.setGuiFactory(GuiSpawner::new);
+//
+//        matterBeamerBlock.initModel();
+//    }
 }

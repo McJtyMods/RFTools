@@ -1,26 +1,31 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
+
+import static mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity.SLOT_BUFFER;
+
 public class ItemFilterInvWrapper implements IItemHandlerModifiable {
-    private final ISidedInventory inv;
+    private final ItemFilterTileEntity te;
+    private final IItemHandlerModifiable inv;
     private final Direction side;
 
-    public ItemFilterInvWrapper(ISidedInventory inv) {
-        this(inv, null);
+    public ItemFilterInvWrapper(ItemFilterTileEntity te) {
+        this(te, null);
     }
 
-    public ItemFilterInvWrapper(ISidedInventory inv, Direction side) {
-        this.inv = inv;
+    public ItemFilterInvWrapper(ItemFilterTileEntity te, Direction side) {
+        this.te = te;
+        this.inv = te.getItemHandler();
         this.side = side;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, Direction side) {
-        int[] slots = inv.getSlotsForFace(side);
+    public static int getSlot(ItemFilterTileEntity te, int slot, Direction side) {
+        int[] slots = te.getSlotsForFace(side);
         if (slot < slots.length) {
             return slots[slot];
         }
@@ -57,12 +62,12 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
 
     @Override
     public int getSlots() {
-        return inv.getSlotsForFace(side).length;
+        return te.getSlotsForFace(side).length;
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        int i = getSlot(inv, slot, side);
+        int i = getSlot(te, slot, side);
         return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
     }
 
@@ -73,13 +78,13 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
             return ItemStack.EMPTY;
         }
 
-        int slot1 = getSlot(inv, slot, side);
+        int slot1 = getSlot(te, slot, side);
 
         if (slot1 == -1) {
             return stack;
         }
 
-        if (!inv.isItemValidForSlot(slot1, stack) || !inv.canInsertItem(slot1, stack, side)) {
+        if (!inv.isItemValid(slot1, stack) || !te.canInsertItem(slot1, stack, side)) {
             return stack;
         }
 
@@ -91,13 +96,13 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
                 return stack;
             }
 
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.getCount();
+            m = Math.min(stack.getMaxStackSize(), inv.getSlots()) - stackInSlot.getCount();
 
             if (stack.getCount() <= m) {
                 if (!simulate) {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
-                    inv.setInventorySlotContents(slot1, copy);
+                    inv.setStackInSlot(slot1, copy);
                 }
 
                 return ItemStack.EMPTY;
@@ -105,9 +110,9 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
-                    ItemStack copy = stack.splitStack(m);
+                    ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
-                    inv.setInventorySlotContents(slot1, copy);
+                    inv.setStackInSlot(slot1, copy);
                     return stack;
                 } else {
                     int amount = -m;
@@ -116,12 +121,12 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
                 }
             }
         } else {
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
+            m = Math.min(stack.getMaxStackSize(), inv.getSlotLimit(0));
             if (m < stack.getCount()) {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
-                    inv.setInventorySlotContents(slot1, stack.splitStack(m));
+                    inv.setStackInSlot(slot1, stack.split(m));
                     return stack;
                 } else {
                     int amount = -m;
@@ -130,7 +135,7 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
                 }
             } else {
                 if (!simulate) {
-                    inv.setInventorySlotContents(slot1, stack);
+                    inv.setStackInSlot(slot1, stack);
                 }
                 return ItemStack.EMPTY;
             }
@@ -140,7 +145,7 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
-        inv.setInventorySlotContents(slot, stack);
+        inv.setStackInSlot(slot, stack);
     }
 
     @Override
@@ -149,7 +154,7 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
             return ItemStack.EMPTY;
         }
 
-        int slot1 = getSlot(inv, slot, side);
+        int slot1 = getSlot(te, slot, side);
 
         if (slot1 == -1) {
             return ItemStack.EMPTY;
@@ -161,7 +166,7 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
             return ItemStack.EMPTY;
         }
 
-        if (!inv.canExtractItem(slot1, stackInSlot, side)) {
+        if (!te.canExtractItem(slot1, stackInSlot, side)) {
             return ItemStack.EMPTY;
         }
 
@@ -179,8 +184,17 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
             }
         } else {
             int m = Math.min(stackInSlot.getCount(), amount);
-            return inv.decrStackSize(slot1, m);
+            return inv.extractItem(slot1, m, false);
         }
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        if (slot < SLOT_BUFFER) {
+            return false;
+        }
+        ItemStack ghostStack = getStackInSlot(slot - SLOT_BUFFER);
+        return ghostStack.isEmpty() || ghostStack.isItemEqual(stack);
     }
 
     @Override

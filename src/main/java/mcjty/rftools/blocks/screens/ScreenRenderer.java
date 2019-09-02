@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
@@ -13,26 +12,26 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-
-
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SideOnly(Side.CLIENT)
 public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
 
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenframe.png");
@@ -41,15 +40,15 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
     private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
 
     @Override
-    public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
         float xRotation = 0.0F, yRotation = 0.0F;
 
         Direction facing = Direction.SOUTH, horizontalFacing = Direction.SOUTH;
         if (tileEntity != null) {
             BlockState state = Minecraft.getInstance().world.getBlockState(tileEntity.getPos());
             if (state.getBlock() instanceof ScreenBlock) {
-                facing = state.getValue(BaseBlock.FACING);
-                horizontalFacing = state.getValue(ScreenBlock.HORIZONTAL_FACING);
+                facing = state.get(BlockStateProperties.FACING);
+                horizontalFacing = state.get(BlockStateProperties.HORIZONTAL_FACING);
             } else {
                 return;
             }
@@ -76,10 +75,10 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
         }
 
         // TileEntity can be null if this is used for an item renderer.
-        GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-        GlStateManager.rotate(yRotation, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(xRotation, 1.0F, 0.0F, 0.0F);
-        GlStateManager.translate(0.0F, 0.0F, -0.4375F);
+        GlStateManager.translatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        GlStateManager.rotatef(yRotation, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(xRotation, 1.0F, 0.0F, 0.0F);
+        GlStateManager.translatef(0.0F, 0.0F, -0.4375F);
 
         if (tileEntity == null) {
             GlStateManager.disableLighting();
@@ -146,24 +145,25 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
             // Safety
             return;
         }
-        if (mouseOver != null) {
-            if (mouseOver.sideHit == blockState.getValue(BaseBlock.FACING)) {
-                double xx = mouseOver.hitVec.x - pos.getX();
-                double yy = mouseOver.hitVec.y - pos.getY();
-                double zz = mouseOver.hitVec.z - pos.getZ();
-                Direction horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
-                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+        if (mouseOver instanceof BlockRayTraceResult) {
+            Direction sideHit = ((BlockRayTraceResult) mouseOver).getFace();
+            if (sideHit == blockState.get(BlockStateProperties.FACING)) {
+                double xx = mouseOver.getHitVec().x - pos.getX();
+                double yy = mouseOver.getHitVec().y - pos.getY();
+                double zz = mouseOver.getHitVec().z - pos.getZ();
+                Direction horizontalFacing = blockState.get(BlockStateProperties.HORIZONTAL_FACING);
+                hit = tileEntity.getHitModule(xx, yy, zz, sideHit, horizontalFacing);
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());
                 }
                 if (RFTools.setup.top) {
-                    tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+                    tileEntity.focusModuleClient(xx, yy, zz, sideHit, horizontalFacing);
                 }
             }
         }
 
         if (tileEntity.isBright()) {
-            Minecraft.getInstance().entityRenderer.disableLightmap();
+            Minecraft.getInstance().gameRenderer.disableLightmap();
         }
 
         for (IClientScreenModule module : modules) {
@@ -180,18 +180,18 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
 
                         switch (mode) {
                             case TEXT:
-                                GlStateManager.translate(-0.5F, 0.5F, 0.07F);
+                                GlStateManager.translatef(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F;
-                                GlStateManager.scale(f3 * factor, -f3 * factor, f3);
+                                GlStateManager.scalef(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case TEXTLARGE:
-                                GlStateManager.translate(-0.5F, 0.5F, 0.07F);
+                                GlStateManager.translatef(-0.5F, 0.5F, 0.07F);
                                 f3 = 0.0075F * 2;
-                                GlStateManager.scale(f3 * factor, -f3 * factor, f3);
+                                GlStateManager.scalef(f3 * factor, -f3 * factor, f3);
                                 GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-                                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 break;
                             case ITEM:
                                 break;
@@ -226,7 +226,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
         }
 
         if (tileEntity.isBright()) {
-            Minecraft.getInstance().entityRenderer.enableLightmap();
+            Minecraft.getInstance().gameRenderer.enableLightmap();
         }
 
         if (mode != IClientScreenModule.TransformMode.NONE) {
@@ -237,7 +237,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
     private void renderScreenBoard(int size, int color) {
         this.bindTexture(texture);
         GlStateManager.pushMatrix();
-        GlStateManager.scale(1, -1, -1);
+        GlStateManager.scalef(1, -1, -1);
         if (size == ScreenTileEntity.SIZE_HUGE) {
             this.screenModelHuge.render();
         } else if (size == ScreenTileEntity.SIZE_LARGE) {

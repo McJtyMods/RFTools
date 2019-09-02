@@ -2,8 +2,11 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -15,20 +18,33 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
+
+import static mcjty.rftools.blocks.spawner.SpawnerSetup.TYPE_MATTER_BEAMER;
 
 
 public class MatterBeamerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final int TICKTIME = 20;
+    public static final int SLOT_MATERIAL = 0;
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, MatterBeamerContainer.factory, 1);
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MATERIAL, 28, 8, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.BEAMER_MAXENERGY, SpawnerConfiguration.BEAMER_RECEIVEPERTICK));
 
     public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
 
@@ -47,22 +63,12 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
     private int ticker = TICKTIME;
 
     public MatterBeamerTileEntity() {
-        super(SpawnerConfiguration.BEAMER_MAXENERGY, SpawnerConfiguration.BEAMER_RECEIVEPERTICK);
+        super(TYPE_MATTER_BEAMER);
     }
 
     @Override
-    protected boolean needsCustomInvWrapper() {
-        return true;
-    }
-
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -87,38 +93,42 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         }
         ticker = TICKTIME;
 
-        TileEntity te = null;
-        if (destination != null) {
-            te = getWorld().getTileEntity(destination);
-            if (!(te instanceof SpawnerTileEntity)) {
-                setDestination(null);
-                return;
-            }
-        } else {
-            return;
-        }
+        itemHandler.ifPresent(h -> {
+            energyHandler.ifPresent(e -> {
+                TileEntity te = null;
+                if (destination != null) {
+                    te = world.getTileEntity(destination);
+                    if (!(te instanceof SpawnerTileEntity)) {
+                        setDestination(null);
+                        return;
+                    }
+                } else {
+                    return;
+                }
 
-        ItemStack itemStack = inventoryHelper.getStackInSlot(0);
-        if (itemStack.isEmpty()) {
-            disableBlockGlow();
-            return;
-        }
+                ItemStack itemStack = h.getStackInSlot(0);
+                if (itemStack.isEmpty()) {
+                    disableBlockGlow();
+                    return;
+                }
 
-        SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
+                SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
-        int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
-        int numblocks = Math.min(maxblocks, itemStack.getCount());
+                int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
+                int numblocks = Math.min(maxblocks, itemStack.getCount());
 
-        int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
-        if (getStoredPower() < rf) {
-            return;
-        }
-        consumeEnergy(rf);
+                int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
+                if (e.getEnergy() < rf) {
+                    return;
+                }
+                e.consumeEnergy(rf);
 
-        if (spawnerTileEntity.addMatter(itemStack, numblocks, getInfusedFactor())) {
-            inventoryHelper.decrStackSize(0, numblocks);
-            enableBlockGlow();
-        }
+                if (spawnerTileEntity.addMatter(itemStack, numblocks, getInfusedFactor())) {
+                    h.extractItem(0, numblocks, false);
+                    enableBlockGlow();
+                }
+            });
+        });
     }
 
     private void disableBlockGlow() {
@@ -136,33 +146,34 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
         boolean oldglowing = glowing;
 
         super.onDataPacket(net, packet);
 
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             // If needed send a render update.
             if (oldglowing != glowing) {
-                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
+                world.func_225319_b(getPos(), null, null);
+//                world.markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
 
 
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        int xCoord = getPos().getX();
-        int yCoord = getPos().getY();
-        int zCoord = getPos().getZ();
-        return new AxisAlignedBB(xCoord - 4, yCoord - 4, zCoord - 4, xCoord + 5, yCoord + 5, zCoord + 5);
-    }
+    // @todo 1.14
+//    @Override
+//    public boolean shouldRenderInPass(int pass) {
+//        return pass == 1;
+//    }
+//
+//    @Override
+//    public AxisAlignedBB getRenderBoundingBox() {
+//        int xCoord = getPos().getX();
+//        int yCoord = getPos().getY();
+//        int zCoord = getPos().getZ();
+//        return new AxisAlignedBB(xCoord - 4, yCoord - 4, zCoord - 4, xCoord + 5, yCoord + 5, zCoord + 5);
+//    }
 
 
     // Called from client side when a wrench is used.
@@ -170,7 +181,7 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = getWorld().getTileEntity(coord);
+            tileEntity = world.getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof MatterBeamerTileEntity)) {
@@ -197,7 +208,7 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         disableBlockGlow();
         markDirty();
 
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             // We're on the client. Send change to server.
             valueToServer(RFToolsMessages.INSTANCE, VALUE_DESTINATION, destination);
         } else {
@@ -218,7 +229,7 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         if (destination == null) {
             return null;
         }
-        TileEntity te = getWorld().getTileEntity(destination);
+        TileEntity te = world.getTileEntity(destination);
         if (te instanceof SpawnerTileEntity) {
             return (SpawnerTileEntity) te;
         } else {
@@ -230,65 +241,46 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
 
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        destination = BlockPosTools.readFromNBT(tagCompound, "dest");
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        destination = BlockPosTools.read(tagCompound, "dest");
         glowing = tagCompound.getBoolean("glowing");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
     }
 
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        BlockPosTools.writeToNBT(tagCompound, "dest", destination);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        BlockPosTools.write(tagCompound, "dest", destination);
         tagCompound.putBoolean("glowing", glowing);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
     }
 
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        return MatterBeamerContainer.factory.getAccessibleSlots();
-    }
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(MatterBeamerTileEntity.this, CONTAINER_FACTORY, 1) {
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
+            }
 
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return MatterBeamerContainer.factory.isInputSlot(index);
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return MatterBeamerContainer.factory.isOutputSlot(index);
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+            @Override
+            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isOutputSlot(slot);
+            }
+        };
     }
 }

@@ -1,8 +1,9 @@
 package mcjty.rftools.items.creativeonly;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,11 +15,11 @@ import java.util.Set;
 public class DelightingInfoHelper {
     static void parseNBT(TileEntity tileEntity, Map<String, NBTDescription> nbtData) {
         CompoundNBT tagCompound = new CompoundNBT();
-        tileEntity.writeToNBT(tagCompound);
-        Set<String> tags = tagCompound.getKeySet();
+        tileEntity.write(tagCompound);
+        Set<String> tags = tagCompound.keySet();
         for (String c : tags) {
-            NBTBase nbtBase = tagCompound.getTag(c);
-            NBTDescription description = new NBTDescription(NBTBase.NBT_TYPES[nbtBase.getId()], nbtBase.toString());
+            INBT nbtBase = tagCompound.get(c);
+            NBTDescription description = new NBTDescription(INBT.NBT_TYPES[nbtBase.getId()], nbtBase.toString());
             nbtData.put(c, description);
         }
     }
@@ -34,7 +35,7 @@ public class DelightingInfoHelper {
         }
     }
 
-    static int fillDelightingData(int x, int y, int z, World world, List<String> blockClasses, List<String> teClasses, Map<String, NBTDescription> nbtData) {
+    static void fillDelightingData(int x, int y, int z, World world, List<String> blockClasses, List<String> teClasses, Map<String, NBTDescription> nbtData) {
         BlockPos pos = new BlockPos(x, y, z);
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
@@ -44,7 +45,6 @@ public class DelightingInfoHelper {
             addSuperTypes(teClasses, tileEntity.getClass());
             parseNBT(tileEntity, nbtData);
         }
-        return block.getMetaFromState(state);
     }
 
     public static class NBTDescription {

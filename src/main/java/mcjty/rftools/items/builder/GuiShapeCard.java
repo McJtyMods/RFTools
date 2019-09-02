@@ -25,6 +25,7 @@ import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -35,11 +36,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Mouse;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
 public class GuiShapeCard extends Screen implements IShapeParentGui {
@@ -80,12 +80,14 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
     // For GuiComposer, GuiBuilder, etc.: the current card to edit
     public static BlockPos fromTEPos = null;
     public static int fromTEStackSlot = 0;
-    public static GuiScreen returnGui = null;
+    public static Screen returnGui = null;
 
     private ShapeID shapeID = null;
     private ShapeRenderer shapeRenderer = null;
 
+
     public GuiShapeCard(boolean fromTE) {
+        super(new StringTextComponent("Shapecard"));
         this.fromTE = fromTE;
     }
 
@@ -109,20 +111,20 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+    public boolean isPauseScreen() {
         return false;
     }
 
     private ItemStack getStackToEdit() {
         if (fromTE) {
-            TileEntity te = mc.world.getTileEntity(fromTEPos);
+            TileEntity te = minecraft.world.getTileEntity(fromTEPos);
             if (te instanceof IInventory) {
                 return ((IInventory) te).getStackInSlot(fromTEStackSlot);
             } else {
                 return ItemStack.EMPTY;
             }
         } else {
-            return mc.player.getHeldItem(Hand.MAIN_HAND);
+            return minecraft.player.getHeldItem(Hand.MAIN_HAND);
         }
     }
 
@@ -137,8 +139,8 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
@@ -149,14 +151,14 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
             return;
         }
 
-        isQuarryCard = ShapeCardType.fromDamage(heldItem.getItemDamage()).isQuarry();
+        isQuarryCard = ShapeCardType.fromDamage(heldItem.getDamage()).isQuarry();   // @todo 1.14 damage is not the way
         if (isQuarryCard) {
             ySize = 160 + 28;
         }
 
         getShapeRenderer().initView(getPreviewLeft(), guiTop);
 
-        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
+        shapeLabel = new ChoiceLabel(minecraft, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_TOPDOME.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_BOTTOMDOME.getDescription(),
@@ -171,55 +173,55 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
                 mcjty.rftools.shapes.Shape.SHAPE_SCAN.getDescription()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
-        solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
+        solidLabel = new ChoiceLabel(minecraft, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
                 "Hollow",
                 "Solid"
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
-        Panel shapePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
+        Panel shapePanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
 
         mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
         boolean solid = ShapeCardItem.isSolid(heldItem);
         solidLabel.setChoice(solid ? "Solid" : "Hollow");
 
-        blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+        blocksLabel = new Label(minecraft, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
 
-        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(170).addChild(shapePanel).addChild(blocksLabel);
+        Panel modePanel = new Panel(minecraft, this).setLayout(new VerticalLayout()).setDesiredWidth(170).addChild(shapePanel).addChild(blocksLabel);
 
         BlockPos dim = ShapeCardItem.getDimension(heldItem);
         BlockPos offset = ShapeCardItem.getOffset(heldItem);
 
-        dimX = new TextField(mc, this).addTextEvent((parent, newText) -> {
+        dimX = new TextField(minecraft, this).addTextEvent((parent, newText) -> {
             if (isTorus()) {
                 dimZ.setText(newText);
             }
             updateSettings();
         }).setText(String.valueOf(dim.getX()));
-        dimY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getY()));
-        dimZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Dim:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
-        offsetX = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getX()));
-        offsetY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getY()));
-        offsetZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        dimY = new TextField(minecraft, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getY()));
+        dimZ = new TextField(minecraft, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getZ()));
+        Panel dimPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(minecraft, this).setText("Dim:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
+        offsetX = new TextField(minecraft, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getX()));
+        offsetY = new TextField(minecraft, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getY()));
+        offsetZ = new TextField(minecraft, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getZ()));
+        Panel offsetPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(minecraft, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
 
-        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0))
+        Panel settingsPanel = new Panel(minecraft, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0))
                 .addChild(dimPanel).addChild(offsetPanel);
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
+        Panel modeSettingsPanel = new Panel(minecraft, this).setLayout(new VerticalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
         modeSettingsPanel.setLayoutHint(0, 0, 180, 160);
         Panel toplevel;
         if (isQuarryCard) {
             setupVoidPanel(heldItem);
-            toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
+            toplevel = new Panel(minecraft, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
 
         } else {
-            toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel);
+            toplevel = new Panel(minecraft, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel);
         }
 
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
@@ -228,20 +230,20 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
     }
 
     private void setupVoidPanel(ItemStack heldItem) {
-        voidPanel = new Panel(mc, this).setLayout(new HorizontalLayout())
+        voidPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout())
                 .setDesiredHeight(26)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
         voidPanel.setLayoutHint(5, 155, 350, 26);
-        Label label = new Label(mc, this).setText("Void:");
-        stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(widget -> updateVoidSettings());
-        cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(widget -> updateVoidSettings());
-        dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt").addButtonEvent(widget -> updateVoidSettings());
-        gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(widget -> updateVoidSettings());
-        sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(widget -> updateVoidSettings());
-        netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(widget -> updateVoidSettings());
-        endstone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void end stone").addButtonEvent(widget -> updateVoidSettings());
-        oredict = new ToggleButton(mc, this).setDesiredWidth(60).setDesiredHeight(15).setTooltips("Enable ore dictionary matching")
+        Label label = new Label(minecraft, this).setText("Void:");
+        stone = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(widget -> updateVoidSettings());
+        cobble = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(widget -> updateVoidSettings());
+        dirt = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt").addButtonEvent(widget -> updateVoidSettings());
+        gravel = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(widget -> updateVoidSettings());
+        sand = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(widget -> updateVoidSettings());
+        netherrack = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(widget -> updateVoidSettings());
+        endstone = new ToggleButton(minecraft, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void end stone").addButtonEvent(widget -> updateVoidSettings());
+        oredict = new ToggleButton(minecraft, this).setDesiredWidth(60).setDesiredHeight(15).setTooltips("Enable ore dictionary matching")
                 .setText("Oredict")
                 .setCheckMarker(true)
                 .addButtonEvent(widget -> updateVoidSettings());
@@ -342,14 +344,14 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
                 if (tag == null) {
                     tag = new CompoundNBT();
                 }
-                tag.setBoolean("voidstone", stone.isPressed());
-                tag.setBoolean("voidcobble", cobble.isPressed());
-                tag.setBoolean("voiddirt", dirt.isPressed());
-                tag.setBoolean("voidgravel", gravel.isPressed());
-                tag.setBoolean("voidsand", sand.isPressed());
-                tag.setBoolean("voidnetherrack", netherrack.isPressed());
-                tag.setBoolean("voidendstone", endstone.isPressed());
-                tag.setBoolean("oredict", oredict.isPressed());
+                tag.putBoolean("voidstone", stone.isPressed());
+                tag.putBoolean("voidcobble", cobble.isPressed());
+                tag.putBoolean("voiddirt", dirt.isPressed());
+                tag.putBoolean("voidgravel", gravel.isPressed());
+                tag.putBoolean("voidsand", sand.isPressed());
+                tag.putBoolean("voidnetherrack", netherrack.isPressed());
+                tag.putBoolean("voidendstone", endstone.isPressed());
+                tag.putBoolean("oredict", oredict.isPressed());
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
                         fromTEPos, fromTEStackSlot, tag));
             }
@@ -368,45 +370,46 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
         }
     }
 
-    @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        window.handleMouseInput();
-
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        x -= guiLeft;
-        y -= guiTop;
-
-        getShapeRenderer().handleShapeDragging(x, y);
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-        window.mouseMovedOrUp(mouseX, mouseY, state);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
+    // @todo 1.14
+//    @Override
+//    protected void mouseClicked(int x, int y, int button) throws IOException {
+//        super.mouseClicked(x, y, button);
+//        window.mouseClicked(x, y, button);
+//    }
+//
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        super.handleMouseInput();
+//        window.handleMouseInput();
+//
+//        int x = Mouse.getEventX() * width / mc.displayWidth;
+//        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+//        x -= guiLeft;
+//        y -= guiTop;
+//
+//        getShapeRenderer().handleShapeDragging(x, y);
+//    }
+//
+//    @Override
+//    protected void mouseReleased(int mouseX, int mouseY, int state) {
+//        super.mouseReleased(mouseX, mouseY, state);
+//        window.mouseMovedOrUp(mouseX, mouseY, state);
+//    }
+//
+//    @Override
+//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+//        super.keyTyped(typedChar, keyCode);
+//        window.keyTyped(typedChar, keyCode);
+//    }
 
     private static int updateCounter = 20;
 
     @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
+    public void render(int xSize_lo, int ySize_lo, float par3) {
 
         getShapeRenderer().handleMouseWheel();
 
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+        super.render(xSize_lo, ySize_lo, par3);
 
         dimZ.setEnabled(!isTorus());
 
@@ -446,9 +449,10 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
         if (tooltips != null) {
             int guiLeft = (this.width - this.xSize) / 2;
             int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+            MouseHelper mouse = getMinecraft().mouseHelper;
+            int x = (int)mouse.getMouseX() * width / getMinecraft().mainWindow.getWidth();
+            int y = height - (int)mouse.getMouseY() * height / getMinecraft().mainWindow.getHeight() - 1;
+            renderTooltip(tooltips, x-guiLeft, y-guiTop, minecraft.fontRenderer);
         }
     }
 
@@ -471,16 +475,16 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
 
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableDepth();
+        GlStateManager.disableTexture();
+        GlStateManager.disableDepthTest();
         GL11.glLineWidth(2.0f);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.color(f, f1, f2, f3);
+        GlStateManager.blendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.color4f(f, f1, f2, f3);
         buffer.pos(x1, y1, 0.0D).endVertex();
         buffer.pos(x2, y2, 0.0D).endVertex();
         tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
+        GlStateManager.enableTexture();
+        GlStateManager.enableDepthTest();
         GlStateManager.disableBlend();
     }
 

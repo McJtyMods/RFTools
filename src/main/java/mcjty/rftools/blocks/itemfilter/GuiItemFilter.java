@@ -7,9 +7,11 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.typed.TypedMap;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,7 +19,7 @@ import java.awt.*;
 
 import static mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity.*;
 
-public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
+public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity, GenericContainer> {
     public static final int ITEMFILTER_WIDTH = 195;
     public static final int ITEMFILTER_HEIGHT = 212;
 
@@ -26,26 +28,26 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
 
     private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterTileEntity.BUFFER_SIZE * 6];
 
-    public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "filter");
+    public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "filter");
 
         xSize = ITEMFILTER_WIDTH;
         ySize = ITEMFILTER_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int[] inputMode = tileEntity.getInputMode();
         int[] outputMode = tileEntity.getOutputMode();
 
-        for (Direction direction : Direction.VALUES) {
+        for (Direction direction : OrientationTools.DIRECTION_VALUES) {
             final int side = direction.ordinal();
             for (int slot = 0; slot < ItemFilterTileEntity.BUFFER_SIZE ; slot++) {
-                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(25 + slot * 18, 4 + side * 13, 12, 12)).
+                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(minecraft, this).setLayoutHint(new PositionalLayout.PositionalHint(25 + slot * 18, 4 + side * 13, 12, 12)).
                         addChoice("0", "Disabled", iconGuiElements, 160, 0).
                         addChoice("1", "Input", iconGuiElements, 96, 16).
                         addChoice("2", "Output", iconGuiElements, 80, 16);

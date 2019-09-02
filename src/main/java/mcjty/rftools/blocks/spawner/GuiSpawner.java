@@ -9,7 +9,7 @@ import mcjty.lib.gui.widgets.BlockRender;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.SyringeItem;
@@ -17,10 +17,13 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.awt.*;
 import java.math.RoundingMode;
@@ -28,7 +31,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 
-public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
+public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity, GenericContainer> {
     private static final int SPAWNER_WIDTH = 180;
     private static final int SPAWNER_HEIGHT = 152;
 
@@ -40,38 +43,33 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
-    public GuiSpawner(SpawnerTileEntity spawnerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "spawner");
-        GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getStoredPower());
+    public GuiSpawner(SpawnerTileEntity spawnerTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "spawner");
 
         xSize = SPAWNER_WIDTH;
         ySize = SPAWNER_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        energyBar = new EnergyBar(minecraft, this).setVertical().setLayoutHint(10, 7, 8, 54).setShowText(false);
 
-        blocks[0] = new BlockRender(mc, this).setLayoutHint(80, 5, 18, 18);
-        blocks[1] = new BlockRender(mc, this).setLayoutHint(80, 25, 18, 18);
-        blocks[2] = new BlockRender(mc, this).setLayoutHint(80, 45, 18, 18);
-        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[0].setLayoutHint(100, 5, 74, 18);
-        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[1].setLayoutHint(100, 25, 74, 18);
-        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[2].setLayoutHint(100, 45, 74, 18);
-        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); name.setLayoutHint(22, 31, 78, 16);
-        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); rfTick.setLayoutHint(22, 47, 78, 16);
+        blocks[0] = new BlockRender(minecraft, this).setLayoutHint(80, 5, 18, 18);
+        blocks[1] = new BlockRender(minecraft, this).setLayoutHint(80, 25, 18, 18);
+        blocks[2] = new BlockRender(minecraft, this).setLayoutHint(80, 45, 18, 18);
+        labels[0] = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[0].setLayoutHint(100, 5, 74, 18);
+        labels[1] = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[1].setLayoutHint(100, 25, 74, 18);
+        labels[2] = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[2].setLayoutHint(100, 45, 74, 18);
+        name = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); name.setLayoutHint(22, 31, 78, 16);
+        rfTick = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); rfTick.setLayoutHint(22, 47, 78, 16);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChildren(blocks[0], labels[0], blocks[1], labels[1], blocks[2], labels[2], rfTick, name);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
-
-        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     private static long lastTime = 0;
@@ -84,7 +82,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         name.setText("");
         rfTick.setText("");
 
-        ItemStack stack = tileEntity.getStackInSlot(SpawnerTileEntity.SLOT_SYRINGE);
+        ItemStack stack = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(h -> h.getStackInSlot(SpawnerTileEntity.SLOT_SYRINGE)).orElse(ItemStack.EMPTY);
         if (stack.isEmpty()) {
             return;
         }
@@ -111,12 +109,12 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                     ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
                     if (b.isEmpty()) {
-                        Object[] blocks = {Blocks.LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF};
+                        Object[] blocks = {Blocks.BIRCH_LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF}; // @todo 1.14 use tags or better way to find leaves
                         int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
                         if (blocks[index] instanceof Block) {
-                            this.blocks[i].setRenderItem(new ItemStack((Block) blocks[index], 1, 0));
+                            this.blocks[i].setRenderItem(new ItemStack((Block) blocks[index], 1));
                         } else {
-                            this.blocks[i].setRenderItem(new ItemStack((Item) blocks[index], 1, 0));
+                            this.blocks[i].setRenderItem(new ItemStack((Item) blocks[index], 1));
                         }
                     } else {
                         blocks[i].setRenderItem(b);
@@ -136,8 +134,9 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         showSyringeInfo();
 
         drawWindow();
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
     }
 }

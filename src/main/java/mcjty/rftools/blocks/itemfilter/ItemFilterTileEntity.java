@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.itemfilter;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -13,10 +13,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
-public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSidedInventory {
+import javax.annotation.Nonnull;
+
+import static mcjty.rftools.blocks.itemfilter.ItemFilterSetup.TYPE_ITEM_FILTER;
+
+public class ItemFilterTileEntity extends GenericTileEntity {
 
     public static final String CMD_SETMODE = "itemfilter.setMode";
     public static final Key<Integer> PARAM_SIDE = new Key<>("side", Type.INTEGER);
@@ -39,7 +44,14 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
             layoutPlayerInventorySlots(24, 130);
         }
     };
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, GHOST_SIZE + BUFFER_SIZE);
+    private NoDirectionItemHander itemHandler = createInternalHandler();
+    private LazyOptional<ItemFilterInvWrapper> invHandlerN = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.NORTH));
+    private LazyOptional<ItemFilterInvWrapper> invHandlerS = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.SOUTH));
+    private LazyOptional<ItemFilterInvWrapper> invHandlerW = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.WEST));
+    private LazyOptional<ItemFilterInvWrapper> invHandlerE = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.EAST));
+    private LazyOptional<ItemFilterInvWrapper> invHandlerD = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.DOWN));
+    private LazyOptional<ItemFilterInvWrapper> invHandlerU = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.UP));
+
 
     private int inputMode[] = new int[6];
     private int outputMode[] = new int[6];
@@ -52,40 +64,39 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return outputMode;
     }
 
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
+    public ItemFilterTileEntity() {
+        super(TYPE_ITEM_FILTER);
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND));
         inputMode = tagCompound.getIntArray("inputs");
         outputMode = tagCompound.getIntArray("outputs");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setIntArray("inputs", inputMode);
-        tagCompound.setIntArray("outputs", outputMode);
+        tagCompound.put("Items", itemHandler.serializeNBT());
+        tagCompound.putIntArray("inputs", inputMode);
+        tagCompound.putIntArray("outputs", outputMode);
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -111,37 +122,35 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return false;
     }
 
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
+    private boolean isInputMode(Direction side, int slot) {
+        return (inputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return false;
+    private boolean isOutputMode(Direction side, int slot) {
+        return (outputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
+    @Nonnull
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (index < SLOT_BUFFER) {
-            return false;
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            switch (facing) {
+                case DOWN:  return invHandlerD.cast();
+                case UP:    return invHandlerU.cast();
+                case NORTH: return invHandlerN.cast();
+                case SOUTH: return invHandlerS.cast();
+                case WEST:  return invHandlerW.cast();
+                case EAST:  return invHandlerE.cast();
+            }
         }
-        ItemStack ghostStack = inventoryHelper.getStackInSlot(index - SLOT_BUFFER);
-        return ghostStack.isEmpty() || ghostStack.isItemEqual(stack);
+        return super.getCapability(capability, facing);
     }
 
-    @Override
     public int[] getSlotsForFace(Direction side) {
         int v = SLOT_BUFFER;
         return new int[] { v, v+1, v+2, v+3, v+4, v+5, v+6, v+7, v+8 };
     }
 
-    @Override
     public boolean canInsertItem(int index, ItemStack stack, Direction side) {
         if (index < SLOT_BUFFER) {
             return false;
@@ -152,13 +161,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
 
         int ghostIndex = index - SLOT_BUFFER;
 
-        ItemStack ghostStack = inventoryHelper.getStackInSlot(ghostIndex);
+        ItemStack ghostStack = itemHandler.getStackInSlot(ghostIndex);
         if (ghostStack.isEmpty()) {
             // First check if there are other ghosted items for this side that match.
             // In that case we don't allow input here.
             int im = inputMode[side.ordinal()];
             for (int i = SLOT_GHOST ; i < SLOT_GHOST + GHOST_SIZE ; i++) {
-                ItemStack g = inventoryHelper.getStackInSlot(i);
+                ItemStack g = itemHandler.getStackInSlot(i);
                 if (!g.isEmpty() && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
                 }
@@ -168,7 +177,6 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return ghostStack.isItemEqual(stack);
     }
 
-    @Override
     public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         if (index < SLOT_BUFFER) {
             return false;
@@ -176,47 +184,11 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return isOutputMode(direction, index - SLOT_BUFFER);
     }
 
-    private boolean isInputMode(Direction side, int slot) {
-        return (inputMode[side.ordinal()] & (1<<slot)) != 0;
+    private NoDirectionItemHander createInternalHandler() {
+        return new NoDirectionItemHander(ItemFilterTileEntity.this, CONTAINER_FACTORY, GHOST_SIZE + BUFFER_SIZE);
     }
 
-    private boolean isOutputMode(Direction side, int slot) {
-        return (outputMode[side.ordinal()] & (1<<slot)) != 0;
-    }
-
-    private IItemHandler invHandlerN = new ItemFilterInvWrapper(this, Direction.NORTH);
-    private IItemHandler invHandlerS = new ItemFilterInvWrapper(this, Direction.SOUTH);
-    private IItemHandler invHandlerW = new ItemFilterInvWrapper(this, Direction.WEST);
-    private IItemHandler invHandlerE = new ItemFilterInvWrapper(this, Direction.EAST);
-    private IItemHandler invHandlerD = new ItemFilterInvWrapper(this, Direction.DOWN);
-    private IItemHandler invHandlerU = new ItemFilterInvWrapper(this, Direction.UP);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, Direction facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, Direction facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            switch (facing) {
-                case DOWN:
-                    return (T) invHandlerD;
-                case UP:
-                    return (T) invHandlerU;
-                case NORTH:
-                    return (T) invHandlerN;
-                case SOUTH:
-                    return (T) invHandlerS;
-                case WEST:
-                    return (T) invHandlerW;
-                case EAST:
-                    return (T) invHandlerE;
-            }
-        }
-        return super.getCapability(capability, facing);
+    NoDirectionItemHander getItemHandler() {
+        return itemHandler;
     }
 }

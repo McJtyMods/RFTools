@@ -2,10 +2,11 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -16,40 +17,35 @@ import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.items.ModItems;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-
-
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
+
+import static mcjty.rftools.blocks.spawner.SpawnerSetup.TYPE_SPAWNER;
 
 //import net.minecraft.entity.monster.SkeletonType;
 
-public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
+public class SpawnerTileEntity extends GenericTileEntity implements MachineInformation, ITickableTileEntity {
 
     public static final String CMD_GET_SPAWNERINFO = "getSpawnerInfo";
     public static final Key<Double> PARAM_MATTER0 = new Key<>("matter0", Type.DOUBLE);
@@ -69,7 +65,10 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             layoutPlayerInventorySlots(10, 70);
         }
     };
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
+//    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
+
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK));
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_SYRINGE) {
         @Override
@@ -90,18 +89,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private AxisAlignedBB entityCheckBox = null;
 
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
     public SpawnerTileEntity() {
-        super(SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK);
-    }
-
-    @Override
-    protected boolean needsCustomInvWrapper() {
-        return true;
+        super(TYPE_SPAWNER);
     }
 
     @Override
@@ -140,7 +129,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         checkSyringe = false;
         mobId = null;
-        ItemStack itemStack = inventoryHelper.getStackInSlot(0);
+        ItemStack itemStack = itemHandler.map(h -> h.getStackInSlot(SLOT_SYRINGE)).orElse(ItemStack.EMPTY);
         if (itemStack.isEmpty()) {
             clearMatter();
             return;
@@ -222,8 +211,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -241,17 +230,19 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             }
         }
 
-        // We have enough materials. Check power.
-        Integer rf = SpawnerConfiguration.mobSpawnRf.get(mobId);
-        if (rf == null) {
-            rf = SpawnerConfiguration.defaultMobSpawnRf;
-        }
+        energyHandler.ifPresent(h -> {
+            // We have enough materials. Check power.
+            Integer rf = SpawnerConfiguration.mobSpawnRf.get(mobId);
+            if (rf == null) {
+                rf = SpawnerConfiguration.defaultMobSpawnRf;
+            }
 
-        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
-        if (getStoredPower() < rf) {
-            return;
-        }
-        consumeEnergy(rf);
+            rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+            if (h.getEnergy() < rf) {
+                return;
+            }
+            h.consumeEnergy(rf);
+        });
 
         for (int i = 0; i < 3; i++) {
             matter[i] -= spawnAmounts.get(i).getAmount();
@@ -259,7 +250,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         markDirty();
 
-        BlockState state = getWorld().getBlockState(getPos());
+        BlockState state = world.getBlockState(getPos());
         Direction k = OrientationTools.getOrientation(state);
         int sx = getPos().getX();
         int sy = getPos().getY();
@@ -280,18 +271,18 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //        }
 
 
-        MobEntity entityLiving = EntityTools.createEntity(getWorld(), mobId);
+        MobEntity entityLiving = null; // @todo 1.14EntityTools.createEntity(world, mobId);
         if (entityLiving == null) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;
         }
 
-        if (entityLiving instanceof EntityDragon) {
+        if (entityLiving instanceof EnderDragonEntity) {
             // Ender dragon needs to be spawned with an additional NBT key set
             CompoundNBT dragonTag = new CompoundNBT();
-            entityLiving.writeEntityToNBT(dragonTag);
-            dragonTag.setShort("DragonPhase", (short) 0);
-            entityLiving.readEntityFromNBT(dragonTag);
+            entityLiving.writeWithoutTypeId(dragonTag); // @todo 1.14 correct?
+            dragonTag.putShort("DragonPhase", (short) 0);
+            entityLiving.read(dragonTag);
         }
 
         if (k == Direction.DOWN) {
@@ -299,7 +290,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         entityLiving.setLocationAndAngles(sx + 0.5D, sy, sz + 0.5D, 0.0F, 0.0F);
-        getWorld().spawnEntity(entityLiving);
+        world.addEntity(entityLiving);
     }
 
 //    private int countEntitiesWithinAABB(AxisAlignedBB aabb) {
@@ -311,8 +302,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //        int cnt = 0;
 //        for (int i1 = i; i1 <= j; ++i1) {
 //            for (int j1 = k; j1 <= l; ++j1) {
-//                if (getWorld().getChunkProvider().chunkExists(i1, j1)) {
-//                    cnt += countEntitiesWithinChunkAABB(getWorld().getChunkFromChunkCoords(i1, j1), aabb);
+//                if (world.getChunkProvider().chunkExists(i1, j1)) {
+//                    cnt += countEntitiesWithinChunkAABB(world.getChunkFromChunkCoords(i1, j1), aabb);
 //                }
 //            }
 //        }
@@ -341,7 +332,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (coord == null) {
             return; // Nothing to do.
         }
-        TileEntity tileEntity = getWorld().getTileEntity(coord);
+        TileEntity tileEntity = world.getTileEntity(coord);
 
         double d = new Vec3d(coord).distanceTo(new Vec3d(getPos()));
         if (d > SpawnerConfiguration.maxBeamDistance) {
@@ -358,14 +349,15 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         matter[0] = tagCompound.getFloat("matter0");
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
@@ -377,120 +369,71 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setFloat("matter0", matter[0]);
-        tagCompound.setFloat("matter1", matter[1]);
-        tagCompound.setFloat("matter2", matter[2]);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
+        tagCompound.putFloat("matter0", matter[0]);
+        tagCompound.putFloat("matter1", matter[1]);
+        tagCompound.putFloat("matter2", matter[2]);
         if (mobId != null && !mobId.isEmpty()) {
-            tagCompound.setString("mobId", mobId);
+            tagCompound.putString("mobId", mobId);
         }
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        return new int[]{SLOT_SYRINGE};
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return isItemValidForSlot(index, itemStackIn);
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return true;
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int amount) {
-        checkSyringe = true;
-        prevMobId = mobId;
-        return inventoryHelper.decrStackSize(index, amount);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        checkSyringe = true;
-        prevMobId = mobId;
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-    }
-
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return stack.getItem() == ModItems.syringeItem;
     }
 
     @Override
     public boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         if (world.isRemote) {
-            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
             useWrench(player);
         }
         return true;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof SpawnerTileEntity) {
-            float[] matter = getMatter();
-            DecimalFormat fmt = new DecimalFormat("#.##");
-            fmt.setRoundingMode(RoundingMode.DOWN);
-            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
-            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
-            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
-        }
-    }
-
-    private static long lastTime = 0;
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof SpawnerTileEntity) {
-            if (System.currentTimeMillis() - lastTime > 500) {
-                lastTime = System.currentTimeMillis();
-                ((SpawnerTileEntity) te).requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, TypedMap.EMPTY);
-            }
-
-            if (matterReceived0 >= 0) {
-                DecimalFormat fmt = new DecimalFormat("#.##");
-                fmt.setRoundingMode(RoundingMode.DOWN);
-                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matterReceived0));
-                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matterReceived1));
-                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matterReceived2));
-            }
-        }
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        TileEntity te = world.getTileEntity(data.getPos());
+//        if (te instanceof SpawnerTileEntity) {
+//            float[] matter = getMatter();
+//            DecimalFormat fmt = new DecimalFormat("#.##");
+//            fmt.setRoundingMode(RoundingMode.DOWN);
+//            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
+//            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
+//            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+//        }
+//    }
+//
+//    private static long lastTime = 0;
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof SpawnerTileEntity) {
+//            if (System.currentTimeMillis() - lastTime > 500) {
+//                lastTime = System.currentTimeMillis();
+//                ((SpawnerTileEntity) te).requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, TypedMap.EMPTY);
+//            }
+//
+//            if (matterReceived0 >= 0) {
+//                DecimalFormat fmt = new DecimalFormat("#.##");
+//                fmt.setRoundingMode(RoundingMode.DOWN);
+//                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matterReceived0));
+//                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matterReceived1));
+//                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matterReceived2));
+//            }
+//        }
+//    }
 
     @Nullable
     @Override
@@ -522,5 +465,32 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         return false;
+    }
+
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(SpawnerTileEntity.this, CONTAINER_FACTORY, 1) {
+
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                checkSyringe = true;
+                prevMobId = mobId;
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == ModItems.syringeItem;
+            }
+
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
+            }
+
+            @Override
+            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isOutputSlot(slot);
+            }
+        };
     }
 }

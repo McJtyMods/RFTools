@@ -13,7 +13,6 @@ import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -23,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -31,14 +31,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -87,7 +86,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onEntityConstructing(AttachCapabilitiesEvent<Entity> event){
         if (event.getObject() instanceof PlayerEntity) {
-            if (!event.getObject().hasCapability(PlayerExtendedProperties.BUFF_CAPABILITY, null)) {
+            if (!event.getObject().getCapability(PlayerExtendedProperties.BUFF_CAPABILITY).isPresent()) {
                 event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
         }
