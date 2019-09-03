@@ -44,6 +44,6 @@ public class ElevatorStopSound extends TickableSound {
             donePlaying = true;
             return;
         }
-        volume = (float) ElevatorConfiguration.baseElevatorVolume.get();
+        volume = (float) (double) ElevatorConfiguration.baseElevatorVolume.get();
     }
 }

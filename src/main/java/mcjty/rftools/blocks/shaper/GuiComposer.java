@@ -1,15 +1,14 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -24,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class GuiComposer extends GenericGuiContainer<ComposerTileEntity, GenericContainer> implements IShapeParentGui {
     public static final int SIDEWIDTH = 80;
@@ -184,7 +182,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity, Generic
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = slot;
             GuiShapeCard.returnGui = this;
-            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            // @todo 1.14
+//            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 
@@ -198,16 +197,17 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity, Generic
         network.sendToServer(new PacketSendComposerData(tileEntity.getPos(), modifiers));
     }
 
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        x -= guiLeft;
-        y -= guiTop;
-
-        getShapeRenderer().handleShapeDragging(x, y);
-    }
+    // @todo 1.14
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        super.handleMouseInput();
+//        int x = Mouse.getEventX() * width / mc.displayWidth;
+//        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+//        x -= guiLeft;
+//        y -= guiTop;
+//
+//        getShapeRenderer().handleShapeDragging(x, y);
+//    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
@@ -216,7 +216,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity, Generic
 
         drawWindow();
 
-        Slot slot = inventorySlots.getSlot(ComposerTileEntity.SLOT_OUT);
+        Slot slot = container.getSlot(ComposerTileEntity.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (!stack.isEmpty()) {

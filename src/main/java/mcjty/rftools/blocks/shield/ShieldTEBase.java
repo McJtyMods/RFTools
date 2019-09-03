@@ -5,14 +5,17 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
-import mcjty.lib.varia.BlockTools;
-import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.RedstoneMode;
+import mcjty.lib.varia.*;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -21,31 +24,34 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
+public abstract class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
         IMachineInformation { // @todo }, IPeripheral {
 
     public static final String CMD_APPLYCAMO = "shield.applyCamo";
@@ -113,19 +119,32 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     private List<RelCoordinateShield> shieldBlocks = new ArrayList<>();
     private List<BlockState> blockStateTable = new ArrayList<>();
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShieldContainer.factory, ShieldContainer.BUFFER_SIZE);
+    public static final int SLOT_BUFFER = 0;
+    public static final int SLOT_SHAPE = 1;
+    public static final int SLOT_SHARD = 2;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 26, 142, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SHAPE, 26, 200, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModItems.dimensionalShardItem) */), ContainerFactory.CONTAINER_CONTAINER, SLOT_SHARD, 229, 118, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
+    public static final int BUFFER_SIZE = 3;
 
-    public ShieldTEBase(int maxEnergy, int maxReceive) {
-        super(maxEnergy, maxReceive);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, getConfigMaxEnergy(), getConfigRfPerTick()));
+
+    public ShieldTEBase(TileEntityType<?> type) {
+        super(type);
     }
+
+    protected abstract int getConfigMaxEnergy();
+    protected abstract int getConfigRfPerTick();
 
     @Override
     protected boolean needsRedstoneMode() {
-        return true;
-    }
-
-    @Override
-    protected boolean needsCustomInvWrapper() {
         return true;
     }
 
@@ -367,7 +386,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
             return null;
         }
         LazyOptional<ResourceLocation> map = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-                .map(h -> h.getStackInSlot(ShieldContainer.SLOT_BUFFER))
+                .map(h -> h.getStackInSlot(SLOT_BUFFER))
                 .filter(stack -> !stack.isEmpty() && stack.getItem() != null)
                 .map(stack -> stack.getItem().getRegistryName());
         if (map.isPresent()) {
@@ -473,46 +492,49 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     private ItemStack lootingSword = ItemStack.EMPTY;
 
     public void applyDamageToEntity(Entity entity) {
-        DamageSource source;
-        int rf;
-        if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
-            rf = ShieldConfiguration.rfDamage.get();
-            source = DamageSource.GENERIC;
-        } else {
-            rf = ShieldConfiguration.rfDamagePlayer.get();
-            if (killer == null) {
-                killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(UUID.nameUUIDFromBytes("rftools_shield".getBytes()), "rftools_shield"));
-            }
-            killer.setWorld(world);
-            killer.setPosition(pos.getX(), pos.getY(), pos.getZ());
-            FakePlayer fakePlayer = killer;
-            ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
-            if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill.get()) {
-                decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill.get());
-                if (lootingSword.isEmpty()) {
-                    lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus.get());
-                }
-                lootingSword.setItemDamage(0);
-                fakePlayer.setHeldItem(Hand.MAIN_HAND, lootingSword);
+        energyHandler.ifPresent(h -> {
+            DamageSource source;
+            int rf;
+            if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
+                rf = ShieldConfiguration.rfDamage.get();
+                source = DamageSource.GENERIC;
             } else {
-                fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                rf = ShieldConfiguration.rfDamagePlayer.get();
+                if (killer == null) {
+                    killer = FakePlayerFactory.get(WorldTools.getOverworld(), new GameProfile(UUID.nameUUIDFromBytes("rftools_shield".getBytes()), "rftools_shield"));
+                }
+                killer.setWorld(world);
+                killer.setPosition(pos.getX(), pos.getY(), pos.getZ());
+                FakePlayer fakePlayer = killer;
+                itemHandler.ifPresent(ih -> {
+                    ItemStack shards = ih.getStackInSlot(SLOT_SHARD);
+                    if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill.get()) {
+                        ih.extractItem(SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill.get(), false);
+                        if (lootingSword.isEmpty()) {
+                            lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus.get());
+                        }
+                        lootingSword.setDamage(0);
+                        fakePlayer.setHeldItem(Hand.MAIN_HAND, lootingSword);
+                    } else {
+                        fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                    }
+                });
+                source = DamageSource.causePlayerDamage(fakePlayer);
             }
-            source = DamageSource.causePlayerDamage(fakePlayer);
-        }
 
-        rf = (int) (rf * costFactor * (4.0f - getInfusedFactor()) / 4.0f);
+            rf = (int) (rf * costFactor * (4.0f - getInfusedFactor()) / 4.0f);
+            if (h.getEnergyStored() < rf) {
+                // Not enough RF to do damage.
+                return;
+            }
+            h.consumeEnergy(rf);
 
-        if (getStoredPower() < rf) {
-            // Not enough RF to do damage.
-            return;
-        }
-        consumeEnergy(rf);
+            float damage = (float) (double) ShieldConfiguration.damage.get();
+            damage *= damageFactor;
+            damage = damage * (1.0f + getInfusedFactor() / 2.0f);
 
-        float damage = (float) ShieldConfiguration.damage.get();
-        damage *= damageFactor;
-        damage = damage * (1.0f + getInfusedFactor() / 2.0f);
-
-        entity.attackEntityFrom(source, damage);
+            entity.attackEntityFrom(source, damage);
+        });
     }
 
     @Override
@@ -556,43 +578,45 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         }
 
 
-        boolean checkPower = false;
-        if (powerTimeout > 0) {
-            powerTimeout--;
-            markDirty();
+        energyHandler.ifPresent(h -> {
+            boolean checkPower = false;
             if (powerTimeout > 0) {
-                return;
-            } else {
-                checkPower = true;
-            }
-        }
-
-        boolean needsUpdate = false;
-
-        int rf = getRfPerTick();
-
-        if (rf > 0) {
-            if (getStoredPower() < rf) {
-                powerTimeout = 100;     // Wait 5 seconds before trying again.
-                needsUpdate = true;
-            } else {
-                if (checkPower) {
-                    needsUpdate = true;
+                powerTimeout--;
+                markDirty();
+                if (powerTimeout > 0) {
+                    return;
+                } else {
+                    checkPower = true;
                 }
-                consumeEnergy(rf);
             }
-        }
 
-        boolean newShieldActive = isMachineEnabled();
-        if (newShieldActive != shieldActive) {
-            needsUpdate = true;
-            shieldActive = newShieldActive;
-        }
+            boolean needsUpdate = false;
 
-        if (needsUpdate) {
-            updateShield();
-            markDirty();
-        }
+            int rf = getRfPerTick();
+
+            if (rf > 0) {
+                if (h.getEnergyStored() < rf) {
+                    powerTimeout = 100;     // Wait 5 seconds before trying again.
+                    needsUpdate = true;
+                } else {
+                    if (checkPower) {
+                        needsUpdate = true;
+                    }
+                    h.consumeEnergy(rf);
+                }
+            }
+
+            boolean newShieldActive = isMachineEnabled();
+            if (newShieldActive != shieldActive) {
+                needsUpdate = true;
+                shieldActive = newShieldActive;
+            }
+
+            if (needsUpdate) {
+                updateShield();
+                markDirty();
+            }
+        });
     }
 
     private int getRfPerTick() {
@@ -620,7 +644,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
             // Special shaped mode.
             templateState = Blocks.AIR.getDefaultState();
 
-            ItemStack shapeItem = inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE);
+            ItemStack shapeItem = itemHandler.map(h -> h.getStackInSlot(SLOT_SHAPE)).orElse(ItemStack.EMPTY);
             Shape shape = ShapeCardItem.getShape(shapeItem);
             boolean solid = ShapeCardItem.isSolid(shapeItem);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension.get());
@@ -656,7 +680,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
                 }
             }
             shieldBlocks.add(new RelCoordinateShield(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord, st));
-            getWorld().setBlockToAir(c);
+            getWorld().setBlockState(c, Blocks.AIR.getDefaultState());
         }
 
         shieldComposed = true;
@@ -664,11 +688,11 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     }
 
     private boolean isShapedShield() {
-        return !inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE).isEmpty();
+        return !itemHandler.map(h -> h.getStackInSlot(SLOT_SHAPE)).orElse(ItemStack.EMPTY).isEmpty();
     }
 
     private boolean findTemplateState() {
-        for (Direction dir : Direction.VALUES) {
+        for (Direction dir : OrientationTools.DIRECTION_VALUES) {
             BlockPos p = getPos().offset(dir);
             if (p.getY() >= 0 && p.getY() < getWorld().getHeight()) {
                 BlockState state = getWorld().getBlockState(p);
@@ -735,7 +759,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
      * Update all shield blocks. Possibly creating the shield.
      */
     private void updateShield() {
-        int[] camoId = calculateCamoId();
+        ResourceLocation camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
         int damageBits = calculateDamageBits();
         Block block = calculateShieldBlock(damageBits, camoId, blockLight);
@@ -748,7 +772,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
                 pos.setPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
                 BlockState oldState = getWorld().getBlockState(pos);
                 if (oldState.getBlock() instanceof AbstractShieldBlock) {
-                    getWorld().setBlockToAir(pos);
+                    getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
                 }
             } else {
                 updateShieldBlock(camoId, cddata, damageBits, block, c);
@@ -757,26 +781,29 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         markDirtyClient();
     }
 
-    private void updateShieldBlock(int[] camoId, int cddata, int damageBits, Block block, RelCoordinateShield c) {
+    private void updateShieldBlock(ResourceLocation camoId, int cddata, int damageBits, Block block, RelCoordinateShield c) {
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
         BlockPos pp = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
         BlockState oldState = getWorld().getBlockState(pp);
-        if ((!oldState.getBlock().isReplaceable(getWorld(), pp)) && oldState.getBlock() != ShieldSetup.shieldTemplateBlock) {
-            return;
-        }
-        getWorld().setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
+        // @todo 1.14 what to do  with isReplaceable
+//        if ((!oldState.getBlock().isReplaceable(getWorld(), pp)) && oldState.getBlock() != ShieldSetup.shieldTemplateBlock) {
+//            return;
+//        }
+//        getWorld().setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
+
         TileEntity te = getWorld().getTileEntity(pp);
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) te;
             if (c.getState() != -1) {
                 BlockState state = blockStateTable.get(c.getState());
                 // @todo VERY DIRTY! Don't use ID
-                int id = Block.getIdFromBlock(state.getBlock());
-                shieldBlockTileEntity.setCamoBlock(id, state.getBlock().getMetaFromState(state), 0);
+                // @todo 1.14
+//                int id = Block.getIdFromBlock(state.getBlock());
+//                shieldBlockTileEntity.setCamoBlock(id, state.getBlock().getMetaFromState(state), 0);
             } else {
-                shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[1], camoId[2]);
+//                shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[1], camoId[2]);
             }
             shieldBlockTileEntity.setShieldBlock(getPos());
             shieldBlockTileEntity.setDamageBits(damageBits);
@@ -840,7 +867,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     }
 
     private void addToTodoStraight(Map<BlockPos, BlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, BlockState templateState) {
-        for (Direction dir : Direction.VALUES) {
+        for (Direction dir : OrientationTools.DIRECTION_VALUES) {
             BlockPos pp = coordinate.offset(dir);
             if (pp.getY() >= 0 && pp.getY() < getWorld().getHeight()) {
                 if (!coordinateSet.containsKey(pp)) {
@@ -919,13 +946,13 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         powerTimeout = tagCompound.getInt("powerTimeout");
         if (tagCompound.contains("templateColor")) {
             int templateColor = tagCompound.getInt("templateColor");
-            templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
+            templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().with(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
         } else if (tagCompound.contains("templateMeta")) {
-            // Deprecated @todo remove with 1.13
+            // Deprecated @todo remove with 1.14 find other way to store blockstate
             int meta = tagCompound.getInt("templateMeta");
-            templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+//            templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
         } else {
-            templateState = Blocks.AIR.getDefaultState();
+//            templateState = Blocks.AIR.getDefaultState();
         }
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("visMode")];
@@ -949,7 +976,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         tagCompound.putBoolean("active", shieldActive);
         tagCompound.putInt("powerTimeout", powerTimeout);
         if (templateState.getMaterial() != Material.AIR) {
-            tagCompound.putInt("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+            tagCompound.putInt("templateColor", templateState.get(ShieldTemplateBlock.COLOR).ordinal());
         }
 
         tagCompound.putInt("visMode", shieldRenderingMode.ordinal());
@@ -964,21 +991,21 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInt("powerTimeout");
         if (!isShapedShield()) {
             if (tagCompound.contains("templateColor")) {
                 int templateColor = tagCompound.getInt("templateColor");
-                templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
+                templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().with(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
             } else if (tagCompound.contains("templateMeta")) {
-                // Deprecated @todo remove with 1.13
+                // Deprecated @todo remove with 1.14
                 int meta = tagCompound.getInt("templateMeta");
-                templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+//                templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
             } else {
-                templateState = Blocks.AIR.getDefaultState();
+//                templateState = Blocks.AIR.getDefaultState();
             }
         } else {
             templateState = Blocks.AIR.getDefaultState();
@@ -998,8 +1025,8 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
                 shieldBlocks.add(new RelCoordinateShield(dx, dy, dz, st));
             }
 
-            NBTTagList list = tagCompound.getTagList("gstates", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < list.tagCount() ; i++) {
+            ListNBT list = tagCompound.getList("gstates", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < list.size() ; i++) {
                 CompoundNBT tc = (CompoundNBT) list.get(i);
                 String b = tc.getString("b");
                 int m = tc.getInt("m");
@@ -1008,7 +1035,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
                     block = Blocks.STONE;
                     m = 0;
                 }
-                BlockState state = block.getStateFromMeta(m);
+                BlockState state = block.getDefaultState(); // @todo 1.14 getStateFromMeta(m);
                 blockStateTable.add(state);
             }
         } else {
@@ -1022,12 +1049,13 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
                 shieldBlocks.add(new RelCoordinateShield(dx, dy, dz, -1));
             }
         }
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("visMode")];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
@@ -1044,23 +1072,21 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
 
     private void readFiltersFromNBT(CompoundNBT tagCompound) {
         filters.clear();
-        NBTTagList filterList = tagCompound.getTagList("filters", Constants.NBT.TAG_COMPOUND);
-        if (filterList != null) {
-            for (int i = 0 ; i < filterList.tagCount() ; i++) {
-                CompoundNBT compound = filterList.getCompoundTagAt(i);
-                filters.add(AbstractShieldFilter.createFilter(compound));
-            }
+        ListNBT filterList = tagCompound.getList("filters", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < filterList.size() ; i++) {
+            CompoundNBT compound = filterList.getCompound(i);
+            filters.add(AbstractShieldFilter.createFilter(compound));
         }
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         tagCompound.putBoolean("composed", shieldComposed);
         tagCompound.putBoolean("active", shieldActive);
         tagCompound.putInt("powerTimeout", powerTimeout);
         if (templateState.getMaterial() != Material.AIR) {
-            tagCompound.putInt("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+            tagCompound.putInt("templateColor", templateState.get(ShieldTemplateBlock.COLOR).ordinal());
         }
         byte[] blocks = new byte[shieldBlocks.size() * 8];
         int j = 0;
@@ -1075,24 +1101,25 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
             blocks[j+7] = shortToByte2((short) c.getState());
             j += 8;
         }
-        tagCompound.setByteArray("relcoordsNew", blocks);
+        tagCompound.putByteArray("relcoordsNew", blocks);
 
-        NBTTagList list = new NBTTagList();
+        ListNBT list = new ListNBT();
         for (BlockState state : blockStateTable) {
             CompoundNBT tc = new CompoundNBT();
             tc.putString("b", state.getBlock().getRegistryName().toString());
-            tc.putInt("m", state.getBlock().getMetaFromState(state));
-            list.appendTag(tc);
+//            tc.putInt("m", state.getBlock().getMetaFromState(state)); // @todo 1.14 meta
+            list.add(tc);
         }
-        tagCompound.setTag("gstates", list);
+        tagCompound.put("gstates", list);
+        writeRestorableToNBT(tagCompound);
 
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putInt("visMode", shieldRenderingMode.ordinal());
         tagCompound.putByte("damageMode", (byte) damageMode.ordinal());
 
@@ -1104,17 +1131,17 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     }
 
     private void writeFiltersToNBT(CompoundNBT tagCompound) {
-        NBTTagList filterList = new NBTTagList();
+        ListNBT filterList = new ListNBT();
         for (ShieldFilter filter : filters) {
             CompoundNBT compound = new CompoundNBT();
             filter.writeToNBT(compound);
-            filterList.appendTag(compound);
+            filterList.add(compound);
         }
-        tagCompound.setTag("filters", filterList);
+        tagCompound.put("filters", filterList);
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -1173,71 +1200,22 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         return false;
     }
 
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        if (index == ShieldContainer.SLOT_SHAPE && !inventoryHelper.getStackInSlot(index).isEmpty()) {
-            // Restart if we go from having a stack to not having stack or the other way around.
-            decomposeShield();
-        }
-        return getInventoryHelper().removeStackFromSlot(index);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int amount) {
-        if (index == ShieldContainer.SLOT_SHAPE && !inventoryHelper.getStackInSlot(index).isEmpty() && amount > 0) {
-            // Restart if we go from having a stack to not having stack or the other way around.
-            decomposeShield();
-        }
-
-        ItemStack stackInSlot = inventoryHelper.getStackInSlot(index);
-        if (!stackInSlot.isEmpty()) {
-            if (stackInSlot.getCount() <= amount) {
-                ItemStack old = stackInSlot.copy();
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStack.EMPTY);
-                markDirty();
-                return old;
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(ShieldTEBase.this, CONTAINER_FACTORY, BUFFER_SIZE) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return true;    // @todo right?
             }
-            ItemStack its = stackInSlot.splitStack(amount);
-            if (stackInSlot.isEmpty()) {
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStack.EMPTY);
+
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                if (index == SLOT_SHAPE && !getStackInSlot(index).isEmpty()) {
+                    // Restart if we go from having a stack to not having stack or the other way around.
+                    decomposeShield();
+                }
             }
-            markDirty();
-            return its;
-        }
-        return ItemStack.EMPTY;
+        };
     }
 
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == ShieldContainer.SLOT_SHAPE /* && (stack.isEmpty() != inventoryHelper.getStackInSlot(index).isEmpty()) */ ) { // @todo McJtyLib issue #62
-            // Restart if we go from having a stack to not having stack or the other way around.
-            decomposeShield();
-        }
-
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
-            int amount = getInventoryStackLimit();
-            if (amount <= 0) {
-                stack.setCount(0);
-            } else {
-                stack.setCount(amount);
-            }
-        }
-        markDirty();
-    }
-
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
 }

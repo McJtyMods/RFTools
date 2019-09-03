@@ -820,16 +820,6 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 return true;
             }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
-            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
-            }
         };
     }
 

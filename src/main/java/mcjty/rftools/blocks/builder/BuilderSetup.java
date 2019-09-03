@@ -43,6 +43,9 @@ public class BuilderSetup {
     @ObjectHolder("rftools:locator")
     public static TileEntityType<?> TYPE_LOCATOR;
 
+    @ObjectHolder("rftools:projector")
+    public static TileEntityType<?> TYPE_PROJECTOR;
+
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
 
@@ -152,13 +155,14 @@ public class BuilderSetup {
     }
 
     private static void readBuilderBlocksConfig() {
-        File modConfigDir = RFTools.setup.getModConfigDir();
-        File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
-        try(FileInputStream inputstream = new FileInputStream(file)) {
-            parseBuilderJson(inputstream);
-        } catch (IOException e) {
-            Logging.log("Could not read 'userbuilder.json', this is not an error!");
-        }
+        // @todo 1.14
+//        File modConfigDir = RFTools.setup.getModConfigDir();
+//        File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
+//        try(FileInputStream inputstream = new FileInputStream(file)) {
+//            parseBuilderJson(inputstream);
+//        } catch (IOException e) {
+//            Logging.log("Could not read 'userbuilder.json', this is not an error!");
+//        }
     }
 
     private static void parseBuilderJson(InputStream inputstream) throws UnsupportedEncodingException {

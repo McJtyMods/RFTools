@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.IItemHandler;
 
 public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModule.ModuleDataStacks> {
@@ -81,7 +80,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 
     @Override
     public ModuleDataStacks getData(IScreenDataHelper helper, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }
@@ -95,23 +94,13 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        if (CapabilityTools.hasItemCapabilitySafe(te)) {
-            IItemHandler itemHandler = CapabilityTools.getItemCapabilitySafe(te);
-            ItemStack stack1 = getItemStack(itemHandler, slot1);
-            ItemStack stack2 = getItemStack(itemHandler, slot2);
-            ItemStack stack3 = getItemStack(itemHandler, slot3);
-            ItemStack stack4 = getItemStack(itemHandler, slot4);
+        return CapabilityTools.getItemCapabilitySafe(te).map(h -> {
+            ItemStack stack1 = getItemStack(h, slot1);
+            ItemStack stack2 = getItemStack(h, slot2);
+            ItemStack stack3 = getItemStack(h, slot3);
+            ItemStack stack4 = getItemStack(h, slot4);
             return new ModuleDataStacks(stack1, stack2, stack3, stack4);
-        } else if (te instanceof IInventory) {
-            IInventory inventory = (IInventory) te;
-            ItemStack stack1 = getItemStack(inventory, slot1);
-            ItemStack stack2 = getItemStack(inventory, slot2);
-            ItemStack stack3 = getItemStack(inventory, slot3);
-            ItemStack stack4 = getItemStack(inventory, slot4);
-            return new ModuleDataStacks(stack1, stack2, stack3, stack4);
-        } else {
-            return null;
-        }
+        }).orElse(null);
     }
 
     private ItemStack getItemStack(IInventory inventory, int slot) {

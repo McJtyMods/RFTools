@@ -5,6 +5,8 @@ import mcjty.lib.varia.Check32;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
@@ -16,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ShapeRenderer {
 
@@ -69,64 +72,67 @@ public class ShapeRenderer {
     public void initView(int dx, int dy) {
         Minecraft mc = Minecraft.getInstance();
 
-        final ScaledResolution scaledresolution = new ScaledResolution(mc);
-        int xScale = scaledresolution.getScaledWidth();
-        int yScale = scaledresolution.getScaledHeight();
-        int sx = (dx + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (dy + 136) * mc.displayHeight / yScale;
-        int sw = 161 * mc.displayWidth / xScale;
-        int sh = 130 * mc.displayHeight / yScale;
+        MainWindow mainWindow = mc.mainWindow;
+        int xScale = mainWindow.getScaledWidth();
+        int yScale = mainWindow.getScaledHeight();
+        int sx = (dx + 84) * mainWindow.getWidth() / xScale;
+        int sy = (mainWindow.getHeight()) - (dy + 136) * mainWindow.getHeight() / yScale;
+        int sw = 161 * mainWindow.getWidth() / xScale;
+        int sh = 130 * mainWindow.getHeight() / yScale;
         int vx = sx + sw/2;
         int vy = sy + sh/2;
 
-        this.dx = vx/scaledresolution.getScaleFactor();
-        this.dy = vy/scaledresolution.getScaleFactor();
+        this.dx = (float) (vx/mainWindow.getGuiScaleFactor());
+        this.dy = (float) (vy/mainWindow.getGuiScaleFactor());
     }
 
     public void handleShapeDragging(int x, int y) {
         if (x >= 100 && y <= 120) {
-            if (McJtyLib.proxy.isShiftKeyDown()) {
-                if (prevX != -1 && Mouse.isButtonDown(0)) {
-                    dx += (x - prevX);
-                    dy += (y - prevY);
-                }
-            } else {
-                if (prevX != -1 && Mouse.isButtonDown(0)) {
-                    yangle -= (x - prevX);
-                    xangle += (y - prevY);
-                }
-            }
+            // @todo 1.14
+//            if (McJtyLib.proxy.isShiftKeyDown()) {
+//                if (prevX != -1 && Mouse.isButtonDown(0)) {
+//                    dx += (x - prevX);
+//                    dy += (y - prevY);
+//                }
+//            } else {
+//                if (prevX != -1 && Mouse.isButtonDown(0)) {
+//                    yangle -= (x - prevX);
+//                    xangle += (y - prevY);
+//                }
+//            }
             prevX = x;
             prevY = y;
         }
 
-        if (Mouse.isButtonDown(2)) {
-            xangle = 0.0f;
-            yangle = 0.0f;
-        }
+        // @todo 1.14
+//        if (Mouse.isButtonDown(2)) {
+//            xangle = 0.0f;
+//            yangle = 0.0f;
+//        }
     }
 
     public void handleMouseWheel() {
-        int dwheel = Mouse.getDWheel();
-        if (dwheel < 0) {
-            scale *= .6;
-            if (scale <= 0.1) {
-                scale = .1f;
-            }
-        } else if (dwheel > 0) {
-            scale *= 1.4;
-        }
+        // @todo 1.14
+//        int dwheel = Mouse.getDWheel();
+//        if (dwheel < 0) {
+//            scale *= .6;
+//            if (scale <= 0.1) {
+//                scale = .1f;
+//            }
+//        } else if (dwheel > 0) {
+//            scale *= 1.4;
+//        }
     }
 
     public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
                                    boolean scan, ShapeID shape) {
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
-        GlStateManager.scale(scale, scale, scale);
-        GlStateManager.rotate(angle, 0, 1, 0);
+        GlStateManager.scalef(scale, scale, scale);
+        GlStateManager.rotatef(angle, 0, 1, 0);
 
 //        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-        Minecraft.getInstance().entityRenderer.disableLightmap();
+        Minecraft.getInstance().gameRenderer.disableLightmap();
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
         GlStateManager.disableLighting();
@@ -140,7 +146,7 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
 //        RenderHelper.enableStandardItemLighting();
-        Minecraft.getInstance().entityRenderer.enableLightmap();
+        Minecraft.getInstance().gameRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
         return doSound;
@@ -152,10 +158,10 @@ public class ShapeRenderer {
         GlStateManager.pushMatrix();
 
         GlStateManager.translatef(dx, dy, 200);
-        GlStateManager.rotate(180-xangle, 1f, 0, 0);
-        GlStateManager.rotate(yangle, 0, 1f, 0);
-        GlStateManager.rotate(zangle, 0, 0, 1f);
-        GlStateManager.scale(-scale, scale, scale);
+        GlStateManager.rotatef(180-xangle, 1f, 0, 0);
+        GlStateManager.rotatef(yangle, 0, 1f, 0);
+        GlStateManager.rotatef(zangle, 0, 0, 1f);
+        GlStateManager.scalef(-scale, scale, scale);
 
         GlStateManager.disableBlend();
         GlStateManager.disableCull();
@@ -175,7 +181,7 @@ public class ShapeRenderer {
         GlStateManager.popMatrix();
 
         if (showGuidelines) {
-            GlStateManager.glLineWidth(3);
+            GlStateManager.lineWidth(3);
             buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             buffer.pos(x - 62, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
             buffer.pos(x - 39, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
@@ -211,7 +217,7 @@ public class ShapeRenderer {
 
 
     static void renderOuterBox(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
-        GlStateManager.glLineWidth(1.0f);
+        GlStateManager.lineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
         int xleft = -xlen / 2;
@@ -250,7 +256,7 @@ public class ShapeRenderer {
     }
 
     static void renderAxis(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
-        GlStateManager.glLineWidth(2.5f);
+        GlStateManager.lineWidth(2.5f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
         buffer.pos(0, 0, 0).color(1f, 0f, 0f, 1f).endVertex();

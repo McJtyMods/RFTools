@@ -19,16 +19,17 @@ public class CrafterSetup {
 
     public static void init() {
         if(!CrafterConfiguration.enabled.get()) return;
-        crafterBlock1 = new CrafterBlock("crafter1", CrafterBlockTileEntity1.class);
-        crafterBlock2 = new CrafterBlock("crafter2", CrafterBlockTileEntity2.class);
-        crafterBlock3 = new CrafterBlock("crafter3", CrafterBlockTileEntity3.class);
+        crafterBlock1 = new CrafterBlock("crafter1", CrafterBlockTileEntity1::new);
+        crafterBlock2 = new CrafterBlock("crafter2", CrafterBlockTileEntity2::new);
+        crafterBlock3 = new CrafterBlock("crafter3", CrafterBlockTileEntity3::new);
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        if(!CrafterConfiguration.enabled.get()) return;
-        crafterBlock1.initModel();
-        crafterBlock2.initModel();
-        crafterBlock3.initModel();
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        if(!CrafterConfiguration.enabled.get()) return;
+//        crafterBlock1.initModel();
+//        crafterBlock2.initModel();
+//        crafterBlock3.initModel();
+//    }
 }

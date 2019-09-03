@@ -1,8 +1,5 @@
 package mcjty.rftools.blocks;
 
-import mcjty.lib.builder.BaseBlockBuilderFactory;
-import mcjty.lib.builder.LogicSlabBlockBuilderFactory;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.booster.BoosterSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -10,22 +7,15 @@ import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.elevator.ElevatorSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
-import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
-import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.monitor.MonitorSetup;
-import mcjty.rftools.blocks.powercell.PowerCellSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
-import mcjty.rftoolsbase.blocks.DimensionalShardBlock;
-import net.minecraft.client.renderer.color.BlockColors;
 
 
 
@@ -35,20 +25,18 @@ public final class ModBlocks {
 
 
     public static void init() {
-        builderFactory = new BaseBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());
-        logicFactory = new LogicSlabBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());
 
         initBaseBlocks();
 
-        CoalGeneratorSetup.init();
+//        CoalGeneratorSetup.init();
         CrafterSetup.init();
-        ModularStorageSetup.init();
+//        ModularStorageSetup.init();
         TeleporterSetup.init();
         ScreenSetup.init();
         LogicBlockSetup.init();
-        MachineInfuserSetup.init();
+//        MachineInfuserSetup.init();
         BuilderSetup.init();
-        PowerCellSetup.init();
+//        PowerCellSetup.init();
         RelaySetup.init();
         MonitorSetup.init();
         ShieldSetup.init();
@@ -58,55 +46,54 @@ public final class ModBlocks {
         ItemFilterSetup.init();
         SecuritySetup.init();
         EndergenicSetup.init();
-        StorageScannerSetup.init();
+//        StorageScannerSetup.init();
         ElevatorSetup.init();
         BoosterSetup.init();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        machineFrame.initModel();
-        machineBase.initModel();
-        dimensionalShardBlock.initModel();
-
-        CoalGeneratorSetup.initClient();
-        CrafterSetup.initClient();
-        ModularStorageSetup.initClient();
-        TeleporterSetup.initClient();
-        ScreenSetup.initClient();
-        LogicBlockSetup.initClient();
-        MachineInfuserSetup.initClient();
-        BuilderSetup.initClient();
-        PowerCellSetup.initClient();
-        RelaySetup.initClient();
-        MonitorSetup.initClient();
-        ShieldSetup.initClient();
-        EnvironmentalSetup.initClient();
-        SpawnerSetup.initClient();
-        BlockProtectorSetup.initClient();
-        ItemFilterSetup.initClient();
-        SecuritySetup.initClient();
-        EndergenicSetup.initClient();
-        StorageScannerSetup.initClient();
-        ElevatorSetup.initClient();
-        BoosterSetup.initClient();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void initClientPost() {
-        ShieldSetup.initClientPost();
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        machineFrame.initModel();
+//        machineBase.initModel();
+//        dimensionalShardBlock.initModel();
+//
+//        CoalGeneratorSetup.initClient();
+//        CrafterSetup.initClient();
+//        ModularStorageSetup.initClient();
+//        TeleporterSetup.initClient();
+//        ScreenSetup.initClient();
+//        LogicBlockSetup.initClient();
+//        MachineInfuserSetup.initClient();
+//        BuilderSetup.initClient();
+//        PowerCellSetup.initClient();
+//        RelaySetup.initClient();
+//        MonitorSetup.initClient();
+//        ShieldSetup.initClient();
+//        EnvironmentalSetup.initClient();
+//        SpawnerSetup.initClient();
+//        BlockProtectorSetup.initClient();
+//        ItemFilterSetup.initClient();
+//        SecuritySetup.initClient();
+//        EndergenicSetup.initClient();
+//        StorageScannerSetup.initClient();
+//        ElevatorSetup.initClient();
+//        BoosterSetup.initClient();
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    public static void initClientPost() {
+//        ShieldSetup.initClientPost();
+//    }
 
     private static void initBaseBlocks() {
         machineFrame = new MachineFrame();
         machineBase = new MachineBase();
-
-        dimensionalShardBlock = new DimensionalShardBlock();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initColorHandlers(BlockColors blockColors) {
-        ShieldSetup.initColorHandlers(blockColors);
-    }
+//    @SideOnly(Side.CLIENT)
+//    public static void initColorHandlers(BlockColors blockColors) {
+//        ShieldSetup.initColorHandlers(blockColors);
+//    }
 
 }

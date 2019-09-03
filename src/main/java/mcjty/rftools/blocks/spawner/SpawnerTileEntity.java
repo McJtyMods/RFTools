@@ -481,16 +481,6 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 return stack.getItem() == ModItems.syringeItem;
             }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
-            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
-            }
         };
     }
 }

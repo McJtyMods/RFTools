@@ -4,6 +4,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
+import mcjty.rftools.blocks.logic.wireless.RedstoneChannelTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
@@ -11,11 +12,11 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -96,18 +97,18 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        if(world.isRemote) {
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
+        if (world.isRemote) {
             return ActionResultType.SUCCESS;
         }
 
-        ItemStack stack = player.getHeldItem(hand);
+        ItemStack stack = context.getItem();
+        BlockPos pos = context.getPos();
         TileEntity te = world.getTileEntity(pos);
-        CompoundNBT tagCompound = stack.getTag();
-        if (tagCompound == null) {
-            tagCompound = new CompoundNBT();
-            stack.setTagCompound(tagCompound);
-        }
+        PlayerEntity player = context.getPlayer();
+        Direction facing = context.getFace();
+        CompoundNBT tagCompound = stack.getOrCreateTag();
         int channel = -1;
         if (te instanceof RedstoneChannelTileEntity) {
             channel = ((RedstoneChannelTileEntity) te).getChannel(true);
@@ -124,17 +125,17 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
             return ActionResultType.SUCCESS;
         }
 
-        tagCompound.removeTag("monitordim");
-        tagCompound.removeTag("monitorx");
-        tagCompound.removeTag("monitory");
-        tagCompound.removeTag("monitorz");
-        tagCompound.removeTag("monitorside");
+        tagCompound.remove("monitordim");
+        tagCompound.remove("monitorx");
+        tagCompound.remove("monitory");
+        tagCompound.remove("monitorz");
+        tagCompound.remove("monitorside");
 
         if (channel != -1) {
             tagCompound.putInt("channel", channel);
             Logging.message(player, "Redstone module is set to channel '" + channel + "'");
         } else {
-            tagCompound.removeTag("channel");
+            tagCompound.remove("channel");
             Logging.message(player, "Redstone module is cleared");
         }
         return ActionResultType.SUCCESS;

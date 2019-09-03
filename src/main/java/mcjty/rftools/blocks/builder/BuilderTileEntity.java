@@ -1098,7 +1098,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
     private void getFilterCache() {
         if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
+            // @todo 1.14
+//            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
         }
     }
 

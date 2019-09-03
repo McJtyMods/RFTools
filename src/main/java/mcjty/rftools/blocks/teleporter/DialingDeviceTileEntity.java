@@ -1,12 +1,15 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -14,11 +17,15 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static mcjty.rftools.blocks.teleporter.TeleporterSetup.TYPE_DIALING_DEVICE;
 
 public class DialingDeviceTileEntity extends GenericTileEntity {
 
@@ -57,8 +64,10 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
     private boolean showOnlyFavorites = false;
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, TeleportConfiguration.DIALER_MAXENERGY.get(), TeleportConfiguration.DIALER_RECEIVEPERTICK.get()));
+
     public DialingDeviceTileEntity() {
-        super(TeleportConfiguration.DIALER_MAXENERGY.get(), TeleportConfiguration.DIALER_RECEIVEPERTICK.get());
+        super(TYPE_DIALING_DEVICE);
     }
 
     /**
@@ -80,7 +89,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
     }
 
     public static boolean isMatterBoosterAvailable(World world, BlockPos pos) {
-        for (Direction facing : Direction.VALUES) {
+        for (Direction facing : OrientationTools.DIRECTION_VALUES) {
             if (TeleporterSetup.matterBoosterBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
@@ -90,7 +99,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
 
     public static boolean isDestinationAnalyzerAvailable(World world, BlockPos pos) {
-        for (Direction facing : Direction.VALUES) {
+        for (Direction facing : OrientationTools.DIRECTION_VALUES) {
             if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
@@ -108,26 +117,28 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         showOnlyFavorites = tagCompound.getBoolean("showFav");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putBoolean("showFav", showOnlyFavorites);
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
@@ -168,7 +179,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        List<ServerPlayerEntity> list = ((ServerWorld) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
+        List<ServerPlayerEntity> list = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
         for (ServerPlayerEntity ServerPlayerEntity : list) {
             if (playerName.equals(ServerPlayerEntity.getName())) {
                 FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
@@ -186,13 +197,19 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
     // Server side only
     private int checkStatus(BlockPos c, int dim) {
-        int cost = TeleportConfiguration.rfPerCheck.get();
-        cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
-
-        if (getStoredPower() < cost) {
-            return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
+        int s = energyHandler.map(h -> {
+            int cost = TeleportConfiguration.rfPerCheck.get();
+            cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
+            if (h.getEnergy() < cost) {
+                return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
+            } else {
+                h.consumeEnergy(cost);
+                return 0;
+            }
+        }).orElse(0);
+        if (s != 0) {
+            return s;
         }
-        consumeEnergy(cost);
 
         World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(dim);
         if (w == null) {
@@ -241,7 +258,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return rc;

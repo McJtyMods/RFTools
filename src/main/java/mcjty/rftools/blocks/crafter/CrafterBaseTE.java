@@ -493,11 +493,7 @@ public class CrafterBaseTE extends GenericTileEntity implements ITickableTileEnt
                 if (!isItemValid(slot, stack)) {
                     return false;
                 }
-                return CONTAINER_FACTORY.isInputSlot(slot);            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
+                return CONTAINER_FACTORY.isInputSlot(slot);
             }
         };
     }

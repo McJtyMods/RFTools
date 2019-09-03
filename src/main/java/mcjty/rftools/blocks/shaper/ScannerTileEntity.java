@@ -320,7 +320,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                     case FILTER_SLOT: {
                         ItemStack inputItem = inState.getBlock().getItem(world, pos, inState);
                         if (false) { // @todo 1.14 !modifier.getIn().isEmpty() && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
-                            StorageFilterCache filter = StorageFilterItem.getCache(modifier.getIn());
+                            StorageFilterCache filter = null; // @todo 1.14 StorageFilterItem.getCache(modifier.getIn());
                             if (filter.match(inputItem)) {
                                 outState = getOutput(inState, modifier);
                                 stop = true;
@@ -493,16 +493,6 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 return stack.getItem() == BuilderSetup.shapeCardItem;
-            }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
-            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
             }
 
             @Override

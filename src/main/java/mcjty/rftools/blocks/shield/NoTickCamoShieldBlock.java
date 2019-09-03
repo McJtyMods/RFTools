@@ -1,7 +1,10 @@
 package mcjty.rftools.blocks.shield;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockReader;
+
+import javax.annotation.Nullable;
 
 public class NoTickCamoShieldBlock extends CamoShieldBlock {
 
@@ -9,8 +12,9 @@ public class NoTickCamoShieldBlock extends CamoShieldBlock {
         super(registryName, unlocName, opaque);
     }
 
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(World world, int metadata) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new NoTickShieldSolidBlockTileEntity();
     }
 }

@@ -1,9 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.rftools.RFTools;
-import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
 
@@ -32,8 +29,21 @@ public class ShieldSetup {
 
     @ObjectHolder("rftools:shield_inv_block")
     public static TileEntityType<?> TYPE_SHIELD_INV_BLOCK;
+    @ObjectHolder("rftools:shield_inv_no_tickblock")
+    public static TileEntityType<?> TYPE_SHIELD_INV_NO_TICK_BLOCK;
+    @ObjectHolder("rftools:shield_solid_no_tickblock")
+    public static TileEntityType<?> TYPE_SHIELD_SOLID_NO_TICK_BLOCK;
+
     @ObjectHolder("rftools:shield_solid")
     public static TileEntityType<?> TYPE_SHIELD_SOLID;
+    @ObjectHolder("rftools:shield_block1")
+    public static TileEntityType<?> TYPE_SHIELD_BLOCK1;
+    @ObjectHolder("rftools:shield_block2")
+    public static TileEntityType<?> TYPE_SHIELD_BLOCK2;
+    @ObjectHolder("rftools:shield_block3")
+    public static TileEntityType<?> TYPE_SHIELD_BLOCK3;
+    @ObjectHolder("rftools:shield_block4")
+    public static TileEntityType<?> TYPE_SHIELD_BLOCK4;
 
 
     public static void init() {
@@ -60,53 +70,55 @@ public class ShieldSetup {
             camoShieldBlockOpaque = new CamoShieldBlock("camo_shield_block_opaque", "rftools.camo_shield_block", true);
             noTickCamoShieldBlockOpaque = new NoTickCamoShieldBlock("notick_camo_shield_block_opaque", "rftools.notick_camo_shield_block", true);
 
-            GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + ":invisible_shield_block");
-            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, RFTools.MODID + ":notick_invisible_shield_block");
-            GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + ":solid_shield_block");
-            GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + ":notick_solid_shield_block");
+            // @todo 1.14
+//            GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + ":invisible_shield_block");
+//            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, RFTools.MODID + ":notick_invisible_shield_block");
+//            GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + ":solid_shield_block");
+//            GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + ":notick_solid_shield_block");
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        shieldBlock1.initModel();
-        shieldBlock2.initModel();
-        shieldBlock3.initModel();
-        shieldBlock4.initModel();
-        shieldTemplateBlock.initModel();
-        invisibleShieldBlock.initModel();
-        noTickInvisibleShieldBlock.initModel();
-        invisibleShieldBlockOpaque.initModel();
-        noTickInvisibleShieldBlockOpaque.initModel();
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
-            solidShieldBlock.initModel();
-            noTickSolidShieldBlock.initModel();
-            camoShieldBlock.initModel();
-            noTickCamoShieldBlock.initModel();
-            solidShieldBlockOpaque.initModel();
-            noTickSolidShieldBlockOpaque.initModel();
-            camoShieldBlockOpaque.initModel();
-            noTickCamoShieldBlockOpaque.initModel();
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void initClientPost() {
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
-            solidShieldBlock.initBlockColors();
-            noTickSolidShieldBlock.initBlockColors();
-            solidShieldBlockOpaque.initBlockColors();
-            noTickSolidShieldBlockOpaque.initBlockColors();
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void initColorHandlers(BlockColors blockColors) {
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
-            camoShieldBlock.initColorHandler(blockColors);
-            noTickCamoShieldBlock.initColorHandler(blockColors);
-            camoShieldBlockOpaque.initColorHandler(blockColors);
-            noTickCamoShieldBlockOpaque.initColorHandler(blockColors);
-        }
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        shieldBlock1.initModel();
+//        shieldBlock2.initModel();
+//        shieldBlock3.initModel();
+//        shieldBlock4.initModel();
+//        shieldTemplateBlock.initModel();
+//        invisibleShieldBlock.initModel();
+//        noTickInvisibleShieldBlock.initModel();
+//        invisibleShieldBlockOpaque.initModel();
+//        noTickInvisibleShieldBlockOpaque.initModel();
+//        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
+//            solidShieldBlock.initModel();
+//            noTickSolidShieldBlock.initModel();
+//            camoShieldBlock.initModel();
+//            noTickCamoShieldBlock.initModel();
+//            solidShieldBlockOpaque.initModel();
+//            noTickSolidShieldBlockOpaque.initModel();
+//            camoShieldBlockOpaque.initModel();
+//            noTickCamoShieldBlockOpaque.initModel();
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    public static void initClientPost() {
+//        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
+//            solidShieldBlock.initBlockColors();
+//            noTickSolidShieldBlock.initBlockColors();
+//            solidShieldBlockOpaque.initBlockColors();
+//            noTickSolidShieldBlockOpaque.initBlockColors();
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    public static void initColorHandlers(BlockColors blockColors) {
+//        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
+//            camoShieldBlock.initColorHandler(blockColors);
+//            noTickCamoShieldBlock.initColorHandler(blockColors);
+//            camoShieldBlockOpaque.initColorHandler(blockColors);
+//            noTickCamoShieldBlockOpaque.initColorHandler(blockColors);
+//        }
+//    }
 }

@@ -25,8 +25,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-
 import static mcjty.rftools.blocks.spawner.SpawnerSetup.TYPE_MATTER_BEAMER;
 
 
@@ -271,16 +269,6 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(MatterBeamerTileEntity.this, CONTAINER_FACTORY, 1) {
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
-            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
-            }
-        };
+        return new NoDirectionItemHander(MatterBeamerTileEntity.this, CONTAINER_FACTORY, 1);
     }
 }

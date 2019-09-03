@@ -11,7 +11,7 @@ public class BlindnessEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return (float) EnvironmentalConfiguration.BLINDNESS_RFPERTICK.get();
+        return (float) (double) EnvironmentalConfiguration.BLINDNESS_RFPERTICK.get();
     }
 
     @Override

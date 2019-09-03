@@ -1,16 +1,18 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.OrientationTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
+import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     private int channel = -1;
@@ -23,7 +25,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
         if (channel == -1) {
             // If we are monitoring some block then we can use that.
             if (!BlockPosTools.INVALID.equals(coordinate)) {
-                World world = DimensionManager.getWorld(dim);
+                World world = WorldTools.getWorld(dim);
                 if (world != null) {
 //                    int powerTo = world.isBlockProvidingPowerTo(coordinate.getX(), coordinate.getY(), coordinate.getZ(), side);
                     int powerTo = world.getRedstonePower(coordinate.offset(side), side.getOpposite());
@@ -34,7 +36,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
             }
             return null;
         }
-        RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
+        RedstoneChannels channels = RedstoneChannels.get();
         if (channels == null) {
             return null;
         }
@@ -53,7 +55,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
                 channel = tagCompound.getInt("channel");
             }
             if (tagCompound.contains("monitorx")) {
-                side = Direction.VALUES[tagCompound.getInt("monitorside")];
+                side = OrientationTools.DIRECTION_VALUES[tagCompound.getInt("monitorside")];
                 if (tagCompound.contains("monitordim")) {
                     this.dim = tagCompound.getInt("monitordim");
                 } else {

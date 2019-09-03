@@ -16,6 +16,8 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 
+import static mcjty.rftools.blocks.security.SecuritySetup.TYPE_SECURITY_MANAGER;
+
 public class SecurityManagerTileEntity extends GenericTileEntity {
 
     public static final String CMD_SETCHANNELNAME = "security.setChannelName";
@@ -46,6 +48,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
 
+    public SecurityManagerTileEntity() {
+        super(TYPE_SECURITY_MANAGER);
+    }
 
     private void updateCard(ItemStack cardStack) {
         if (world.isRemote) {
@@ -191,11 +196,6 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
             @Override
             public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
                 return stack.getItem() instanceof SecurityCardItem;
-            }
-
-            @Override
-            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
-                return CONTAINER_FACTORY.isOutputSlot(slot);
             }
 
             @Override

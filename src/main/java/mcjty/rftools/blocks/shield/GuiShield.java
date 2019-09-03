@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -9,10 +9,11 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
@@ -21,8 +22,11 @@ import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.List;
 
 import static mcjty.rftools.blocks.shield.ShieldTEBase.*;
 
-public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer> {
+public class GuiShield extends GenericGuiContainer<ShieldTEBase, GenericContainer> {
     public static final int SHIELD_WIDTH = 256;
     public static final int SHIELD_HEIGHT = 224;
 
@@ -67,37 +71,34 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/shieldprojector.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiShield(ShieldTileEntity shieldTileEntity, ShieldContainer container) {
-        this((ShieldTEBase) shieldTileEntity, container);
+    public GuiShield(ShieldTileEntity shieldTileEntity, GenericContainer container, PlayerInventory inventory) {
+        this((ShieldTEBase) shieldTileEntity, container, inventory);
     }
 
-    public GuiShield(ShieldTileEntity2 shieldTileEntity, ShieldContainer container) {
-        this((ShieldTEBase) shieldTileEntity, container);
+    public GuiShield(ShieldTileEntity2 shieldTileEntity, GenericContainer container, PlayerInventory inventory) {
+        this((ShieldTEBase) shieldTileEntity, container, inventory);
     }
 
-    public GuiShield(ShieldTileEntity3 shieldTileEntity, ShieldContainer container) {
-        this((ShieldTEBase) shieldTileEntity, container);
+    public GuiShield(ShieldTileEntity3 shieldTileEntity, GenericContainer container, PlayerInventory inventory) {
+        this((ShieldTEBase) shieldTileEntity, container, inventory);
     }
 
-    public GuiShield(ShieldTileEntity4 shieldTileEntity, ShieldContainer container) {
-        this((ShieldTEBase) shieldTileEntity, container);
+    public GuiShield(ShieldTileEntity4 shieldTileEntity, GenericContainer container, PlayerInventory inventory) {
+        this((ShieldTEBase) shieldTileEntity, container, inventory);
     }
 
-    public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "shield");
-        GenericEnergyStorageTileEntity.setCurrentRF(shieldTileEntity.getStoredPower());
+    public GuiShield(ShieldTEBase shieldTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, inventory, GuiProxy.GUI_MANUAL_SHAPE, "shield");
 
         xSize = SHIELD_WIDTH;
         ySize = SHIELD_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        long maxEnergyStored = tileEntity.getCapacity();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(12, 141, 10, 76).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        energyBar = new EnergyBar(minecraft, this).setVertical().setLayoutHint(12, 141, 10, 76).setShowText(false);
 
         initVisibilityMode();
         initActionOptions();
@@ -105,46 +106,46 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
         ImageChoiceLabel redstoneMode = initRedstoneMode();
         initDamageType();
 
-        filterList = new WidgetList(mc, this).setName("filters").setDesiredHeight(120).
+        filterList = new WidgetList(minecraft, this).setName("filters").setDesiredHeight(120).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget<?> parent, int index) {
                         selectFilter();
                     }
                 });
-        Slider filterSlider = new Slider(mc, this).setVertical().setScrollableName("filters").setDesiredWidth(11).setDesiredHeight(120);
-        Panel filterPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
+        Slider filterSlider = new Slider(minecraft, this).setVertical().setScrollableName("filters").setDesiredWidth(11).setDesiredHeight(120);
+        Panel filterPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
                 .setLayoutHint(12, 10, 154, 124).addChildren(filterList, filterSlider)
                 .setFilledBackground(0xff9e9e9e);
 
-        Button applyCamo = new Button(mc, this).setChannel("camo").setText("Set").setTooltips("Set the camouflage block").
+        Button applyCamo = new Button(minecraft, this).setChannel("camo").setText("Set").setTooltips("Set the camouflage block").
                 setLayoutHint(46, 142, 30, 16);
-        colorSelector = new ColorSelector(mc, this)
+        colorSelector = new ColorSelector(minecraft, this)
                 .setName("color")
                 .setTooltips("Color for the shield")
                 .setLayoutHint(25, 177, 30, 16);
 
-        ToggleButton light = new ToggleButton(mc, this).setName("light").setCheckMarker(true).setText("L").setTooltips("If pressed, light is blocked", "by the shield")
+        ToggleButton light = new ToggleButton(minecraft, this).setName("light").setCheckMarker(true).setText("L").setTooltips("If pressed, light is blocked", "by the shield")
                 .setLayoutHint(56, 177, 23, 16);
 
-        player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
+        player = new TextField(minecraft, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
 
-        addFilter = new Button(mc, this).setChannel("addfilter").setText("Add").setTooltips("Add selected filter").setLayoutHint(4, 6, 36, 14);
-        delFilter = new Button(mc, this).setChannel("delfilter").setText("Del").setTooltips("Delete selected filter").setLayoutHint(39, 6, 36, 14);
-        upFilter = new Button(mc, this).setChannel("upfilter").setText("Up").setTooltips("Move filter up").setLayoutHint(4, 22, 36, 14);
-        downFilter = new Button(mc, this).setChannel("downfilter").setText("Down").setTooltips("Move filter down").setLayoutHint(39, 22, 36, 14);
+        addFilter = new Button(minecraft, this).setChannel("addfilter").setText("Add").setTooltips("Add selected filter").setLayoutHint(4, 6, 36, 14);
+        delFilter = new Button(minecraft, this).setChannel("delfilter").setText("Del").setTooltips("Delete selected filter").setLayoutHint(39, 6, 36, 14);
+        upFilter = new Button(minecraft, this).setChannel("upfilter").setText("Up").setTooltips("Move filter up").setLayoutHint(4, 22, 36, 14);
+        downFilter = new Button(minecraft, this).setChannel("downfilter").setText("Down").setTooltips("Move filter down").setLayoutHint(39, 22, 36, 14);
 
-        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(170, 58, 80, 43)
+        Panel controlPanel = new Panel(minecraft, this).setLayout(new PositionalLayout()).setLayoutHint(170, 58, 80, 43)
                 .addChildren(addFilter, delFilter, upFilter, downFilter)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
 
-        Label lootingBonus = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
+        Label lootingBonus = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setText("Looting:");
         lootingBonus.setTooltips("Insert dimensional shards", "for looting bonus")
                 .setLayoutHint(160, 118, 60, 18);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(energyBar,
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(energyBar,
                 visibilityOptions, applyCamo, redstoneMode, filterPanel, actionOptions,
                 typeOptions, player, controlPanel, damageType,
                 colorSelector, lootingBonus, light);
@@ -165,7 +166,6 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
 
         listDirty = 0;
         requestFilters();
-        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     private void selectFilter() {
@@ -235,8 +235,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
             } else {
                 n = filter.getFilterName();
             }
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(n).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(85));
+            Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout());
+            panel.addChild(new Label(minecraft, this).setText(n).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(85));
             String actionName;
             boolean solid = (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
             boolean damage = (filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0;
@@ -249,7 +249,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
             } else {
                 actionName = ACTION_PASS;
             }
-            panel.addChild(new Label(mc, this).setText(actionName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+            panel.addChild(new Label(minecraft, this).setText(actionName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
             filterList.addChild(panel);
         }
     }
@@ -319,7 +319,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private ImageChoiceLabel initRedstoneMode() {
-        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(minecraft, this).
                 setName("redstone").
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
@@ -330,7 +330,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private void initVisibilityMode() {
-        visibilityOptions = new ChoiceLabel(mc, this)
+        visibilityOptions = new ChoiceLabel(minecraft, this)
                 .setName("visibility")
                 .setLayoutHint(25, 161, 54, 14);
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
@@ -349,7 +349,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private void initActionOptions() {
-        actionOptions = new ChoiceLabel(mc, this).setLayoutHint(170, 12, 80, 14);
+        actionOptions = new ChoiceLabel(minecraft, this).setLayoutHint(170, 12, 80, 14);
         actionOptions.addChoices(ACTION_PASS, ACTION_SOLID, ACTION_DAMAGE, ACTION_SOLIDDAMAGE);
         actionOptions.setChoiceTooltip(ACTION_PASS, "Entity that matches this filter", "can pass through");
         actionOptions.setChoiceTooltip(ACTION_SOLID, "Entity that matches this filter", "cannot pass");
@@ -358,7 +358,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private void initTypeOptions() {
-        typeOptions = new ChoiceLabel(mc, this).setLayoutHint(170, 28, 80, 14);
+        typeOptions = new ChoiceLabel(minecraft, this).setLayoutHint(170, 28, 80, 14);
         typeOptions.addChoices("All", "Passive", "Hostile", "Item", "Player");
         typeOptions.setChoiceTooltip("All", "Matches everything");
         typeOptions.setChoiceTooltip("Passive", "Matches passive mobs");
@@ -368,7 +368,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private void initDamageType() {
-        damageType = new ChoiceLabel(mc, this)
+        damageType = new ChoiceLabel(minecraft, this)
                 .setName("damage")
                 .setLayoutHint(170, 102, 80, 14);
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
@@ -377,13 +377,13 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
     }
 
     private void applyCamoToShield() {
-        ItemStack stack = tileEntity.getStackInSlot(0);
+        ItemStack stack = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(h -> h.getStackInSlot(0)).orElse(ItemStack.EMPTY);
 
         int pass = 0;
         if (!stack.isEmpty()) {
             Block block = Block.getBlockFromItem(stack.getItem());
             if (block != null) {
-                pass = block.getBlockLayer().ordinal();
+                pass = block.getRenderLayer().ordinal();
             }
         }
         sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_APPLYCAMO,
@@ -412,10 +412,10 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer
         populateFilters();
         enableButtons();
         drawWindow();
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
-
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
     }
 }

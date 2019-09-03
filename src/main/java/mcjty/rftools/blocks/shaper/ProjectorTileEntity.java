@@ -1,9 +1,10 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -27,11 +28,18 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_PROJECTOR;
 import static net.minecraft.util.Direction.*;
 
 public class ProjectorTileEntity extends GenericTileEntity implements ITickableTileEntity {
@@ -82,7 +90,11 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         }
     };
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
+//    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScannerConfiguration.PROJECTOR_MAXENERGY.get(), ScannerConfiguration.PROJECTOR_RECEIVEPERTICK.get()));
+
+
     private ShapeRenderer shapeRenderer = null;
     private ProjectorOperation operations[] = new ProjectorOperation[4];
 
@@ -106,7 +118,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     private boolean doNotifyClients = false;  // Set to true to notify clients
 
     public ProjectorTileEntity() {
-        super(ScannerConfiguration.PROJECTOR_MAXENERGY.get(), ScannerConfiguration.PROJECTOR_RECEIVEPERTICK.get());
+        super(TYPE_PROJECTOR);
         for (int i = 0 ; i < operations.length ; i++) {
             operations[i] = new ProjectorOperation();
         }
@@ -121,29 +133,31 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             updateOperations(false);
 
-            boolean a = active;
-            if (a) {
-                if (getStoredPower() < ScannerConfiguration.PROJECTOR_USEPERTICK.get()) {
-                    a = false;
+            energyHandler.ifPresent(h -> {
+                boolean a = active;
+                if (a) {
+                    if (h.getEnergyStored() < ScannerConfiguration.PROJECTOR_USEPERTICK.get()) {
+                        a = false;
+                    }
                 }
-            }
 
-            if (a != projecting) {
-                projecting = a;
-                markForNotification();
-            }
+                if (a != projecting) {
+                    projecting = a;
+                    markForNotification();
+                }
 
-            if (projecting) {
-                consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK.get());
-            }
-            if (doNotifyClients) {
-                doNotifyClients = false;
-                notifyClients();
-            }
+                if (projecting) {
+                    h.consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK.get());
+                }
+                if (doNotifyClients) {
+                    doNotifyClients = false;
+                    notifyClients();
+                }
+            });
         } else {
             if (scanNeeded) {
                 scanNeeded = false;
@@ -160,14 +174,13 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-        if (getWorld().isRemote) {
+    public void remove() {
+        super.remove();
+        if (world.isRemote) {
             stopSounds();
         }
     }
 
-    @SideOnly(Side.CLIENT)
     private void stopSounds() {
         ProjectorSounds.stopSound(getPos());
     }
@@ -176,7 +189,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         int scanId = ShapeCardItem.getScanId(getRenderStack());
         boolean isSolid = ShapeCardItem.isSolid(getRenderStack());
         if (scanId == 0) {
-            return new ShapeID(getWorld().getDimension().getType().getId(), getPos(), scanId, isGrayscale(), isSolid);
+            return new ShapeID(world.getDimension().getType().getId(), getPos(), scanId, isGrayscale(), isSolid);
         } else {
             return new ShapeID(0, null, scanId, isGrayscale(), isSolid);
         }
@@ -192,7 +205,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     private void updateOperations(boolean pulse) {
-        for (Direction facing : Direction.HORIZONTALS) {
+        for (Direction facing : OrientationTools.HORIZONTAL_DIRECTION_VALUES) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];
             int pl = index ^ 1;
@@ -289,30 +302,12 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         return counter;
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return stack.getItem() == BuilderSetup.shapeCardItem;
-    }
-
-    @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         verticalOffset = tagCompound.contains("offs") ? tagCompound.getFloat("offs") : .2f;
         scale = tagCompound.contains("scale") ? tagCompound.getFloat("scale") : .01f;
         angle = tagCompound.contains("angle") ? tagCompound.getFloat("angle") : .0f;
@@ -328,19 +323,19 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInt("counter");
-        for (Direction facing : Direction.HORIZONTALS) {
+        for (Direction facing : OrientationTools.HORIZONTAL_DIRECTION_VALUES) {
             if (tagCompound.contains("op_"+facing.getName())) {
                 int index = facing.ordinal() - 2;
                 ProjectorOperation op = operations[index];
-                CompoundNBT tc = (CompoundNBT) tagCompound.getTag("op_" + facing.getName());
+                CompoundNBT tc = (CompoundNBT) tagCompound.get("op_" + facing.getName());
                 String on = tc.getString("on");
                 Double von = null;
-                if (tc.hasKey("von")) {
+                if (tc.contains("von")) {
                     von = tc.getDouble("von");
                 }
                 String off = tc.getString("off");
                 Double voff = null;
-                if (tc.hasKey("voff")) {
+                if (tc.contains("voff")) {
                     voff = tc.getDouble("voff");
                 }
                 op.setOpcodeOn(ProjectorOpcode.getByCode(on));
@@ -352,12 +347,13 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setFloat("offs", verticalOffset);
-        tagCompound.setFloat("scale", scale);
-        tagCompound.setFloat("angle", angle);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
+        tagCompound.putFloat("offs", verticalOffset);
+        tagCompound.putFloat("scale", scale);
+        tagCompound.putFloat("angle", angle);
         tagCompound.putBoolean("rot", autoRotate);
         tagCompound.putBoolean("scan", scanline);
         tagCompound.putBoolean("sound", sound);
@@ -365,20 +361,21 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         tagCompound.putBoolean("projecting", projecting);
         tagCompound.putBoolean("active", active);
         tagCompound.putInt("counter", counter);
-        for (Direction facing : Direction.HORIZONTALS) {
+        for (Direction facing : OrientationTools.HORIZONTAL_DIRECTION_VALUES) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];
             CompoundNBT tc = new CompoundNBT();
-            tc.setString("on", op.getOpcodeOn().getCode());
+            tc.putString("on", op.getOpcodeOn().getCode());
             if (op.getValueOn() != null) {
-                tc.setDouble("von", op.getValueOn());
+                tc.putDouble("von", op.getValueOn());
             }
-            tc.setString("off", op.getOpcodeOff().getCode());
+            tc.putString("off", op.getOpcodeOff().getCode());
             if (op.getValueOff() != null) {
-                tc.setDouble("voff", op.getValueOff());
+                tc.putDouble("voff", op.getValueOff());
             }
-            tagCompound.setTag("op_"+facing.getName(), tc);
+            tagCompound.put("op_"+facing.getName(), tc);
         }
+        return tagCompound;
     }
 
     public float getVerticalOffset() {
@@ -448,7 +445,7 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     public ItemStack getRenderStack() {
-        return inventoryHelper.getStackInSlot(SLOT_CARD);
+        return itemHandler.map(h -> h.getStackInSlot(SLOT_CARD)).orElse(ItemStack.EMPTY);
     }
 
     public ShapeRenderer getShapeRenderer() {
@@ -459,7 +456,6 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     @SuppressWarnings("NullableProblems")
-    @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos.add(-5, 0, -5), pos.add(6, 5, 6));
@@ -471,18 +467,18 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     private void notifyClients() {
-        int dimension = getWorld().getDimension().getType().getId();
+        DimensionType dimension = world.getDimension().getType();
         double x = getPos().getX();
         double y = getPos().getY();
         double z = getPos().getZ();
         double sqradius = 40 * 40;
-        for (ServerPlayerEntity player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
-            if (player.dimension == dimension) {
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (player.dimension.equals(dimension)) {
                 double d0 = x - player.posX;
                 double d1 = y - player.posY;
                 double d2 = z - player.posZ;
                 if (d0 * d0 + d1 * d1 + d2 * d2 < sqradius) {
-                    RFToolsMessages.INSTANCE.sendTo(new PacketProjectorClientNotification(this), player);
+                    RFToolsMessages.INSTANCE.sendTo(new PacketProjectorClientNotification(this), player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 }
             }
         }
@@ -508,13 +504,13 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_RSSETTINGS.equals(command)) {
-            for (Direction facing : Direction.HORIZONTALS) {
+            for (Direction facing : OrientationTools.HORIZONTAL_DIRECTION_VALUES) {
                 int idx = facing.ordinal()-2;
                 String opOn = params.get(PARAM_OPON.get(idx));
                 String opOff = params.get(PARAM_OPOFF.get(idx));
@@ -619,6 +615,15 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         }
 
         return power;
+    }
+
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(ProjectorTileEntity.this, CONTAINER_FACTORY, 1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == BuilderSetup.shapeCardItem;
+            }
+        };
     }
 
 }

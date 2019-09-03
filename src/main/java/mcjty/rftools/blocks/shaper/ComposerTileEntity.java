@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -11,12 +11,14 @@ import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.ShapeModifier;
 import mcjty.rftools.shapes.ShapeOperation;
 import mcjty.rftools.shapes.ShapeRotation;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
 
 import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_COMPOSER;
 
@@ -39,7 +41,7 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
             layoutPlayerInventorySlots(85, 142);
         }
     };
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, SLOT_COUNT*2 + 1);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private ShapeModifier modifiers[] = new ShapeModifier[SLOT_COUNT];
 
     public ComposerTileEntity() {
@@ -52,27 +54,29 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
     @Override
     public void tick() {
         if (!world.isRemote) {
-            ItemStack output = getStackInSlot(SLOT_OUT);
-            if (!output.isEmpty()) {
-                ListNBT list = new ListNBT();
-                for (int i = SLOT_TABS; i < SLOT_TABS + SLOT_COUNT; i++) {
-                    ItemStack item = getStackInSlot(i);
-                    if (!item.isEmpty()) {
-                        if (item.hasTagCompound()) {
-                            CompoundNBT copy = item.getTag().copy();
-                            ShapeModifier modifier = modifiers[i - 1];
-                            ShapeCardItem.setModifier(copy, modifier);
-                            ItemStack materialGhost = getStackInSlot(i + SLOT_COUNT);
-                            ShapeCardItem.setGhostMaterial(copy, materialGhost);
-                            list.appendTag(copy);
+            itemHandler.ifPresent(h -> {
+                ItemStack output = h.getStackInSlot(SLOT_OUT);
+                if (!output.isEmpty()) {
+                    ListNBT list = new ListNBT();
+                    for (int i = SLOT_TABS; i < SLOT_TABS + SLOT_COUNT; i++) {
+                        ItemStack item = h.getStackInSlot(i);
+                        if (!item.isEmpty()) {
+                            if (item.hasTag()) {
+                                CompoundNBT copy = item.getTag().copy();
+                                ShapeModifier modifier = modifiers[i - 1];
+                                ShapeCardItem.setModifier(copy, modifier);
+                                ItemStack materialGhost = h.getStackInSlot(i + SLOT_COUNT);
+                                ShapeCardItem.setGhostMaterial(copy, materialGhost);
+                                list.add(copy);
+                            }
                         }
                     }
+                    ShapeCardItem.setChildren(output, list);
+                    if (!ShapeCardItem.getShape(output).isComposition()) {
+                        ShapeCardItem.setShape(output, Shape.SHAPE_COMPOSITION, true);
+                    }
                 }
-                ShapeCardItem.setChildren(output, list);
-                if (!ShapeCardItem.getShape(output).isComposition()) {
-                    ShapeCardItem.setShape(output, Shape.SHAPE_COMPOSITION, true);
-                }
-            }
+            });
         }
     }
 
@@ -85,33 +89,14 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
         markDirtyClient();
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return stack.getItem() == BuilderSetup.shapeCardItem;
-    }
-
-    @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
-        ListNBT list = tagCompound.getTagList("ops", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            CompoundNBT tag = list.getCompoundTagAt(i);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        ListNBT list = tagCompound.getList("ops", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.size() ; i++) {
+            CompoundNBT tag = list.getCompound(i);
             String op = tag.getString("mod_op");
             boolean flipY = tag.getBoolean("mod_flipy");
             String rot = tag.getString("mod_rot");
@@ -127,19 +112,30 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
         }
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
         ListNBT list = new ListNBT();
         for (int i = 0; i < SLOT_COUNT ; i++) {
             CompoundNBT tc = new CompoundNBT();
             ShapeModifier mod = modifiers[i];
-            tc.setString("mod_op", mod.getOperation().getCode());
-            tc.setBoolean("mod_flipy", mod.isFlipY());
-            tc.setString("mod_rot", mod.getRotation().getCode());
-            list.appendTag(tc);
+            tc.putString("mod_op", mod.getOperation().getCode());
+            tc.putBoolean("mod_flipy", mod.isFlipY());
+            tc.putString("mod_rot", mod.getRotation().getCode());
+            list.add(tc);
         }
-        tagCompound.setTag("ops", list);
+        tagCompound.put("ops", list);
+        return tagCompound;
+    }
+
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(ComposerTileEntity.this, CONTAINER_FACTORY, SLOT_COUNT*2 + 1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == BuilderSetup.shapeCardItem;
+            }
+        };
     }
 }
