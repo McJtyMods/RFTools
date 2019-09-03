@@ -39,7 +39,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         if (renderInfo.hitx >= 0) {
             GlStateManager.disableLighting();
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-0.5F, 0.5F, 0.07F);
+            GlStateManager.translatef(-0.5F, 0.5F, 0.07F);
             float f3 = 0.0105F;
             GlStateManager.scale(f3 * renderInfo.factor, -f3 * renderInfo.factor, f3);
             GL11.glNormal3f(0.0F, 0.0F, -1.0F);
@@ -71,11 +71,11 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         GlStateManager.depthMask(true);
 
         GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
 
         GlStateManager.pushMatrix();
         float f3 = 0.0105F;
-        GlStateManager.translate(-0.5F, 0.5F, 0.06F);
+        GlStateManager.translatef(-0.5F, 0.5F, 0.06F);
         float factor = renderInfo.factor;
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
@@ -96,7 +96,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         GlStateManager.popMatrix();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(-0.5F, 0.5F, 0.08F);
+        GlStateManager.translatef(-0.5F, 0.5F, 0.08F);
         f3 = 0.0050F;
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
@@ -162,8 +162,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 int j1 = (int) Math.round(13.0D - health * 13.0D);
                 int k = (int) Math.round(255.0D - health * 255.0D);
                 GlStateManager.disableLighting();
-                GlStateManager.disableTexture2D();
-                GlStateManager.disableAlpha();
+                GlStateManager.disableTexture();
+                GlStateManager.disableAlphaTest();
                 GlStateManager.disableBlend();
                 Tessellator tessellator = Tessellator.getInstance();
                 int l = 255 - k << 16 | k << 8;
@@ -171,8 +171,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 renderQuad(tessellator, x + 2, y + 13, 13, 2, 0, 0.0D);
                 renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.02D);
                 renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.04D);
-                GlStateManager.enableAlpha();
-                GlStateManager.enableTexture2D();
+                GlStateManager.enableAlphaTest();
+                GlStateManager.enableTexture();
                 GlStateManager.enableLighting();
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             }

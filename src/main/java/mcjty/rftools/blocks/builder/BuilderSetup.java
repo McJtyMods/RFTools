@@ -40,6 +40,9 @@ public class BuilderSetup {
     @ObjectHolder("rftools:scanner")
     public static TileEntityType<?> TYPE_SCANNER;
 
+    @ObjectHolder("rftools:locator")
+    public static TileEntityType<?> TYPE_LOCATOR;
+
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
 

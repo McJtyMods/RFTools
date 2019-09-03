@@ -5,7 +5,7 @@ import mcjty.lib.client.RenderGlowEffect;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.HudRenderer;
-import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -25,7 +25,7 @@ public class EndergenicRenderer extends TileEntityRenderer<EndergenicTileEntity>
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void render(EndergenicTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(EndergenicTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
         Tessellator tessellator = Tessellator.getInstance();
         BlockPos coord = tileEntity.getPos();
         if (coord.equals(RFTools.instance.clientInfo.getSelectedTE())) {
@@ -40,10 +40,10 @@ public class EndergenicRenderer extends TileEntityRenderer<EndergenicTileEntity>
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
-        GlStateManager.disableAlpha();
+        GlStateManager.disableAlphaTest();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        GlStateManager.translatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         this.bindTexture(halo);
         float s = (System.currentTimeMillis() % 1000) / 1000.0f;
         if (s > 0.5f) {

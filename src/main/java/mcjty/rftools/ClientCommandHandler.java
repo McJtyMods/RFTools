@@ -9,15 +9,12 @@ import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.GuiLocator;
-import mcjty.rftools.blocks.storage.ModularStorageBlock;
-import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterBlock;
 import mcjty.rftools.shapes.ScanDataManagerClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class ClientCommandHandler {
@@ -54,14 +51,15 @@ public class ClientCommandHandler {
     public static final String CMD_RETURN_COUNTER_INFO = "returnCounterInfo";
 
     public static void registerCommands() {
-        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCANNER_CONTENTS, (player, arguments) -> {
-            GuiStorageScanner.fromServer_inventory = arguments.get(PARAM_STACKS);
-            return true;
-        });
-        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCANNER_SEARCH, (player, arguments) -> {
-            GuiStorageScanner.fromServer_foundInventories = new HashSet<>(arguments.get(PARAM_INVENTORIES));
-            return true;
-        });
+        // @todo 1.14
+//        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCANNER_CONTENTS, (player, arguments) -> {
+//            GuiStorageScanner.fromServer_inventory = arguments.get(PARAM_STACKS);
+//            return true;
+//        });
+//        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCANNER_SEARCH, (player, arguments) -> {
+//            GuiStorageScanner.fromServer_foundInventories = new HashSet<>(arguments.get(PARAM_INVENTORIES));
+//            return true;
+//        });
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_DESTINATION_INFO, (player, arguments) -> {
             MatterTransmitterBlock.setDestinationInfo(arguments.get(PARAM_ID), arguments.get(PARAM_NAME));
             return true;
@@ -81,14 +79,15 @@ public class ClientCommandHandler {
             GuiLocator.energyConsumption = arguments.get(PARAM_ENERGY);
             return true;
         });
-        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_STORAGE_INFO, (player, arguments) -> {
-            ModularStorageBlock.cntReceived = arguments.get(PARAM_COUNTER);
-            ModularStorageBlock.nameModuleReceived = arguments.get(PARAM_NAME);
-            return true;
-        });
+        // @todo 1.14
+//        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_STORAGE_INFO, (player, arguments) -> {
+//            ModularStorageBlock.cntReceived = arguments.get(PARAM_COUNTER);
+//            ModularStorageBlock.nameModuleReceived = arguments.get(PARAM_NAME);
+//            return true;
+//        });
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_FLASH_ENDERGENIC, (player, arguments) -> {
             BlockPos pos = arguments.get(PARAM_POS);
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
+            TileEntity te = McJtyLib.proxy.getClientWorld().getTileEntity(pos);
             if (te instanceof EndergenicTileEntity) {
                 EndergenicTileEntity tileEntity = (EndergenicTileEntity) te;
                 tileEntity.syncCountersFromServer(arguments.get(PARAM_GOODCOUNTER), arguments.get(PARAM_BADCOUNTER));
@@ -98,7 +97,7 @@ public class ClientCommandHandler {
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_POSITION_TO_CLIENT, (player, arguments) -> {
             BlockPos tePos = arguments.get(PARAM_POS);
             BlockPos scanPos = arguments.get(PARAM_SCAN);
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(tePos);
+            TileEntity te = McJtyLib.proxy.getClientWorld().getTileEntity(tePos);
             if (te instanceof BuilderTileEntity) {
                 BuilderTileEntity.setScanLocationClient(tePos, scanPos);
             }

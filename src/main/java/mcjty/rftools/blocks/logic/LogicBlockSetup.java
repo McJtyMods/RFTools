@@ -64,6 +64,21 @@ public class LogicBlockSetup {
     @ObjectHolder("rftools:sensor")
     public static TileEntityType<?> TYPE_SENSOR;
 
+    @ObjectHolder("rftools:redstone_receiver")
+    public static TileEntityType<?> TYPE_REDSTONE_RECEIVER;
+
+    @ObjectHolder("rftools:redstone_transmitter")
+    public static TileEntityType<?> TYPE_REDSTONE_TRANSMITTER;
+
+    @ObjectHolder("rftools:wire")
+    public static TileEntityType<?> TYPE_WIRE;
+
+    @ObjectHolder("rftools:counter")
+    public static TileEntityType<?> TYPE_COUNTER;
+
+    @ObjectHolder("rftools:analog")
+    public static TileEntityType<?> TYPE_ANALOG;
+
     public static void init() {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();

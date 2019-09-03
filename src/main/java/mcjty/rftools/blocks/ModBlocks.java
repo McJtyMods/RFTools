@@ -33,9 +33,6 @@ public final class ModBlocks {
     public static MachineFrame machineFrame;
     public static MachineBase machineBase;
 
-    public static BaseBlockBuilderFactory builderFactory;
-    public static LogicSlabBlockBuilderFactory logicFactory;
-
 
     public static void init() {
         builderFactory = new BaseBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());

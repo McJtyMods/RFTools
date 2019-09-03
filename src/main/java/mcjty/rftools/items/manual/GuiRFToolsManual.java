@@ -9,14 +9,13 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextPage;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.*;
-import java.io.IOException;
 
-public class GuiRFToolsManual extends GuiScreen {
+public class GuiRFToolsManual extends Screen {
 
     /** The X size of the window in pixels. */
     private int xSize = 400;
@@ -41,7 +40,8 @@ public class GuiRFToolsManual extends GuiScreen {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual(int manual) {
-        String gameLocale = Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase(java.util.Locale.ENGLISH);
+        super(new StringTextComponent("RFTools Manual"));
+        String gameLocale = Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getCode().toLowerCase(java.util.Locale.ENGLISH);
         if (manual == MANUAL_MAIN) {
             if (gameLocale.equals("en_us")) {
                 manualText = manualMainText;
@@ -58,28 +58,28 @@ public class GuiRFToolsManual extends GuiScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        textPage = new TextPage(RFTools.instance, mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0).setCraftingGridImage(iconGuiElements, 0, 192);
+        textPage = new TextPage(RFTools.instance, minecraft, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0).setCraftingGridImage(iconGuiElements, 0, 192);
 
-        prevButton = new Button(mc, this).setText("<").addButtonEvent(parent -> {
+        prevButton = new Button(minecraft, this).setText("<").addButtonEvent(parent -> {
 //            System.out.println("GuiRFToolsManual.buttonClicked: <");
             textPage.prevPage();
             window.setTextFocus(textPage);
         });
-        pageLabel = new Label(mc, this).setText("0 / 0");
-        nextButton = new Button(mc, this).setText(">").addButtonEvent(parent -> {
+        pageLabel = new Label(minecraft, this).setText("0 / 0");
+        nextButton = new Button(minecraft, this).setText(">").addButtonEvent(parent -> {
 //            System.out.println("GuiRFToolsManual.buttonClicked: >");
             textPage.nextPage();
             window.setTextFocus(textPage);
         });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16).addChildren(prevButton, pageLabel, nextButton);
+        Panel buttonPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).setDesiredHeight(16).addChildren(prevButton, pageLabel, nextButton);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(textPage, buttonPanel);
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(textPage, buttonPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -92,38 +92,38 @@ public class GuiRFToolsManual extends GuiScreen {
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+    public boolean isPauseScreen() {
         return false;
     }
 
+    // @todo 1.14
+//    @Override
+//    protected void mouseClicked(int x, int y, int button) throws IOException {
+//        super.mouseClicked(x, y, button);
+//        window.mouseClicked(x, y, button);
+//    }
+//
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        super.handleMouseInput();
+//        window.handleMouseInput();
+//    }
+//
+//    @Override
+//    protected void mouseReleased(int mouseX, int mouseY, int state) {
+//        super.mouseReleased(mouseX, mouseY, state);
+//        window.mouseMovedOrUp(mouseX, mouseY, state);
+//    }
+//
+//    @Override
+//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+//        super.keyTyped(typedChar, keyCode);
+//        window.keyTyped(typedChar, keyCode);
+//    }
 
     @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-        window.mouseMovedOrUp(mouseX, mouseY, state);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+    public void render(int xSize_lo, int ySize_lo, float par3) {
+        super.render(xSize_lo, ySize_lo, par3);
 
         int index = textPage.getPageIndex();
         int count = textPage.getPageCount();
@@ -136,9 +136,11 @@ public class GuiRFToolsManual extends GuiScreen {
         if (tooltips != null) {
             int guiLeft = (this.width - this.xSize) / 2;
             int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+            double mouseX = minecraft.mouseHelper.getMouseX();
+            double mouseY = minecraft.mouseHelper.getMouseY();
+            int x = (int) (mouseX * width / minecraft.mainWindow.getWidth());
+            int y = (int) (height - mouseY * height / minecraft.mainWindow.getHeight() - 1);
+            renderTooltip(tooltips, x-guiLeft, y-guiTop, minecraft.fontRenderer);
         }
     }
 }

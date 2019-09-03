@@ -8,7 +8,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,21 +69,20 @@ public class Scan {
     }
 
     public void writeToNBTExternal(CompoundNBT tagCompound) {
-        tagCompound.setByteArray("data", rledata == null ? new byte[0] : rledata);
+        tagCompound.putByteArray("data", rledata == null ? new byte[0] : rledata);
         ListNBT pal = new ListNBT();
         for (BlockState state : materialPalette) {
             CompoundNBT tc = new CompoundNBT();
             Block block = state.getBlock();
+            // @todo 1.14 need to serialize blockstate now that meta is gone!
             if (block == null || block.getRegistryName() == null) {
-                tc.setString("r", Blocks.STONE.getRegistryName().toString());
-                tc.setInteger("m", 0);
+                tc.putString("r", Blocks.STONE.getRegistryName().toString());
             } else {
-                tc.setString("r", block.getRegistryName().toString());
-                tc.setInteger("m", block.getMetaFromState(state));
+                tc.putString("r", block.getRegistryName().toString());
             }
-            pal.appendTag(tc);
+            pal.add(tc);
         }
-        tagCompound.setTag("scanpal", pal);
+        tagCompound.put("scanpal", pal);
         if (dataDim != null) {
             tagCompound.putInt("scandimx", dataDim.getX());
             tagCompound.putInt("scandimy", dataDim.getY());
@@ -101,14 +100,15 @@ public class Scan {
     }
 
     public void readFromNBTExternal(CompoundNBT tagCompound) {
-        ListNBT list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.tagCount(); i++) {
-            CompoundNBT tc = list.getCompoundTagAt(i);
+        ListNBT list = tagCompound.getList("scanpal", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundNBT tc = list.getCompound(i);
             Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));
             if (block == null) {
                 block = Blocks.STONE;
             }
-            materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
+            // @todo 1.14 deserialize blockstate now that meta is gone
+//            materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
         }
         rledata = tagCompound.getByteArray("data");
         dataDim = new BlockPos(tagCompound.getInt("scandimx"), tagCompound.getInt("scandimy"), tagCompound.getInt("scandimz"));

@@ -34,7 +34,7 @@ public class DumpClientScreenModule implements IClientScreenModule<IModuleData> 
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
         GlStateManager.depthMask(false);
         int xoffset = 7 + 5;
 

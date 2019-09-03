@@ -1,15 +1,6 @@
 package mcjty.rftools.crafting;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
-
-public class NBTMatchingRecipe extends ShapedRecipes {
+public class NBTMatchingRecipe {} /* @todo 1.14 extends ShapedRecipes {
 
     private final String[][] matchingNBTs;
 
@@ -48,9 +39,9 @@ public class NBTMatchingRecipe extends ShapedRecipes {
         return false;
     }
 
-    /**
+    **
      * Checks if the region of a crafting inventory is match for the recipe.
-     */
+     *
     private boolean checkMatchNBT(CraftingInventory inventoryCrafting, int x, int y, boolean reversed) {
         for (int col = 0; col < 3; ++col) {
             for (int row = 0; row < 3; ++row) {
@@ -124,3 +115,4 @@ public class NBTMatchingRecipe extends ShapedRecipes {
         return true;
     }
 }
+*/

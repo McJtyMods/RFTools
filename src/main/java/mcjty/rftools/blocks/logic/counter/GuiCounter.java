@@ -9,20 +9,21 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
+public class GuiCounter extends GenericGuiContainer<CounterTileEntity, GenericContainer> {
 
     private TextField currentField;
 
-    public GuiCounter(CounterTileEntity counterTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "counter");
+    public GuiCounter(CounterTileEntity counterTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "counter");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/counter.gui"));
-        super.initGui();
+        super.init();
 
         requestCurrentCounter();
 

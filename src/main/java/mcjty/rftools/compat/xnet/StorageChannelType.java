@@ -1,20 +1,6 @@
 package mcjty.rftools.compat.xnet;
 
-import mcjty.rftools.api.storage.IStorageScanner;
-import mcjty.xnet.api.channels.IChannelSettings;
-import mcjty.xnet.api.channels.IChannelType;
-import mcjty.xnet.api.channels.IConnectorSettings;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.items.CapabilityItemHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-public class StorageChannelType implements IChannelType {
+public class StorageChannelType {} /* @todo 1.14 (xnet) implements IChannelType {
 
     @Override
     public String getID() {
@@ -56,3 +42,4 @@ public class StorageChannelType implements IChannelType {
         return new StorageChannelSettings();
     }
 }
+*/

@@ -18,18 +18,18 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
 import mcjty.rftools.shapes.ShapeDataManagerServer;
+import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
@@ -37,9 +37,11 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -95,16 +97,17 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        if (event.getWorld().isRemote) {
+        World world = event.getWorld();
+        if (world.isRemote) {
             return;
         }
         PlayerEntity player = event.getEntityPlayer();
         ItemStack heldItem = player.getHeldItemMainhand();
         if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
-            double blockReachDistance = player.getAttribute(PlayerEntity.REACH_DISTANCE).getValue()
-            RayTraceResult rayTrace = ForgeHooks.rayTraceEyes(player, blockReachDistance + 1);
-            if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-                Block block = event.getWorld().getBlockState(rayTrace.getBlockPos()).getBlock();
+            double blockReachDistance = player.getAttribute(PlayerEntity.REACH_DISTANCE).getValue();
+            BlockRayTraceResult rayTrace = rayTraceEyes(player, blockReachDistance + 1);
+            if (rayTrace.getType() == RayTraceResult.Type.BLOCK) {
+                Block block = world.getBlockState(rayTrace.getPos()).getBlock();
                 if (block instanceof ScreenBlock) {
                     event.setCanceled(true);
                     return;
@@ -115,6 +118,16 @@ public class ForgeEventHandlers {
             }
         }
     }
+
+    @Nonnull
+    public static BlockRayTraceResult rayTraceEyes(LivingEntity entity, double length) {
+        Vec3d startPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        Vec3d endPos = startPos.add(new Vec3d(entity.getLookVec().x * length, entity.getLookVec().y * length, entity.getLookVec().z * length));
+        RayTraceContext context = new RayTraceContext(startPos, endPos, RayTraceContext.BlockMode.COLLIDER,
+                RayTraceContext.FluidMode.NONE, entity);
+        return entity.world.rayTraceBlocks(context);
+    }
+
 
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
@@ -129,17 +142,18 @@ public class ForgeEventHandlers {
                     World world = event.getWorld();
                     BlockState state = world.getBlockState(event.getPos());
                     Block block = state.getBlock();
-                    if (block instanceof ScreenBlock) {
-                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                        ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
-                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
-                        return;
-                    } else if (block instanceof ScreenHitBlock) {
-                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                        ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
-                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
-                        return;
-                    }
+                    // @todo 1.14
+//                    if (block instanceof ScreenBlock) {
+//                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+//                        ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
+//                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
+//                        return;
+//                    } else if (block instanceof ScreenHitBlock) {
+//                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+//                        ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
+//                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
+//                        return;
+//                    }
                 }
             }
         }
@@ -171,14 +185,15 @@ public class ForgeEventHandlers {
     private void checkCreativeClick(PlayerInteractEvent event) {
         if (event.getEntityPlayer().isCreative()) {
             // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
-            Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
+            BlockState state = event.getWorld().getBlockState(event.getPos());
+            Block block = state.getBlock();
             if (block == ScreenSetup.screenBlock || block == ScreenSetup.creativeScreenBlock || block == ScreenSetup.screenHitBlock) {
                 if (!event.getEntityPlayer().isSneaking()) {
                     // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
 
                     if (event.getWorld().isRemote) {
                         // simulate click because it isn't called in creativemode or when we cancel the event
-                        block.onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
+                        block.onBlockClicked(state, event.getWorld(), event.getPos(), event.getEntityPlayer());
                     }
 
                     event.setCanceled(true);
@@ -223,7 +238,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
-        World world = event.getWorld();
+        World world = event.getWorld().getWorld();
         int id = world.getDimension().getType().getId();
 
         Entity entity = event.getEntity();
@@ -239,11 +254,10 @@ public class ForgeEventHandlers {
     public void onPlayerCloned(PlayerEvent.Clone event) {
         if (event.isWasDeath()) {
             // We need to copyFrom the capabilities
-            if (event.getOriginal().hasCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY, null)) {
-                FavoriteDestinationsProperties oldFavorites = event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY, null);
+            event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY).ifPresent(oldFavorites -> {
                 FavoriteDestinationsProperties newFavorites = PlayerExtendedProperties.getFavoriteDestinations(event.getEntityPlayer());
                 newFavorites.copyFrom(oldFavorites);
-            }
+            });
         }
     }
 

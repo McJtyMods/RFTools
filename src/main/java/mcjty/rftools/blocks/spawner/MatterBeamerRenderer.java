@@ -5,11 +5,11 @@ import mcjty.lib.client.RenderGlowEffect;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -21,7 +21,7 @@ public class MatterBeamerRenderer extends TileEntityRenderer<MatterBeamerTileEnt
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void render(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage, float alpha) {
+    public void render(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage) {
         ResourceLocation txt;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -37,7 +37,7 @@ public class MatterBeamerRenderer extends TileEntityRenderer<MatterBeamerTileEnt
                 GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
                 Minecraft mc = Minecraft.getInstance();
-                EntityPlayerSP p = mc.player;
+                PlayerEntity p = mc.player;
                 double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * time;
                 double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * time;
                 double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * time;
@@ -45,7 +45,7 @@ public class MatterBeamerRenderer extends TileEntityRenderer<MatterBeamerTileEnt
                 RenderHelper.Vector start = new RenderHelper.Vector(tileEntity.getPos().getX() + .5f, tileEntity.getPos().getY() + .5f, tileEntity.getPos().getZ() + .5f);
                 RenderHelper.Vector end = new RenderHelper.Vector(destination.getX() + .5f, destination.getY() + .5f, destination.getZ() + .5f);
                 RenderHelper.Vector player = new RenderHelper.Vector((float) doubleX, (float) doubleY + p.getEyeHeight(), (float) doubleZ);
-                GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+                GlStateManager.translated(-doubleX, -doubleY, -doubleZ);
 
                 this.bindTexture(redglow);
 

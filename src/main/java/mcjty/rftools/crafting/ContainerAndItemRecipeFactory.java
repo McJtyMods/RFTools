@@ -1,25 +1,6 @@
 package mcjty.rftools.crafting;
 
-import com.google.gson.JsonObject;
-import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
-import mcjty.rftools.items.storage.StorageModuleTabletItem;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
-import net.minecraftforge.common.crafting.IRecipeFactory;
-import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import static mcjty.rftools.items.storage.StorageModuleTabletItem.META_FOR_SCANNER;
-
-public class ContainerAndItemRecipeFactory implements IRecipeFactory {
+public class ContainerAndItemRecipeFactory {} /* @todo 1.14 implements IRecipeFactory {
     @Override
     public IRecipe parse(JsonContext context, JsonObject json) {
         ShapedOreRecipe recipe = ShapedOreRecipe.factory(context, json);
@@ -104,3 +85,4 @@ public class ContainerAndItemRecipeFactory implements IRecipeFactory {
         }
     }
 }
+*/

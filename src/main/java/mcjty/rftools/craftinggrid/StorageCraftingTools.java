@@ -1,22 +1,15 @@
 package mcjty.rftools.craftinggrid;
 
-import gnu.trove.set.hash.TIntHashSet;
-import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
-import mcjty.rftools.network.RFToolsMessages;
+import it.unimi.dsi.fastutil.ints.IntHash;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -28,7 +21,7 @@ public class StorageCraftingTools {
 
     @Nonnull
     private static int[] tryRecipe(PlayerEntity player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
-        CraftingInventory workInventory = new CraftingInventory(new Container() {
+        CraftingInventory workInventory = new CraftingInventory(new Container(null, -1) {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;
@@ -38,13 +31,14 @@ public class StorageCraftingTools {
         CraftingInventory inventory = craftingRecipe.getInventory();
 
         int[] missingCount = new int[10];
-        TIntHashSet[] hashSets = new TIntHashSet[9];
+        IntHash[] hashSets = new IntHash[9];
         for (int i = 0 ; i < 10 ; i++) {
             if (i < 9) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (!stack.isEmpty()) {
                     missingCount[i] = stack.getCount() * n;
-                    hashSets[i] = new TIntHashSet(OreDictionary.getOreIDs(stack));
+                    // @todo 1.14 tags, hashset...
+//                    hashSets[i] = new IntHash(OreDictionary.getOreIDs(stack));
                 } else {
                     missingCount[i] = 0;
                 }
@@ -97,7 +91,7 @@ public class StorageCraftingTools {
 
     private static List<ItemStack> testAndConsumeCraftingItems(PlayerEntity player, CraftingRecipe craftingRecipe,
                                                                IItemSource itemSource, boolean strictDamage) {
-        CraftingInventory workInventory = new CraftingInventory(new Container() {
+        CraftingInventory workInventory = new CraftingInventory(new Container(null, -1) {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;
@@ -145,25 +139,29 @@ public class StorageCraftingTools {
         return result;
     }
 
-    private static boolean match(@Nonnull ItemStack target, @Nonnull TIntHashSet targetIDs, @Nonnull ItemStack input, boolean strictDamage) {
+    private static boolean match(@Nonnull ItemStack target, @Nonnull IntHash targetIDs, @Nonnull ItemStack input, boolean strictDamage) {
         if (strictDamage) {
-            return (target.getItem() == input.getItem() && ((target.getMetadata() == OreDictionary.WILDCARD_VALUE) || target.getMetadata() == input.getMetadata()));
+//            return (target.getItem() == input.getItem() && ((target.getMetadata() == OreDictionary.WILDCARD_VALUE) || target.getMetadata() == input.getMetadata()));
+            // @todo 1.14
+            return false;
         } else {
             if (target.getItem() == input.getItem()) {
                 return true;
             }
 
-            if (targetIDs.isEmpty()) {
-                return false;
-            }
+            // @todo 1.14
+//            if (targetIDs.isEmpty()) {
+//                return false;
+//            }
 
             // Try OreDictionary
-            int[] inputIDs = OreDictionary.getOreIDs(input);
-            for (int id : inputIDs) {
-                if (targetIDs.contains(id)) {
-                    return true;
-                }
-            }
+            // @todo 1.14
+//            int[] inputIDs = OreDictionary.getOreIDs(input);
+//            for (int id : inputIDs) {
+//                if (targetIDs.contains(id)) {
+//                    return true;
+//                }
+//            }
             return false;
         }
     }
@@ -171,7 +169,7 @@ public class StorageCraftingTools {
     private static int findMatchingItems(CraftingInventory workInventory, List<Pair<IItemKey, ItemStack>> undo, int i,
                                          @Nonnull ItemStack stack,
                                          int count, IItemSource itemSource, boolean strictDamage) {
-        TIntHashSet stackIDs = new TIntHashSet(OreDictionary.getOreIDs(stack));
+        IntHash stackIDs = null; // @todo 1.14 new IntHash(OreDictionary.getOreIDs(stack));
 
         for (Pair<IItemKey, ItemStack> pair : itemSource.getItems()) {
             ItemStack input = pair.getValue();
@@ -298,23 +296,25 @@ public class StorageCraftingTools {
     }
 
     public static void craftFromGrid(PlayerEntity player, int count, boolean test, BlockPos pos) {
-        player.addStat(StatList.CRAFTING_TABLE_INTERACTION);
+        // @todo 1.14
+//        player.addStat(StatList.CRAFTING_TABLE_INTERACTION);
         int[] testResult = new int[0];
         if (pos == null) {
             // Handle tablet version
             ItemStack mainhand = player.getHeldItemMainhand();
-            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
-                if (player.openContainer instanceof ModularStorageItemContainer) {
-                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
-                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
-                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
-                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
-                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
-                } else if (player.openContainer instanceof StorageScannerContainer) {
-                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
-                    testResult = storageItemContainer.getStorageScannerTileEntity().craft(player, count, test);
-                }
-            }
+            // @todo 1.14
+//            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+//                if (player.openContainer instanceof ModularStorageItemContainer) {
+//                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+//                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
+//                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+//                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
+//                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
+//                } else if (player.openContainer instanceof StorageScannerContainer) {
+//                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+//                    testResult = storageItemContainer.getStorageScannerTileEntity().craft(player, count, test);
+//                }
+//            }
         } else {
             TileEntity te = player.getEntityWorld().getTileEntity(pos);
             if (te instanceof CraftingGridProvider) {
@@ -322,7 +322,8 @@ public class StorageCraftingTools {
             }
         }
         if (testResult.length > 0) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), (ServerPlayerEntity) player);
+            // @todo 1.14
+//            RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), (ServerPlayerEntity) player);
         }
     }
 
@@ -332,18 +333,19 @@ public class StorageCraftingTools {
         if (pos == null) {
             // Handle tablet version
             ItemStack mainhand = player.getHeldItemMainhand();
-            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
-                if (player.openContainer instanceof ModularStorageItemContainer) {
-                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
-                    provider = storageItemContainer.getCraftingGridProvider();
-                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
-                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
-                    provider = storageItemContainer.getCraftingGridProvider();
-                } else if (player.openContainer instanceof StorageScannerContainer) {
-                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
-                    provider = storageItemContainer.getStorageScannerTileEntity();
-                }
-            }
+            // @todo 1.14
+//            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+//                if (player.openContainer instanceof ModularStorageItemContainer) {
+//                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+//                    provider = storageItemContainer.getCraftingGridProvider();
+//                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+//                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
+//                    provider = storageItemContainer.getCraftingGridProvider();
+//                } else if (player.openContainer instanceof StorageScannerContainer) {
+//                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+//                    provider = storageItemContainer.getStorageScannerTileEntity();
+//                }
+//            }
         } else {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof CraftingGridProvider) {
@@ -351,7 +353,8 @@ public class StorageCraftingTools {
             }
         }
         if (provider != null) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, provider.getCraftingGrid()), (ServerPlayerEntity) player);
+            // @todo 1.14
+//            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, provider.getCraftingGrid()), (ServerPlayerEntity) player);
         }
     }
 }

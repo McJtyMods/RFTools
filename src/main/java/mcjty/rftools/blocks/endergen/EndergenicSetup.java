@@ -1,60 +1,55 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.GenericContainer;
+import mcjty.lib.blocks.RotationType;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-
-
 
 import static mcjty.lib.varia.ItemStackTools.mapTag;
 
 public class EndergenicSetup {
-    public static BaseBlock<EndergenicTileEntity, GenericContainer> endergenicBlock;
-    public static BaseBlock<PearlInjectorTileEntity, GenericContainer> pearlInjectorBlock;
+    public static BaseBlock endergenicBlock;
+    public static BaseBlock pearlInjectorBlock;
     public static EnderMonitorBlock enderMonitorBlock;
 
     public static void init() {
-        endergenicBlock = ModBlocks.builderFactory.<EndergenicTileEntity> builder("endergenic")
-                .tileEntityClass(EndergenicTileEntity.class)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_TRANSLUCENT)
-                .rotationType(BaseBlock.RotationType.NONE)
+        endergenicBlock = new BaseBlock("endergenic", new BlockBuilder()
+                .tileEntitySupplier(EndergenicTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_TRANSLUCENT)
                 .infusable()
-                .guiId(GuiProxy.GUI_ENDERGENIC)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.endergenic")
-                .build();
+                .infoExtended("message.rftools.endergenic")) {
+            @Override
+            public RotationType getRotationType() {
+                return RotationType.NONE;
+            }
+        };
 
-        pearlInjectorBlock = ModBlocks.builderFactory.<PearlInjectorTileEntity> builder("pearl_injector")
-                .tileEntityClass(PearlInjectorTileEntity.class)
-                .container(PearlInjectorTileEntity.CONTAINER_FACTORY)
-                .flags(BlockFlags.REDSTONE_CHECK)
-                .guiId(GuiProxy.GUI_PEARL_INJECTOR)
+        pearlInjectorBlock = new BaseBlock("pearl_injector", new BlockBuilder()
+                .tileEntitySupplier(PearlInjectorTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.pearl_injector")
                 .infoExtendedParameter(stack -> {
-                    int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((CompoundNBT)nbt).isEmpty()).count(), 0);
+                    int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !ItemStack.read((CompoundNBT)nbt).isEmpty()).count(), 0);
                     return Integer.toString(count);
-                })
-                .build();
+                }));
 
         enderMonitorBlock = new EnderMonitorBlock();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        endergenicBlock.initModel();
-        endergenicBlock.setGuiFactory(GuiEndergenic::new);
-        EndergenicRenderer.register();
-
-        pearlInjectorBlock.initModel();
-        pearlInjectorBlock.setGuiFactory(GuiPearlInjector::new);
-
-        enderMonitorBlock.initModel();
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        endergenicBlock.initModel();
+//        endergenicBlock.setGuiFactory(GuiEndergenic::new);
+//        EndergenicRenderer.register();
+//
+//        pearlInjectorBlock.initModel();
+//        pearlInjectorBlock.setGuiFactory(GuiPearlInjector::new);
+//
+//        enderMonitorBlock.initModel();
+//    }
 }

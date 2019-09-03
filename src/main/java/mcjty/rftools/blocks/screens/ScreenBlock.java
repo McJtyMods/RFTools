@@ -47,6 +47,10 @@ public class ScreenBlock extends GenericRFToolsBlock {
             .tileEntitySupplier(supplier));
     }
 
+    public boolean isCreative() {
+        return false;
+    }
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {

@@ -3,26 +3,12 @@ package mcjty.rftools.blocks.logic.counter;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
-import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.setup.CommandHandler;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_COUNTER;
 
 public class CounterTileEntity extends LogicTileEntity {
 
@@ -36,6 +22,7 @@ public class CounterTileEntity extends LogicTileEntity {
     private int current = 0;
 
     public CounterTileEntity() {
+        super(TYPE_COUNTER);
     }
 
     public int getCounter() {
@@ -58,7 +45,7 @@ public class CounterTileEntity extends LogicTileEntity {
     }
 
     protected void update() {
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             return;
         }
         boolean pulse = (powerLevel > 0) && !prevIn;
@@ -79,35 +66,35 @@ public class CounterTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
         prevIn = tagCompound.getBoolean("prevIn");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        counter = tagCompound.getInteger("counter");
+        counter = tagCompound.getInt("counter");
         if (counter == 0) {
             counter = 1;
         }
-        current = tagCompound.getInteger("current");
+        current = tagCompound.getInt("current");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
-        tagCompound.setBoolean("prevIn", prevIn);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        tagCompound.putBoolean("prevIn", prevIn);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("counter", counter);
-        tagCompound.setInteger("current", current);
+        tagCompound.putInt("counter", counter);
+        tagCompound.putInt("current", current);
     }
 
     @Override
@@ -117,7 +104,7 @@ public class CounterTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -144,33 +131,34 @@ public class CounterTileEntity extends LogicTileEntity {
         return false;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        probeInfo.text(TextFormatting.GREEN + "Current: " + getCurrent());
-    }
-
-    private static long lastTime = 0;
-
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        probeInfo.text(TextFormatting.GREEN + "Current: " + getCurrent());
+//    }
+//
+//    private static long lastTime = 0;
+//
     // Client side
+    // @todo 1.14 rewrite using new way to sync integers through container!
     public static int cntReceived = 0;
 
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-
-        if (System.currentTimeMillis() - lastTime > 500) {
-            lastTime = System.currentTimeMillis();
-            RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
-                    TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, getWorld().getDimension().getType().getId()).put(CommandHandler.PARAM_POS, getPos()));
-        }
-
-        currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//
+//        if (System.currentTimeMillis() - lastTime > 500) {
+//            lastTime = System.currentTimeMillis();
+//            RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
+//                    TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, world.getDimension().getType().getId()).put(CommandHandler.PARAM_POS, getPos()));
+//        }
+//
+//        currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);
+//    }
 
 
 }

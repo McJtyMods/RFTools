@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -16,50 +17,48 @@ import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.awt.*;
 
 import static mcjty.rftools.blocks.screens.ScreenTileEntity.PARAM_TRUETYPE;
 
-public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
+public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity, GenericContainer> {
     public static final int SCREEN_WIDTH = 256;
     public static final int SCREEN_HEIGHT = 224;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screen.png");
 
     private Panel toplevel;
-    private ToggleButton buttons[] = new ToggleButton[ScreenContainer.SCREEN_MODULES];
-    private Panel modulePanels[] = new Panel[ScreenContainer.SCREEN_MODULES];
-    private IClientScreenModule<?>[] clientScreenModules = new IClientScreenModule<?>[ScreenContainer.SCREEN_MODULES];
+    private ToggleButton buttons[] = new ToggleButton[ScreenTileEntity.SCREEN_MODULES];
+    private Panel modulePanels[] = new Panel[ScreenTileEntity.SCREEN_MODULES];
+    private IClientScreenModule<?>[] clientScreenModules = new IClientScreenModule<?>[ScreenTileEntity.SCREEN_MODULES];
 
     private ToggleButton bright;
     private ChoiceLabel trueType;
 
     private int selected = -1;
 
-    public GuiScreen(CreativeScreenTileEntity te, ScreenContainer container) {
-        this((ScreenTileEntity) te, container);
-    }
-
-    public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "screens");
+    public GuiScreen(ScreenTileEntity screenTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "screens");
 
         xSize = SCREEN_WIDTH;
         ySize = SCREEN_HEIGHT;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
-            buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false).setTooltips("Open the gui for this", "module");
+        for (int i = 0 ; i < ScreenTileEntity.SCREEN_MODULES ; i++) {
+            buttons[i] = new ToggleButton(minecraft, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false).setTooltips("Open the gui for this", "module");
             final int finalI = i;
             buttons[i].addButtonEvent(parent -> selectPanel(finalI));
             toplevel.addChild(buttons[i]);
@@ -67,7 +66,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
             clientScreenModules[i] = null;
         }
 
-        bright = new ToggleButton(mc, this)
+        bright = new ToggleButton(minecraft, this)
                 .setName("bright")
                 .setText("Bright")
                 .setCheckMarker(true)
@@ -76,8 +75,8 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
 //        .setLayoutHint(7, 208, 63, 14);
         toplevel.addChild(bright);
 
-        toplevel.addChild(new Label(mc, this).setText("Font:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setLayoutHint(new PositionalLayout.PositionalHint(85+50+9, 123, 30, 14)));
-        trueType = new ChoiceLabel(mc, this)
+        toplevel.addChild(new Label(minecraft, this).setText("Font:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setLayoutHint(new PositionalLayout.PositionalHint(85+50+9, 123, 30, 14)));
+        trueType = new ChoiceLabel(minecraft, this)
                 .addChoices("Default", "Truetype", "Vanilla")
                 .setTooltips("Set truetype font mode", "for the screen")
                 .setLayoutHint(new PositionalLayout.PositionalHint(85+50+14+30, 123, 68, 14));
@@ -93,7 +92,8 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
 
         window.bind(RFToolsMessages.INSTANCE, "bright", tileEntity, ScreenTileEntity.VALUE_BRIGHT.getName());
 
-        Keyboard.enableRepeatEvents(true);
+        // @todo 1.14
+//        Keyboard.enableRepeatEvents(true);
 
         selected = -1;
     }
@@ -118,22 +118,26 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     }
 
     private void refreshButtons() {
-        for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
-            final ItemStack slot = tileEntity.getStackInSlot(i);
-            if (!slot.isEmpty() && ScreenBlock.hasModuleProvider(slot)) {
-                IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(slot);
-                Class<? extends IClientScreenModule<?>> clientScreenModuleClass = moduleProvider.getClientScreenModule();
-                if (!clientScreenModuleClass.isInstance(clientScreenModules[i])) {
-                    installModuleGui(i, slot, moduleProvider, clientScreenModuleClass);
+        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+            for (int i = 0; i < ScreenTileEntity.SCREEN_MODULES; i++) {
+                final ItemStack slot = h.getStackInSlot(i);
+                if (!slot.isEmpty() && ScreenBlock.hasModuleProvider(slot)) {
+                    int finalI = i;
+                    ScreenBlock.getModuleProvider(slot).ifPresent(moduleProvider -> {
+                        Class<? extends IClientScreenModule<?>> clientScreenModuleClass = moduleProvider.getClientScreenModule();
+                        if (!clientScreenModuleClass.isInstance(clientScreenModules[finalI])) {
+                            installModuleGui(finalI, slot, moduleProvider, clientScreenModuleClass);
+                        }
+                    });
+                } else {
+                    uninstallModuleGui(i);
                 }
-            } else {
-                uninstallModuleGui(i);
+                if (modulePanels[i] != null) {
+                    modulePanels[i].setVisible(selected == i);
+                    buttons[i].setPressed(selected == i);
+                }
             }
-            if (modulePanels[i] != null) {
-                modulePanels[i].setVisible(selected == i);
-                buttons[i].setPressed(selected == i);
-            }
-        }
+        });
     }
 
     private void uninstallModuleGui(int i) {
@@ -164,9 +168,11 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
 
         final CompoundNBT finalTagCompound = tagCompound;
-        ScreenModuleGuiBuilder guiBuilder = new ScreenModuleGuiBuilder(mc, this, tagCompound, () -> {
-            slot.setTagCompound(finalTagCompound);
-            tileEntity.setInventorySlotContents(i, slot);
+        ScreenModuleGuiBuilder guiBuilder = new ScreenModuleGuiBuilder(minecraft, this, tagCompound, () -> {
+            slot.setTag(finalTagCompound);
+            tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+                ((IItemHandlerModifiable)h).setStackInSlot(i, slot);
+            });
             RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), i, finalTagCompound));
         });
         moduleProvider.createGui(guiBuilder);

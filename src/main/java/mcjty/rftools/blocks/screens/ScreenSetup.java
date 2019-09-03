@@ -35,8 +35,8 @@ public class ScreenSetup {
     public static TileEntityType<?> TYPE_SCREEN_CONTROLLER;
 
     public static void init() {
-        screenBlock = new ScreenBlock("screen", ScreenTileEntity.class);
-        creativeScreenBlock = new ScreenBlock("creative_screen", CreativeScreenTileEntity.class) {
+        screenBlock = new ScreenBlock("screen", ScreenTileEntity::new);
+        creativeScreenBlock = new ScreenBlock("creative_screen", CreativeScreenTileEntity::new) {
             @Override
             public boolean isCreative() {
                 return true;
@@ -64,29 +64,30 @@ public class ScreenSetup {
         dumpModuleItem = new DumpModuleItem();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        screenBlock.initModel();
-        creativeScreenBlock.initModel();
-        screenHitBlock.initModel();
-        screenControllerBlock.initModel();
-
-        textModuleItem.initModel();
-        inventoryModuleItem.initModel();
-        inventoryPlusModuleItem.initModel();
-        energyModuleItem.initModel();
-        energyPlusModuleItem.initModel();
-        clockModuleItem.initModel();
-        fluidModuleItem.initModel();
-        fluidPlusModuleItem.initModel();
-        machineInformationModuleItem.initModel();
-        computerModuleItem.initModel();
-        buttonModuleItem.initModel();
-        elevatorButtonModuleItem.initModel();
-        redstoneModuleItem.initModel();
-        counterModuleItem.initModel();
-        counterPlusModuleItem.initModel();
-        storageControlModuleItem.initModel();
-        dumpModuleItem.initModel();
-    }
+    // @todo 1.14
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        screenBlock.initModel();
+//        creativeScreenBlock.initModel();
+//        screenHitBlock.initModel();
+//        screenControllerBlock.initModel();
+//
+//        textModuleItem.initModel();
+//        inventoryModuleItem.initModel();
+//        inventoryPlusModuleItem.initModel();
+//        energyModuleItem.initModel();
+//        energyPlusModuleItem.initModel();
+//        clockModuleItem.initModel();
+//        fluidModuleItem.initModel();
+//        fluidPlusModuleItem.initModel();
+//        machineInformationModuleItem.initModel();
+//        computerModuleItem.initModel();
+//        buttonModuleItem.initModel();
+//        elevatorButtonModuleItem.initModel();
+//        redstoneModuleItem.initModel();
+//        counterModuleItem.initModel();
+//        counterPlusModuleItem.initModel();
+//        storageControlModuleItem.initModel();
+//        dumpModuleItem.initModel();
+//    }
 }

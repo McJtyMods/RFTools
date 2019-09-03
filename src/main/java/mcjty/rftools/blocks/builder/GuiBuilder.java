@@ -7,39 +7,41 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import static mcjty.rftools.blocks.builder.BuilderTileEntity.*;
 
-public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
+public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity, GenericContainer> {
 
     private EnergyBar energyBar;
     private Button currentLevel;
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
 
-    public GuiBuilder(BuilderTileEntity builderTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "builder");
-        setCurrentRF(builderTileEntity.getStoredPower());
+    public GuiBuilder(BuilderTileEntity builderTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, inventory, GuiProxy.GUI_MANUAL_SHAPE, "builder");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
         setupEvents();
 
-        tileEntity.requestRfFromServer(RFTools.MODID);
-        tileEntity.requestCurrentLevel();
+        tileEntity.requestCurrentLevel();   // @todo 1.14, use the new container integer system
     }
 
     private void setupEvents() {
@@ -55,8 +57,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         anchor[2] = window.findChild("anchor2");
         anchor[3] = window.findChild("anchor3");
 
-        energyBar.setMaxValue(tileEntity.getCapacity());
-        energyBar.setValue(getCurrentRF());
         ((ChoiceLabel) window.findChild("mode")).setChoice(MODES[tileEntity.getMode()]);
         ChoiceLabel rotateButton = window.findChild("rotate");
         rotateButton.setChoice(String.valueOf(tileEntity.getRotate() * 90));
@@ -66,13 +66,14 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void openCardGui() {
-        ItemStack cardStack = inventorySlots.getSlot(SLOT_TAB).getStack();
+        ItemStack cardStack = container.getSlot(SLOT_TAB).getStack();
         if (!cardStack.isEmpty()) {
-            EntityPlayerSP player = Minecraft.getInstance().player;
+            PlayerEntity player = Minecraft.getInstance().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = SLOT_TAB;
             GuiShapeCard.returnGui = this;
-            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            // @todo 1.14
+//            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 
@@ -93,7 +94,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private boolean isShapeCard() {
-        ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
+        ItemStack card = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(h -> h.getStackInSlot(SLOT_TAB)).orElse(ItemStack.EMPTY);
         return !card.isEmpty() && card.getItem() == BuilderSetup.shapeCardItem;
     }
 
@@ -102,7 +103,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         int cury = getCurrentLevelClientSide();
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
 
-        ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
+        ItemStack card = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(h -> h.getStackInSlot(SLOT_TAB)).orElse(ItemStack.EMPTY);
         if (card.isEmpty()) {
             window.setFlag("!validcard");
         } else if (card.getItem() == BuilderSetup.shapeCardItem) {
@@ -114,9 +115,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         drawWindow();
 
-        energyBar.setValue(getCurrentRF());
-
-        tileEntity.requestRfFromServer(RFTools.MODID);
-        tileEntity.requestCurrentLevel();
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
+        tileEntity.requestCurrentLevel();   // @todo 1.14, new system
     }
 }

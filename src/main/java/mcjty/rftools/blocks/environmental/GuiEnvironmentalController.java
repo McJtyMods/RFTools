@@ -6,21 +6,22 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;
 import static mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity.*;
 
-public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
+public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity, GenericContainer> {
 
     public static final String BLACKLIST = "BL";
     public static final String WHITELIST = "WL";
@@ -40,14 +41,14 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private WidgetList playersList;
     private ChoiceLabel modeLabel;
 
-    public GuiEnvironmentalController(EnvironmentalControllerTileEntity tileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "envctrl");
+    public GuiEnvironmentalController(EnvironmentalControllerTileEntity tileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "envctrl");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/environmental.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
         setupEvents();
@@ -58,8 +59,6 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
     private void initializeFields() {
         energyBar = window.findChild("energybar");
-        energyBar.setMaxValue(tileEntity.getCapacity());
-        energyBar.setValue(getCurrentRF());
 
         ((ImageChoiceLabel)window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
 
@@ -153,7 +152,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         players.sort(null);
         playersList.removeChildren();
         for (String player : players) {
-            playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+            playersList.addChild(new Label(minecraft, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
     }
 
@@ -203,9 +202,10 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         populatePlayers();
         enableButtons();
 
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
 
         drawWindow();
     }

@@ -13,16 +13,15 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Mouse;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuiTeleportProbe extends GuiScreen {
+public class GuiTeleportProbe extends Screen {
 
     /** The X size of the window in pixels. */
     private int xSize = 356;
@@ -38,29 +37,30 @@ public class GuiTeleportProbe extends GuiScreen {
     private int listDirty;
 
     public GuiTeleportProbe() {
+        super(new StringTextComponent("Teleport Probe"));
         listDirty = 0;
     }
 
     @Override
-    public boolean doesGuiPauseGame() {
+    public boolean isPauseScreen() {
         return false;
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(minecraft, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget<?> parent, int index) {
                 teleport(index);
             }
         });
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("list");
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
+        Slider listSlider = new Slider(minecraft, this).setDesiredWidth(11).setVertical().setScrollableName("list");
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -101,42 +101,37 @@ public class GuiTeleportProbe extends GuiScreen {
             BlockPos coordinate = destination.getCoordinate();
             int dim = destination.getDimension();
 
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout());
 
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(destination.getName()).setDesiredWidth(100));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(75));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText("Id " + dim).setDesiredWidth(75));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(destination.getName()).setDesiredWidth(100));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(BlockPosTools.toString(coordinate)).setDesiredWidth(75));
+            panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText("Id " + dim).setDesiredWidth(75));
             list.addChild(panel);
         }
     }
 
-    @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
-        super.mouseClicked(x, y, button);
-        window.mouseClicked(x, y, button);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        window.handleMouseInput();
-    }
-
+    // @todo 1.14
 //    @Override
-//    protected void mouseMovedOrUp(int x, int y, int button) {
-//        super.mouseMovedOrUp(x, y, button);
-//        window.mouseMovedOrUp(x, y, button);
+//    protected void mouseClicked(int x, int y, int button) throws IOException {
+//        super.mouseClicked(x, y, button);
+//        window.mouseClicked(x, y, button);
+//    }
+//
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        super.handleMouseInput();
+//        window.handleMouseInput();
+//    }
+//
+//    @Override
+//    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+//        super.keyTyped(typedChar, keyCode);
+//        window.keyTyped(typedChar, keyCode);
 //    }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        window.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+    public void render(int xSize_lo, int ySize_lo, float par3) {
+        super.render(xSize_lo, ySize_lo, par3);
 
         listDirty--;
         if (listDirty <= 0) {
@@ -149,9 +144,12 @@ public class GuiTeleportProbe extends GuiScreen {
         if (tooltips != null) {
             int guiLeft = (this.width - this.xSize) / 2;
             int guiTop = (this.height - this.ySize) / 2;
-            int x = Mouse.getEventX() * width / mc.displayWidth;
-            int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
+            double mouseX = minecraft.mouseHelper.getMouseX();
+            double mouseY = minecraft.mouseHelper.getMouseY();
+            int x = (int) (mouseX * width / minecraft.mainWindow.getWidth());
+            int y = (int) (height - mouseY * height / minecraft.mainWindow.getHeight() - 1);
+
+            renderTooltip(tooltips, x-guiLeft, y-guiTop, minecraft.fontRenderer);
         }
     }
 

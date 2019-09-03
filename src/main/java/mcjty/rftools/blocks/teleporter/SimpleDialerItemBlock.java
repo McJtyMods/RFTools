@@ -1,28 +1,31 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.blocks.GenericItemBlock;
+import mcjty.lib.blocks.BaseBlockItem;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class SimpleDialerItemBlock extends GenericItemBlock {
+public class SimpleDialerItemBlock extends BaseBlockItem {
     public SimpleDialerItemBlock(Block block) {
-        super(block);
+        super(block, new Properties().group(RFTools.setup.getTab()));
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        ItemStack stack = context.getItem();
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
+        PlayerEntity player = context.getPlayer();
         TileEntity te = world.getTileEntity(pos);
         CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
@@ -33,7 +36,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
             if (!world.isRemote) {
                 MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
 
-                if (!matterTransmitterTileEntity.checkAccess(player.getName())) {
+                if (!matterTransmitterTileEntity.checkAccess(player.getName().getFormattedText())) {    // @todo 1.14
                     Logging.message(player, TextFormatting.RED + "You have no access to this matter transmitter!");
                     return ActionResultType.FAIL;
                 }
@@ -72,10 +75,10 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
             }
         } else {
-            return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+            return super.onItemUse(context);
         }
 
-        stack.setTagCompound(tagCompound);
+        stack.setTag(tagCompound);
         return ActionResultType.SUCCESS;
     }
 
@@ -91,7 +94,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                     TileEntity recTe = worldForDimension.getTileEntity(destination.getCoordinate());
                     if (recTe instanceof MatterReceiverTileEntity) {
                         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) recTe;
-                        if (!matterReceiverTileEntity.checkAccess(player.getName())) {
+                        if (!matterReceiverTileEntity.checkAccess(player.getName().getFormattedText())) {   // @todo 1.14
                             access = false;
                         }
                     }

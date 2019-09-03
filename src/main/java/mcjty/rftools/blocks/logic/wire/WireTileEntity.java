@@ -3,18 +3,19 @@ package mcjty.rftools.blocks.logic.wire;
 
 import mcjty.lib.tileentity.LogicTileEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_WIRE;
+
 public class WireTileEntity extends LogicTileEntity {
 
     private int loopDetector = 0;
 
-    public WireTileEntity(TileEntityType<?> type) {
-        super(type);
+    public WireTileEntity() {
+        super(TYPE_WIRE);
     }
 
     @Override

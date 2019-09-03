@@ -7,18 +7,19 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiElevator extends GenericGuiContainer<ElevatorTileEntity> {
+public class GuiElevator extends GenericGuiContainer<ElevatorTileEntity, GenericContainer> {
 
-    public GuiElevator(ElevatorTileEntity tileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "elevator");
+    public GuiElevator(ElevatorTileEntity tileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "elevator");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/elevator.gui"));
-        super.initGui();
+        super.init();
 
         TextField elevator = window.findChild("name");
         elevator.setText(tileEntity.getName());

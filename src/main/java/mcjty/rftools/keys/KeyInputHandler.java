@@ -6,8 +6,8 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class KeyInputHandler {
 

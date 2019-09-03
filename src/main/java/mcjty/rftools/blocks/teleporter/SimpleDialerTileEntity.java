@@ -5,6 +5,8 @@ import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
+import static mcjty.rftools.blocks.teleporter.TeleporterSetup.TYPE_SIMPLE_DIALER;
+
 public class SimpleDialerTileEntity extends LogicTileEntity {
 
     private GlobalCoordinate transmitter;
@@ -14,6 +16,7 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     private boolean prevIn = false;
 
     public SimpleDialerTileEntity() {
+        super(TYPE_SIMPLE_DIALER);
     }
 
     public void update() {
@@ -64,9 +67,10 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
         return receiver;
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         if (tagCompound.contains("transX")) {
             transmitter = new GlobalCoordinate(new BlockPos(tagCompound.getInt("transX"), tagCompound.getInt("transY"), tagCompound.getInt("transZ")), tagCompound.getInt("transDim"));
         } else {
@@ -80,9 +84,10 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
         onceMode = tagCompound.getBoolean("once");
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         if (transmitter != null) {
             tagCompound.putInt("transX", transmitter.getCoordinate().getX());
             tagCompound.putInt("transY", transmitter.getCoordinate().getY());
@@ -93,5 +98,6 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
             tagCompound.putInt("receiver", receiver);
         }
         tagCompound.putBoolean("once", onceMode);
+        return tagCompound;
     }
 }

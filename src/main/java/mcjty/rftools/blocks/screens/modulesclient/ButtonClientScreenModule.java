@@ -34,7 +34,7 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
         GlStateManager.depthMask(false);
 
         int xoffset;

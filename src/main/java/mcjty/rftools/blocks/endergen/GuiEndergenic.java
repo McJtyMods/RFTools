@@ -5,16 +5,16 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.energy.CapabilityEnergy;
 
-import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;
-
-public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
+public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity, GenericContainer> {
 
     private EnergyBar energyBar;
     private TextField lastRfPerTick;
@@ -30,19 +30,16 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     private int timer = 10;
 
-    public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "power");
-        GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getStoredPower());
+    public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "power");
     }
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/endergenic.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
-
-        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     private void initializeFields() {
@@ -51,17 +48,16 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         lastLostPearls = window.findChild("lastlost");
         lastLaunchedPearls = window.findChild("lastlaunched");
         lastOpportunities = window.findChild("lastopp");
-
-        energyBar.setMaxValue(tileEntity.getCapacity());
-        energyBar.setValue(getCurrentRF());
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
-        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+
+        tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
+            energyBar.setMaxValue(((GenericEnergyStorage)e).getCapacity());
+            energyBar.setValue(((GenericEnergyStorage)e).getEnergy());
+        });
 
         checkStats();
 

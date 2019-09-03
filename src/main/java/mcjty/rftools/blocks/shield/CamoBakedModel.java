@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.model.IModelState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +23,7 @@ public class CamoBakedModel implements IBakedModel {
     private VertexFormat format;
     private static TextureAtlasSprite spriteCable;
 
-    public CamoBakedModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public CamoBakedModel(ModelBakery bakery, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         this.format = format;
     }
 

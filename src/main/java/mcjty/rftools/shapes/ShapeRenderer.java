@@ -121,7 +121,7 @@ public class ShapeRenderer {
     public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
                                    boolean scan, ShapeID shape) {
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
+        GlStateManager.translatef((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(angle, 0, 1, 0);
 
@@ -130,13 +130,13 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
         GlStateManager.disableLighting();
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.isGrayscale(), shape.getScanId());
 
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
 //        RenderHelper.enableStandardItemLighting();
@@ -151,7 +151,7 @@ public class ShapeRenderer {
 
         GlStateManager.pushMatrix();
 
-        GlStateManager.translate(dx, dy, 200);
+        GlStateManager.translatef(dx, dy, 200);
         GlStateManager.rotate(180-xangle, 1f, 0, 0);
         GlStateManager.rotate(yangle, 0, 1f, 0);
         GlStateManager.rotate(zangle, 0, 0, 1f);
@@ -159,7 +159,7 @@ public class ShapeRenderer {
 
         GlStateManager.disableBlend();
         GlStateManager.disableCull();
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -186,7 +186,7 @@ public class ShapeRenderer {
             tessellator.draw();
         }
 
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
@@ -336,10 +336,10 @@ public class ShapeRenderer {
                 int y = beacon.getPos().getY()+1;
                 int z = beacon.getPos().getZ();
                 BeaconType type = beacon.getType();
-                GlStateManager.translate(x, y, z);
+                GlStateManager.translatef(x, y, z);
                 RenderData.RenderElement element = getBeaconElement(tessellator, buffer, type, beacon.isDoBeacon());
                 element.render();
-                GlStateManager.translate(-x, -y, -z);
+                GlStateManager.translatef(-x, -y, -z);
             }
         }
 

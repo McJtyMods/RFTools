@@ -1,17 +1,6 @@
 package mcjty.rftools.compat.wheelsupport;
 
-import mcjty.intwheel.api.IWheelAction;
-import mcjty.intwheel.api.WheelActionElement;
-import mcjty.lib.blocks.BaseBlock;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
-
-public class RemoveBlockAction implements IWheelAction {
+public class RemoveBlockAction {} /* @todo 1.14 implements IWheelAction {
 
     public static final String ACTION_REMOVEBLOCK = "rftools.removeblock";
 
@@ -40,3 +29,4 @@ public class RemoveBlockAction implements IWheelAction {
         }
     }
 }
+*/

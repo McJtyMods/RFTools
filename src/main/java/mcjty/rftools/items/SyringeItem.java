@@ -170,7 +170,11 @@ public class SyringeItem extends Item {
         }
     }
 
-    private static ItemStack createMobSyringe(ResourceLocation id) {
+    public static ItemStack createMobSyringe(String id) {
+        return createMobSyringe(new ResourceLocation(id));
+    }
+
+    public static ItemStack createMobSyringe(ResourceLocation id) {
         ItemStack syringe = new ItemStack(ModItems.syringeItem);
         CompoundNBT tagCompound = new CompoundNBT();
         tagCompound.putString("mobId", id.toString());

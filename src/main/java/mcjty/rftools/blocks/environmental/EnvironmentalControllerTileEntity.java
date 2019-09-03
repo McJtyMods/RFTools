@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.api.information.IMachineInformation;
-import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.ScrollableLabel;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -12,7 +12,6 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -26,14 +25,16 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+
+import static mcjty.rftools.blocks.environmental.EnvironmentalSetup.TYPE_ENVIRONMENTAL_CONTROLLER;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
@@ -61,8 +62,14 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     public static final String COMPONENT_NAME = "environmental_controller";
 
     public static final int ENV_MODULES = 7;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/environmental.gui"));
     public static final int SLOT_MODULES = 0;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, 18, ENV_MODULES, 18);
+            layoutPlayerInventorySlots(27, 142);
+        }
+    };
 
     public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULES, SLOT_MODULES + ENV_MODULES - 1) {
         @Override
@@ -72,7 +79,8 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     };
     public static final String CONTAINER_INVENTORY = "container";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, ENV_MODULES);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get()));
 
     public enum EnvironmentalMode {
         MODE_BLACKLIST,
@@ -97,7 +105,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     private int powerTimeout = 0;
 
     public EnvironmentalControllerTileEntity() {
-        super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get());
+        super(TYPE_ENVIRONMENTAL_CONTROLLER);
     }
 
     @Override
@@ -129,11 +137,6 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     @Override
     protected boolean needsRedstoneMode() {
-        return true;
-    }
-
-    @Override
-    protected boolean needsCustomInvWrapper() {
         return true;
     }
 
@@ -347,28 +350,30 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
             return;
         }
 
-        long rf = getStoredPower();
-        if (!isMachineEnabled()) {
-            rf = 0;
-        }
-
-        getEnvironmentModules();
-
-        int rfNeeded = getTotalRfPerTick();
-        if (rfNeeded > rf || environmentModules.isEmpty()) {
-            deactivate();
-            powerTimeout = 20;
-        } else {
-            consumeEnergy(rfNeeded);
-            for (EnvironmentModule module : environmentModules) {
-                module.activate(true);
-                module.tick(getWorld(), getPos(), radius, miny, maxy, this);
+        energyHandler.ifPresent(h -> {
+            long rf = h.getEnergy();
+            if (!isMachineEnabled()) {
+                rf = 0;
             }
-            if (!active) {
-                active = true;
-                markDirtyClient();
+
+            getEnvironmentModules();
+
+            int rfNeeded = getTotalRfPerTick();
+            if (rfNeeded > rf || environmentModules.isEmpty()) {
+                deactivate();
+                powerTimeout = 20;
+            } else {
+                h.consumeEnergy(rfNeeded);
+                for (EnvironmentModule module : environmentModules) {
+                    module.activate(true);
+                    module.tick(getWorld(), getPos(), radius, miny, maxy, this);
+                }
+                if (!active) {
+                    active = true;
+                    markDirtyClient();
+                }
             }
-        }
+        });
     }
 
     public void deactivate() {
@@ -404,88 +409,43 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
             int volume = getVolume();
             totalRfPerTick = 0;
             environmentModules = new ArrayList<>();
-            for (int i = 0; i < inventoryHelper.getCount(); i++) {
-                ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (!itemStack.isEmpty() && itemStack.getItem() instanceof EnvModuleProvider) {
-                    EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
-                    Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
-                    EnvironmentModule environmentModule;
-                    try {
-                        environmentModule = moduleClass.newInstance();
-                    } catch (InstantiationException e) {
-                        Logging.log("Failed to instantiate controller module!");
-                        continue;
-                    } catch (IllegalAccessException e) {
-                        Logging.log("Failed to instantiate controller module!");
-                        continue;
+            itemHandler.ifPresent(h -> {
+                for (int i = 0; i < h.getSlots(); i++) {
+                    ItemStack itemStack = h.getStackInSlot(i);
+                    if (!itemStack.isEmpty() && itemStack.getItem() instanceof EnvModuleProvider) {
+                        EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
+                        Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
+                        EnvironmentModule environmentModule;
+                        try {
+                            environmentModule = moduleClass.newInstance();
+                        } catch (InstantiationException e) {
+                            Logging.log("Failed to instantiate controller module!");
+                            continue;
+                        } catch (IllegalAccessException e) {
+                            Logging.log("Failed to instantiate controller module!");
+                            continue;
+                        }
+                        environmentModules.add(environmentModule);
+                        totalRfPerTick += (int) (environmentModule.getRfPerTick() * volume);
                     }
-                    environmentModules.add(environmentModule);
-                    totalRfPerTick += (int) (environmentModule.getRfPerTick() * volume);
                 }
-            }
-
+            });
         }
         return environmentModules;
     }
 
     @Override
-    public int[] getSlotsForFace(Direction side) {
-        return CONTAINER_FACTORY.getAccessibleSlots();
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return CONTAINER_FACTORY.isOutputSlot(index);
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return CONTAINER_FACTORY.isInputSlot(index);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int index, int amount) {
-        environmentModules = null;
-        return inventoryHelper.decrStackSize(index, amount);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        environmentModules = null;
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 1;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         totalRfPerTick = tagCompound.getInt("rfPerTick");
         active = tagCompound.getBoolean("active");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
+        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         radius = tagCompound.getInt("radius");
         miny = tagCompound.getInt("miny");
         maxy = tagCompound.getInt("maxy");
@@ -501,10 +461,10 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         }
 
         players.clear();
-        ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        ListNBT playerList = tagCompound.getList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
-            for (int i = 0; i < playerList.tagCount(); i++) {
-                String player = playerList.getStringTagAt(i);
+            for (int i = 0; i < playerList.size(); i++) {
+                String player = playerList.getString(i);
                 players.add(player);
             }
         }
@@ -515,13 +475,14 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         super.write(tagCompound);
         tagCompound.putInt("rfPerTick", totalRfPerTick);
         tagCompound.putBoolean("active", active);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
+        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putInt("radius", radius);
         tagCompound.putInt("miny", miny);
         tagCompound.putInt("maxy", maxy);
@@ -536,7 +497,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -591,19 +552,15 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     }
 
 
+// @todo 1.14
+//    @Override
+//    public boolean shouldRenderInPass(int pass) {
+//        return pass == 1;
+//    }
+
 
     @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public void onBlockBreak(World world, BlockPos pos, BlockState state) {
+    public void onReplaced(World world, BlockPos pos, BlockState state) {
         deactivate();
     }
 
@@ -646,4 +603,24 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 //    }
 
 
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(EnvironmentalControllerTileEntity.this, CONTAINER_FACTORY, ENV_MODULES) {
+
+            @Override
+            protected void onUpdate(int index) {
+                super.onUpdate(index);
+                environmentModules = null;
+            }
+
+            @Override
+            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isInputSlot(slot) || CONTAINER_FACTORY.isSpecificItemSlot(slot);
+            }
+
+            @Override
+            public boolean isItemExtractable(int slot, @Nonnull ItemStack stack) {
+                return CONTAINER_FACTORY.isOutputSlot(slot);
+            }
+        };
+    }
 }

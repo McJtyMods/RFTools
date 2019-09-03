@@ -2,7 +2,10 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.network.PacketServerCommandTyped;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -30,7 +33,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static mcjty.rftools.blocks.screens.ScreenContainer.CONTAINER_FACTORY;
 import static mcjty.rftools.blocks.screens.ScreenSetup.TYPE_SCREEN;
 
 public class ScreenTileEntity extends GenericTileEntity implements ITickableTileEntity {
@@ -58,6 +60,17 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
                 new DefaultValue<>(VALUE_BRIGHT, this::isBright, this::setBright),
         };
     }
+
+    public static final int SLOT_MODULES = 0;
+    public static final int SCREEN_MODULES = 11;
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, 18, SCREEN_MODULES, 18);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
 
@@ -795,7 +808,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ScreenTileEntity.this, CONTAINER_FACTORY, ScreenContainer.SCREEN_MODULES) {
+        return new NoDirectionItemHander(ScreenTileEntity.this, CONTAINER_FACTORY, SCREEN_MODULES) {
 
             @Override
             protected void onUpdate(int index) {

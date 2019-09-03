@@ -1,36 +1,30 @@
 package mcjty.rftools.blocks.shaper;
 
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.EnergyTools;
-import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.shapes.BeaconType;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.theoneprobe.api.TextStyleClass;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
+
+import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_LOCATOR;
 
 public class LocatorTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
@@ -63,13 +57,15 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
     private Integer minEnergy = null;
     private Integer maxEnergy = null;
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScannerConfiguration.LOCATOR_MAXENERGY.get(), ScannerConfiguration.LOCATOR_RECEIVEPERTICK.get()));
+
     public LocatorTileEntity() {
-        super(ScannerConfiguration.LOCATOR_MAXENERGY.get(), ScannerConfiguration.LOCATOR_RECEIVEPERTICK.get());
+        super(TYPE_LOCATOR);
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote && isMachineEnabled()) {
+    public void tick() {
+        if (!world.isRemote && isMachineEnabled()) {
             counter--;
             markDirtyQuick();
             if (counter <= 0) {
@@ -81,33 +77,35 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
                     return;
                 }
 
-                int energy = getEnergyPerScan(scanner);
-                if (getStoredPower() < energy) {
-                    // Do nothing
-                    return;
-                }
+                energyHandler.ifPresent(h -> {
+                    int energy = getEnergyPerScan(scanner);
+                    if (h.getEnergyStored() < energy) {
+                        // Do nothing
+                        return;
+                    }
 
-                BlockPos dim = scanner.getDataDim();
-                BlockPos start = scanner.getFirstCorner();
-                if (start == null) {
-                    // No valid destination. Don't do anything
-                    return;
-                }
+                    BlockPos dim = scanner.getDataDim();
+                    BlockPos start = scanner.getFirstCorner();
+                    if (start == null) {
+                        // No valid destination. Don't do anything
+                        return;
+                    }
 
-                World scanWorld = scanner.getScanWorld(scanner.getScanDimension());
+                    World scanWorld = scanner.getScanWorld(scanner.getScanDimension());
 
-                consumeEnergy(energy);
-                AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
+                    h.consumeEnergy(energy);
+                    AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
 
-                List<Entity> entities = scanWorld.getEntitiesWithinAABB(LivingEntity.class, bb);
-                int scanId = scanner.getScanId();
-                ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
-                extraData.touch();
-                extraData.clear();
+                    List<Entity> entities = scanWorld.getEntitiesWithinAABB(LivingEntity.class, bb);
+                    int scanId = scanner.getScanId();
+                    ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
+                    extraData.touch();
+                    extraData.clear();
 
-                BlockPos center = scanner.getScanCenter();
-                findEntityBeacons(entities, extraData, center);
-                findEnergyBeacons(scanner, extraData, dim, start, center, scanWorld);
+                    BlockPos center = scanner.getScanCenter();
+                    findEntityBeacons(entities, extraData, center);
+                    findEnergyBeacons(scanner, extraData, dim, start, center, scanWorld);
+                });
             }
         }
     }
@@ -173,7 +171,7 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
                         continue;
                     }
                 }
-                if (entity instanceof EntityAnimal) {
+                if (entity instanceof AnimalEntity) {
                     if (passiveType != BeaconType.BEACON_OFF) {
                         extraData.addBeacon(pos, passiveType, passiveBeacon);
                         counter.increment(pos);
@@ -194,14 +192,14 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private boolean checkFilter(String filt, Entity entity) {
-        String name = entity.getName().toLowerCase();
+        String name = entity.getName().getFormattedText().toLowerCase();    // @todo 1.14
         if (name.contains(filt)) {
             return true;
         }
 
         // Check if the entity has a name tag
         if (entity.hasCustomName()) {
-            String nameTag = entity.getCustomNameTag().toLowerCase();
+            String nameTag = entity.getCustomName().getFormattedText().toLowerCase();   // @todo 1.14
             if (nameTag.contains(filt)) {
                 return true;
             }
@@ -250,7 +248,7 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private ScannerTileEntity getScanner() {
-        TileEntity te = getWorld().getTileEntity(getPos().down());
+        TileEntity te = world.getTileEntity(getPos().down());
         if (te instanceof ScannerTileEntity) {
             return (ScannerTileEntity) te;
         }
@@ -306,9 +304,10 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
         return energyBeacon;
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         counter = tagCompound.getInt("counter");
         hostileType = BeaconType.getTypeByCode(tagCompound.getString("hostile"));
         passiveType = BeaconType.getTypeByCode(tagCompound.getString("passive"));
@@ -331,31 +330,32 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
         }
     }
 
-
+    // @todo 1.14 loot tables
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         tagCompound.putInt("counter", counter);
-        tagCompound.setString("hostile", hostileType.getCode());
-        tagCompound.setString("passive", passiveType.getCode());
-        tagCompound.setString("player", playerType.getCode());
-        tagCompound.setString("energylow", energyType.getCode());
+        tagCompound.putString("hostile", hostileType.getCode());
+        tagCompound.putString("passive", passiveType.getCode());
+        tagCompound.putString("player", playerType.getCode());
+        tagCompound.putString("energylow", energyType.getCode());
         tagCompound.putBoolean("hostileBeacon", hostileBeacon);
         tagCompound.putBoolean("passiveBeacon", passiveBeacon);
         tagCompound.putBoolean("playerBeacon", playerBeacon);
         tagCompound.putBoolean("energyBeacon", energyBeacon);
-        tagCompound.setString("filter", filter);
+        tagCompound.putString("filter", filter);
         if (minEnergy != null) {
             tagCompound.putInt("minEnergy", minEnergy);
         }
         if (maxEnergy != null) {
             tagCompound.putInt("maxEnergy", maxEnergy);
         }
+        return tagCompound;
     }
 
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -387,26 +387,26 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
     }
 
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        if (world.getBlockState(data.getPos().down()).getBlock() != BuilderSetup.scannerBlock) {
-            probeInfo.text(TextStyleClass.ERROR + "Error! Needs a scanner below!");
-        } else {
-            probeInfo.text(TextStyleClass.INFO + "Scanner detected");
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        if (accessor.getWorld().getBlockState(accessor.getPosition().down()).getBlock() != BuilderSetup.scannerBlock) {
-            currenttip.add(TextFormatting.RED.toString() + TextFormatting.BOLD + "Error! Needs a scanner below!");
-        } else {
-            currenttip.add(TextFormatting.WHITE + "Scanner detected");
-        }
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        if (world.getBlockState(data.getPos().down()).getBlock() != BuilderSetup.scannerBlock) {
+//            probeInfo.text(TextStyleClass.ERROR + "Error! Needs a scanner below!");
+//        } else {
+//            probeInfo.text(TextStyleClass.INFO + "Scanner detected");
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        if (accessor.world.getBlockState(accessor.getPosition().down()).getBlock() != BuilderSetup.scannerBlock) {
+//            currenttip.add(TextFormatting.RED.toString() + TextFormatting.BOLD + "Error! Needs a scanner below!");
+//        } else {
+//            currenttip.add(TextFormatting.WHITE + "Scanner detected");
+//        }
+//    }
 }

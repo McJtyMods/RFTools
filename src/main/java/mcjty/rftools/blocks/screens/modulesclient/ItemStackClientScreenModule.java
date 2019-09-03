@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
@@ -7,6 +8,7 @@ import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -40,18 +42,18 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
         RenderHelper.enableGUIStandardItemLighting();
 //        RenderHelper.enableStandardItemLighting();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GlStateManager.depthMask(true);
 
         GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
 
         GlStateManager.pushMatrix();
         float f3 = 0.0075F;
-        GlStateManager.translate(-0.5F, 0.5F, 0.06F);
+        GlStateManager.translatef(-0.5F, 0.5F, 0.06F);
         float factor = renderInfo.factor;
-        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.scalef(f3 * factor, -f3 * factor, 0.0001f);
 
 //        short short1 = 240;
 //        short short2 = 240;
@@ -65,8 +67,8 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
         GlStateManager.popMatrix();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(-0.5F, 0.5F, 0.08F);
-        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.translatef(-0.5F, 0.5F, 0.08F);
+        GlStateManager.scalef(f3 * factor, -f3 * factor, 0.0001f);
 
         x = 10;
         x = renderSlotOverlay(fontRenderer, currenty, screenData, slot1, 0, x);
@@ -93,7 +95,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
                 // Ignore this.
             }
             if (!itm.isEmpty()) {
-                RenderItem itemRender = Minecraft.getInstance().getRenderItem();
+                ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
                 itemRender.renderItemAndEffectIntoGUI(itm, x, currenty);
             }
             x += 30;
@@ -141,8 +143,8 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
                 int k = (int) Math.round(255.0D - health * 255.0D);
                 GlStateManager.disableLighting();
 //                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GlStateManager.disableTexture2D();
-                GlStateManager.disableAlpha();
+                GlStateManager.disableTexture();
+                GlStateManager.disableAlphaTest();
                 GlStateManager.disableBlend();
                 Tessellator tessellator = Tessellator.getInstance();
                 int l = 255 - k << 16 | k << 8;
@@ -151,11 +153,11 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
                 renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.02D);
                 renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.04D);
                 //GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down the line.
-                GlStateManager.enableAlpha();
-                GlStateManager.enableTexture2D();
+                GlStateManager.enableAlphaTest();
+                GlStateManager.enableTexture();
                 GlStateManager.enableLighting();
 //                GL11.glEnable(GL11.GL_DEPTH_TEST);
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
     }

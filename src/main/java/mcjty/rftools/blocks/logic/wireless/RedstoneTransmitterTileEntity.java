@@ -2,11 +2,14 @@ package mcjty.rftools.blocks.logic.wireless;
 
 import net.minecraft.nbt.CompoundNBT;
 
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_REDSTONE_TRANSMITTER;
+
 public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
 
     private int prevIn = -1;
 
     public RedstoneTransmitterTileEntity() {
+        super(TYPE_REDSTONE_TRANSMITTER);
     }
 
     @Override
@@ -27,7 +30,7 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
         if (powerLevel != prevIn) {
             prevIn = powerLevel;
             markDirty();
-            RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
+            RedstoneChannels channels = RedstoneChannels.get();
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
             ch.setValue(powerLevel);
             channels.save();
@@ -35,19 +38,19 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         if(tagCompound.contains("prevIn", 3 /* int */)) {
-            prevIn = tagCompound.getInteger("prevIn");
+            prevIn = tagCompound.getInt("prevIn");
         } else {
             prevIn = tagCompound.getBoolean("prevIn") ? 15 : 0; // backwards compatibility
         }
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setInteger("prevIn", prevIn);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putInt("prevIn", prevIn);
         return tagCompound;
     }
 }

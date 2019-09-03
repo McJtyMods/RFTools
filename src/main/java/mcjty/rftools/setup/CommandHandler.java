@@ -4,6 +4,7 @@ import mcjty.lib.McJtyLib;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderTools;
@@ -11,9 +12,7 @@ import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.security.SecurityTools;
 import mcjty.rftools.blocks.shaper.ShaperTools;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerTools;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
-import mcjty.rftools.items.storage.StorageTools;
 import mcjty.rftools.items.teleportprobe.PorterTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
@@ -70,30 +69,31 @@ public class CommandHandler {
     public static final String CMD_GET_COUNTER_INFO = "getCounterInfo";
 
     public static void registerCommands() {
-        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_SCANNER_CONTENTS, (player, arguments) -> {
-            StorageScannerTools.requestContents(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_INV_POS));
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_SCANNER_SEARCH, (player, arguments) -> {
-            StorageScannerTools.scannerSearch(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_SEARCH_TEXT));
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_COMPACT, (player, arguments) -> {
-            StorageTools.compact(player);
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_CLEAR_GRID, (player, arguments) -> {
-            StorageTools.clearGrid(player);
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_CYCLE_STORAGE, (player, arguments) -> {
-            StorageTools.cycleStorage(player);
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_STORAGE_INFO, (player, arguments) -> {
-            StorageTools.returnStorageInfo(player, arguments.get(PARAM_DIMENSION), arguments.get(PARAM_POS));
-            return true;
-        });
+        // @todo 1.14
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_SCANNER_CONTENTS, (player, arguments) -> {
+//            StorageScannerTools.requestContents(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_INV_POS));
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_SCANNER_SEARCH, (player, arguments) -> {
+//            StorageScannerTools.scannerSearch(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_SEARCH_TEXT));
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_COMPACT, (player, arguments) -> {
+//            StorageTools.compact(player);
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_CLEAR_GRID, (player, arguments) -> {
+//            StorageTools.clearGrid(player);
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_CYCLE_STORAGE, (player, arguments) -> {
+//            StorageTools.cycleStorage(player);
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_STORAGE_INFO, (player, arguments) -> {
+//            StorageTools.returnStorageInfo(player, arguments.get(PARAM_DIMENSION), arguments.get(PARAM_POS));
+//            return true;
+//        });
         McJtyLib.registerCommand(RFTools.MODID, CMD_CLEAR_TARGET, (player, arguments) -> {
             PorterTools.clearTarget(player, arguments.get(PARAM_TARGET));
             return true;
@@ -157,7 +157,7 @@ public class CommandHandler {
             return true;
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_COUNTER_INFO, (player, arguments) -> {
-            ServerWorld world = DimensionManager.getWorld(arguments.get(PARAM_DIMENSION));
+            ServerWorld world = WorldTools.getWorld(arguments.get(PARAM_DIMENSION));
             if (world != null) {
                 TileEntity te = world.getTileEntity(arguments.get(PARAM_POS));
                 if (te instanceof CounterTileEntity) {

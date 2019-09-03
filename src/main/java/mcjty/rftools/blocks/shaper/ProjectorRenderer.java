@@ -7,12 +7,11 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 
 
-@SideOnly(Side.CLIENT)
 public class ProjectorRenderer extends TileEntityRenderer<ProjectorTileEntity> {
 
     @Override
-    public void render(ProjectorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
+    public void render(ProjectorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+        super.render(te, x, y, z, partialTicks, destroyStage);
 
         boolean sound = false;
         ItemStack renderStack = te.getRenderStack();

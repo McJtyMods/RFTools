@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.IAction;
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
@@ -24,6 +25,13 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
 
     public static final String ACTION_SCAN = "scan";
     public static final String ACTION_DETACH = "detach";
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
 
     @Override
     public IAction[] getActions() {

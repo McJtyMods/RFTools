@@ -8,11 +8,12 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
 import java.text.DecimalFormat;
 
-public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
+public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity, GenericContainer> {
 
     private TextField mulEqual;
     private TextField mulLess;
@@ -21,17 +22,17 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
     private TextField addLess;
     private TextField addGreater;
 
-    public GuiAnalog(AnalogTileEntity te, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, GuiProxy.GUI_MANUAL_MAIN, "analog");
+    public GuiAnalog(AnalogTileEntity te, GenericContainer container, PlayerInventory inventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, inventory, GuiProxy.GUI_MANUAL_MAIN, "analog");
     }
 
     private static final DecimalFormat fmt = new DecimalFormat("#.#");
 
 
     @Override
-    public void initGui() {
+    public void init() {
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/analog.gui"));
-        super.initGui();
+        super.init();
 
         initializeFields();
         setupEvents();

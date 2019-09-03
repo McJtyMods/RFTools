@@ -10,20 +10,19 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
-import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.shapes.ShapeDataManagerClient;
+import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -31,14 +30,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
-@SideOnly(Side.CLIENT)
 public class RenderWorldLastEventHandler {
 
     private static long lastTime = 0;
@@ -53,12 +49,12 @@ public class RenderWorldLastEventHandler {
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getInstance();
-        EntityPlayerSP p = mc.player;
+        PlayerEntity p = mc.player;
         ItemStack heldItem = p.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        if (heldItem.getItem() == ModItems.smartWrenchItem) {
+        if (heldItem.getItem() instanceof SmartWrenchItem) {
             if (BlockProtectorConfiguration.enabled.get() && SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
@@ -96,7 +92,7 @@ public class RenderWorldLastEventHandler {
 
     public static final ResourceLocation YELLOWGLOW = new ResourceLocation(RFTools.MODID, "textures/blocks/yellowglow.png");
 
-    private static void renderHighlightedBlocks(RenderWorldLastEvent evt, EntityPlayerSP p, BlockPos base, Set<BlockPos> coordinates) {
+    private static void renderHighlightedBlocks(RenderWorldLastEvent evt, PlayerEntity p, BlockPos base, Set<BlockPos> coordinates) {
         BlockOutlineRenderer.renderHighlightedBlocks(p, base, coordinates, YELLOWGLOW, evt.getPartialTicks());
     }
 
@@ -104,18 +100,18 @@ public class RenderWorldLastEventHandler {
         Map<BlockPos, Pair<Long, BlockPos>> scans = BuilderTileEntity.getScanLocClient();
         if (!scans.isEmpty()) {
             Minecraft mc = Minecraft.getInstance();
-            EntityPlayerSP p = mc.player;
+            PlayerEntity p = mc.player;
             double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
             double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
             double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
 
             GlStateManager.pushMatrix();
-            GlStateManager.color(1.0f, 0, 0);
-            GlStateManager.glLineWidth(3);
-            GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+            GlStateManager.color3f(1.0f, 0, 0);
+            GlStateManager.lineWidth(3);
+            GlStateManager.translated(-doubleX, -doubleY, -doubleZ);
 
-            GlStateManager.disableDepth();
-            GlStateManager.disableTexture2D();
+            GlStateManager.disableDepthTest();
+            GlStateManager.disableTexture();
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.getBuffer();
@@ -131,7 +127,7 @@ public class RenderWorldLastEventHandler {
 
             tessellator.draw();
 
-            GlStateManager.enableTexture2D();
+            GlStateManager.enableTexture();
             GlStateManager.popMatrix();
         }
     }
@@ -157,7 +153,7 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderPower(RenderWorldLastEvent evt) {
-        EntityPlayerSP player = Minecraft.getInstance().player;
+        PlayerEntity player = Minecraft.getInstance().player;
 
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
@@ -168,10 +164,10 @@ public class RenderWorldLastEventHandler {
             double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+            GlStateManager.translated(-doubleX, -doubleY, -doubleZ);
 
-            GlStateManager.disableDepth();
-            GlStateManager.enableTexture2D();
+            GlStateManager.disableDepthTest();
+            GlStateManager.enableTexture();
 
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
@@ -209,7 +205,7 @@ public class RenderWorldLastEventHandler {
                 renderBoxOutline(pos);
             }
 
-            GlStateManager.enableDepth();
+            GlStateManager.enableDepthTest();
 
             GlStateManager.popMatrix();
         }

@@ -64,7 +64,7 @@ public abstract class RedstoneChannelBlock extends LogicSlabBlock {
                             channel = -1;
                         }
                         if(channel == -1) {
-                            RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
+                            RedstoneChannels redstoneChannels = RedstoneChannels.get();
                             channel = redstoneChannels.newChannel();
                             redstoneChannels.save();
                             tagCompound.putInt("channel", channel);

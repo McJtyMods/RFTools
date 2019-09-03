@@ -6,8 +6,9 @@ import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.LogicFacing;
+import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -16,6 +17,8 @@ import net.minecraft.world.World;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_ANALOG;
 
 public class AnalogTileEntity extends LogicTileEntity {
 
@@ -34,6 +37,10 @@ public class AnalogTileEntity extends LogicTileEntity {
     private int addEqual = 0;
     private int addLess = 0;
     private int addGreater = 0;
+
+    public AnalogTileEntity() {
+        super(TYPE_ANALOG);
+    }
 
     public int getPowerLevel() {
         return powerLevel;
@@ -90,30 +97,33 @@ public class AnalogTileEntity extends LogicTileEntity {
         this.addGreater = addGreater;
     }
 
+    // @todo 1.14 loot tables
     @Override
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         mulEqual = tagCompound.getFloat("mulE");
         mulLess = tagCompound.getFloat("mulL");
         mulGreater = tagCompound.getFloat("mulG");
-        addEqual = tagCompound.getInteger("addE");
-        addLess = tagCompound.getInteger("addL");
-        addGreater = tagCompound.getInteger("addG");
+        addEqual = tagCompound.getInt("addE");
+        addLess = tagCompound.getInt("addL");
+        addGreater = tagCompound.getInt("addG");
+    }
+
+    // @todo 1.14 loot tables
+    @Override
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putFloat("mulE", mulEqual);
+        tagCompound.putFloat("mulL", mulLess);
+        tagCompound.putFloat("mulG", mulGreater);
+        tagCompound.putInt("addE", addEqual);
+        tagCompound.putInt("addL", addLess);
+        tagCompound.putInt("addG", addGreater);
+        return tagCompound;
     }
 
     @Override
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setFloat("mulE", mulEqual);
-        tagCompound.setFloat("mulL", mulLess);
-        tagCompound.setFloat("mulG", mulGreater);
-        tagCompound.setInteger("addE", addEqual);
-        tagCompound.setInteger("addL", addLess);
-        tagCompound.setInteger("addG", addGreater);
-    }
-
-    @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -165,7 +175,7 @@ public class AnalogTileEntity extends LogicTileEntity {
                 int oldPower = getPowerLevel();
                 setPowerInput(outputStrength);
                 if (oldPower != outputStrength) {
-                    world.notifyNeighborsOfStateChange(pos, getBlockType(), false);
+                    world.notifyNeighborsOfStateChange(pos, LogicBlockSetup.analogBlock);
                 }
             } finally {
                 loopDetector.remove(pos);
