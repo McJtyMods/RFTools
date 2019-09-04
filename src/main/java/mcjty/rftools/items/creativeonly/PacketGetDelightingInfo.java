@@ -43,8 +43,8 @@ public class PacketGetDelightingInfo {
             List<String> teClasses = new ArrayList<>();
             Map<String,DelightingInfoHelper.NBTDescription> nbtData = new HashMap<>();
 
-            int metadata = DelightingInfoHelper.fillDelightingData(pos.getX(), pos.getY(), pos.getZ(), world, blockClasses, teClasses, nbtData);
-            RFToolsMessages.INSTANCE.sendTo(new PacketDelightingInfoReady(blockClasses, teClasses, nbtData, metadata),
+            DelightingInfoHelper.fillDelightingData(pos.getX(), pos.getY(), pos.getZ(), world, blockClasses, teClasses, nbtData);
+            RFToolsMessages.INSTANCE.sendTo(new PacketDelightingInfoReady(blockClasses, teClasses, nbtData),
                     ctx.getSender().connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
         });
         ctx.setPacketHandled(true);

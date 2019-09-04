@@ -40,7 +40,8 @@ public class ClientProxy extends DefaultClientProxy {
 
     @SubscribeEvent
     public void colorHandlerEventBlock(ColorHandlerEvent.Block event) {
-        ModBlocks.initColorHandlers(event.getBlockColors());
+        // @todo 1.14
+//        ModBlocks.initColorHandlers(event.getBlockColors());
     }
 
     @SubscribeEvent

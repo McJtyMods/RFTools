@@ -51,6 +51,6 @@ public class PlayerFilter extends AbstractShieldFilter {
     @Override
     public void writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setString("name", name);
+        tagCompound.putString("name", name);
     }
 }

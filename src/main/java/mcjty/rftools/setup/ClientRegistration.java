@@ -28,8 +28,9 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        ModItems.initClient();
-        ModBlocks.initClient();
+        // @todo 1.14
+//        ModItems.initClient();
+//        ModBlocks.initClient();
     }
 
     @SubscribeEvent

@@ -79,6 +79,9 @@ public class LogicBlockSetup {
     @ObjectHolder("rftools:analog")
     public static TileEntityType<?> TYPE_ANALOG;
 
+    @ObjectHolder("rftools:digit")
+    public static TileEntityType<?> TYPE_DIGIT;
+
     public static void init() {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();

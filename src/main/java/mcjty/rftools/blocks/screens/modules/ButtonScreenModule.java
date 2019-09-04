@@ -20,7 +20,7 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
     @Override
     public IModuleDataBoolean getData(IScreenDataHelper helper, World worldObj, long millis) {
         if (channel != -1 && toggle) {
-            RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
+            RedstoneChannels channels = RedstoneChannels.get();
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
             return helper.createBoolean(ch.getValue() > 0);
         }
@@ -50,13 +50,13 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
             if (channel != -1) {
                 if (toggle) {
                     if (clicked) {
-                        RedstoneChannels channels = RedstoneChannels.getChannels(world);
+                        RedstoneChannels channels = RedstoneChannels.get();
                         RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
                         ch.setValue((ch.getValue() == 0) ? 15 : 0);
                         channels.save();
                     }
                 } else {
-                    RedstoneChannels channels = RedstoneChannels.getChannels(world);
+                    RedstoneChannels channels = RedstoneChannels.get();
                     RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
                     ch.setValue(clicked ? 15 : 0);
                     channels.save();

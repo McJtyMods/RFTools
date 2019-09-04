@@ -100,7 +100,7 @@ public class GuiChamberDetails extends GuiItemScreen {
                 stack = stacks.get(bm);
             } else {
                 // @todo uses meta
-                stack = new ItemStack(bm.getBlock(), 0, bm.getBlock().getMetaFromState(bm));
+                stack = new ItemStack(bm.getBlock(), 0); // @todo 1.14 meta, bm.getBlock().getMetaFromState(bm));
             }
             BlockRender blockRender = new BlockRender(minecraft, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
@@ -108,7 +108,7 @@ public class GuiChamberDetails extends GuiItemScreen {
             if (stack.getItem() == null) {
                 nameLabel.setText("?").setDesiredWidth(160);
             } else {
-                nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
+                nameLabel.setText(stack.getDisplayName().getFormattedText()).setDesiredWidth(160);
             }
 
             Label countLabel = new Label(minecraft, this).setText(String.valueOf(count)).setColor(StyleConfig.colorTextInListNormal);
@@ -139,14 +139,15 @@ public class GuiChamberDetails extends GuiItemScreen {
             Entity entity = null;
             if (realEntities.containsKey(className)) {
                 entity = realEntities.get(className);
-                entityName = EntityList.getEntityString(entity);
-                if (entity instanceof EntityItem) {
-                    EntityItem entityItem = (EntityItem) entity;
-                    if (!entityItem.getItem().isEmpty()) {
-                        String displayName = entityItem.getItem().getDisplayName();
-                        entityName += " (" + displayName + ")";
-                    }
-                }
+                // @todo 1.14
+//                entityName = EntityList.getEntityString(entity);
+//                if (entity instanceof EntityItem) {
+//                    EntityItem entityItem = (EntityItem) entity;
+//                    if (!entityItem.getItem().isEmpty()) {
+//                        String displayName = entityItem.getItem().getDisplayName();
+//                        entityName += " (" + displayName + ")";
+//                    }
+//                }
             } else {
                 try {
                     Class<?> aClass = Class.forName(className);

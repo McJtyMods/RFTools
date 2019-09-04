@@ -98,7 +98,7 @@ public class LocatorTileEntity extends GenericTileEntity implements ITickableTil
 
                     List<Entity> entities = scanWorld.getEntitiesWithinAABB(LivingEntity.class, bb);
                     int scanId = scanner.getScanId();
-                    ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
+                    ScanExtraData extraData = ScanDataManager.get().getExtraData(scanId);
                     extraData.touch();
                     extraData.clear();
 

@@ -99,7 +99,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
             List<ServerPlayerEntity> list = server.getPlayerList().getPlayers();
             for (ServerPlayerEntity ServerPlayerEntity : list) {
                 if (playerName.equals(ServerPlayerEntity.getName())) {  // @todo 1.14 use UUID?
-                    properties = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
+                    properties = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity).map(h -> h).orElse(null);
                     break;
                 }
             }

@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.RotationType;
 import mcjty.lib.builder.BlockBuilder;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.Logging;
@@ -13,6 +14,7 @@ import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -45,6 +47,12 @@ public class BuilderSetup {
 
     @ObjectHolder("rftools:projector")
     public static TileEntityType<?> TYPE_PROJECTOR;
+
+    @ObjectHolder("rftools:space_chamber")
+    public static TileEntityType<?> TYPE_SPACE_CHAMBER;
+
+    @ObjectHolder("rftools:modifier")
+    public static ContainerType<GenericContainer> CONTAINER_MODIFIER;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;

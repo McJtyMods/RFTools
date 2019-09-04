@@ -114,7 +114,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
 //            probeInfo.text(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getModuleName());
 //            if (matterTransmitterTileEntity.isDialed()) {
 //                Integer teleportId = matterTransmitterTileEntity.getTeleportId();
-//                TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+//                TeleportDestinations destinations = TeleportDestinations.get();
 //                String name = "?";
 //                if (teleportId != null) {
 //                    name = TeleportDestinations.getDestinationName(destinations, teleportId);

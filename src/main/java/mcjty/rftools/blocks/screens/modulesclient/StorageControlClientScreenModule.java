@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -8,6 +9,7 @@ import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -41,9 +43,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
             GlStateManager.pushMatrix();
             GlStateManager.translatef(-0.5F, 0.5F, 0.07F);
             float f3 = 0.0105F;
-            GlStateManager.scale(f3 * renderInfo.factor, -f3 * renderInfo.factor, f3);
+            GlStateManager.scalef(f3 * renderInfo.factor, -f3 * renderInfo.factor, f3);
             GL11.glNormal3f(0.0F, 0.0F, -1.0F);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
             int y = currenty;
             int i = 0;
@@ -66,7 +68,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         }
 
         RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GlStateManager.depthMask(true);
 
@@ -77,7 +79,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         float f3 = 0.0105F;
         GlStateManager.translatef(-0.5F, 0.5F, 0.06F);
         float factor = renderInfo.factor;
-        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.scalef(f3 * factor, -f3 * factor, 0.0001f);
 
         int y = currenty;
         int i = 0;
@@ -98,7 +100,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         GlStateManager.pushMatrix();
         GlStateManager.translatef(-0.5F, 0.5F, 0.08F);
         f3 = 0.0050F;
-        GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
+        GlStateManager.scalef(f3 * factor, -f3 * factor, 0.0001f);
 
         y = currenty + 30;
         i = 0;
@@ -131,7 +133,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private void renderSlot(int currenty, ItemStack stack, int x) {
-        RenderItem itemRender = Minecraft.getInstance().getRenderItem();
+        ItemRenderer itemRender = Minecraft.getInstance().getItemRenderer();
         itemRender.renderItemAndEffectIntoGUI(stack, x, currenty);
     }
 
@@ -174,7 +176,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 GlStateManager.enableAlphaTest();
                 GlStateManager.enableTexture();
                 GlStateManager.enableLighting();
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
     }
@@ -196,7 +198,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         if (tagCompound != null) {
             for (int i = 0 ; i < stacks.size() ; i++) {
                 if (tagCompound.contains("stack"+i)) {
-                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
+                    stacks.set(i, ItemStack.read(tagCompound.getCompound("stack" + i)));
                 }
             }
         }

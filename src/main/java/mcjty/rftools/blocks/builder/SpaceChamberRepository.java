@@ -5,7 +5,6 @@ import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -19,18 +18,12 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
 
     private final Map<Integer,SpaceChamberChannel> channels = new HashMap<>();
 
-    public SpaceChamberRepository(String name) {
-        super(name);
+    public SpaceChamberRepository() {
+        super(SPACECHAMBER_CHANNELS_NAME);
     }
 
-    @Override
-    public void clear() {
-        channels.clear();
-        lastId = 0;
-    }
-
-    public static SpaceChamberRepository getChannels(World world) {
-        return getData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
+    public static SpaceChamberRepository get() {
+        return getData(SpaceChamberRepository::new, SPACECHAMBER_CHANNELS_NAME);
     }
 
     public SpaceChamberChannel getOrCreateChannel(int id) {
@@ -56,34 +49,34 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         channels.clear();
-        ListNBT lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            int channel = tc.getInteger("channel");
+        ListNBT lst = tagCompound.getList("channels", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.size() ; i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            int channel = tc.getInt("channel");
 
             SpaceChamberChannel value = new SpaceChamberChannel();
-            value.setDimension(tc.getInteger("dimension"));
-            value.setMinCorner(BlockPosTools.readFromNBT(tc, "minCorner"));
-            value.setMaxCorner(BlockPosTools.readFromNBT(tc, "maxCorner"));
+            value.setDimension(tc.getInt("dimension"));
+            value.setMinCorner(BlockPosTools.read(tc, "minCorner"));
+            value.setMaxCorner(BlockPosTools.read(tc, "maxCorner"));
             channels.put(channel, value);
         }
         lastId = tagCompound.getInt("lastId");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
+    public CompoundNBT write(CompoundNBT tagCompound) {
         ListNBT lst = new ListNBT();
         for (Map.Entry<Integer, SpaceChamberChannel> entry : channels.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
-            tc.setInteger("channel", entry.getKey());
-            tc.setInteger("dimension", entry.getValue().getDimension());
-            BlockPosTools.writeToNBT(tc, "minCorner", entry.getValue().getMinCorner());
-            BlockPosTools.writeToNBT(tc, "maxCorner", entry.getValue().getMaxCorner());
-            lst.appendTag(tc);
+            tc.putInt("channel", entry.getKey());
+            tc.putInt("dimension", entry.getValue().getDimension());
+            BlockPosTools.write(tc, "minCorner", entry.getValue().getMinCorner());
+            BlockPosTools.write(tc, "maxCorner", entry.getValue().getMaxCorner());
+            lst.add(tc);
         }
-        tagCompound.setTag("channels", lst);
+        tagCompound.put("channels", lst);
         tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }

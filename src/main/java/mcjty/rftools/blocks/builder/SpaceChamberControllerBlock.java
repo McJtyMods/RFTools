@@ -113,7 +113,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, entityLivingBase, itemStack);
         if (!world.isRemote) {
-            SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
+            SpaceChamberRepository chamberRepository = SpaceChamberRepository.get();
             SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             if (te.getChannel() == -1) {
                 int id = chamberRepository.newChannel();
@@ -128,7 +128,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock {
     @Override
     public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newstate, boolean isMoving) {
         if (!world.isRemote) {
-            SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);
+            SpaceChamberRepository chamberRepository = SpaceChamberRepository.get();
             SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             if (te.getChannel() != -1) {
                 chamberRepository.deleteChannel(te.getChannel());

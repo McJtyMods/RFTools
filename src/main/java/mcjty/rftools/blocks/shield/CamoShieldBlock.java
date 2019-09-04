@@ -10,6 +10,7 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
+import static mcjty.rftools.blocks.shield.ShieldSetup.TYPE_SHIELD_CAMO_BLOCK;
 import static mcjty.rftools.blocks.shield.ShieldSetup.TYPE_SHIELD_SOLID_NO_TICK_BLOCK;
 
 public class CamoShieldBlock extends AbstractShieldBlock {
@@ -39,7 +40,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TickShieldSolidBlockTileEntity(TYPE_SHIELD_SOLID_NO_TICK_BLOCK);
+        return new TickShieldSolidBlockTileEntity(TYPE_SHIELD_CAMO_BLOCK);
     }
 
 //    @Override

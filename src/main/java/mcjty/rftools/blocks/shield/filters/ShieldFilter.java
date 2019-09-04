@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shield.filters;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 
 public interface ShieldFilter {
     public static final int ACTION_PASS = 0;            // Entities that match this filter can pass
@@ -22,5 +23,5 @@ public interface ShieldFilter {
 
     void writeToNBT(CompoundNBT tagCompound);
 
-    void toBytes(ByteBuf buf);
+    void toBytes(PacketBuffer buf);
 }

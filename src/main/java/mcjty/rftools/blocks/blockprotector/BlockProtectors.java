@@ -20,22 +20,15 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     private final Map<GlobalCoordinate,Integer> protectorIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
-    public BlockProtectors(String name) {
-        super(name);
-    }
-
-    @Override
-    public void clear() {
-        protectorById.clear();
-        protectorIdByCoordinate.clear();
-        lastId = 0;
+    public BlockProtectors() {
+        super(PROTECTORS_NAME);
     }
 
     public static Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
         if (world.isRemote) {
             return Collections.emptyList();
         }
-        BlockProtectors blockProtectors = getProtectors(world);
+        BlockProtectors blockProtectors = get();
         return blockProtectors.findProtectors(x, y, z, world.getDimension().getType().getId(), 2);
     }
 
@@ -59,8 +52,8 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
 
-    public static BlockProtectors getProtectors(World world) {
-        return AbstractWorldData.getData(world, BlockProtectors.class, PROTECTORS_NAME);
+    public static BlockProtectors get() {
+        return getData(BlockProtectors::new, PROTECTORS_NAME);
     }
 
     // Set an old id to a new position (after moving a receiver).
@@ -112,7 +105,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         protectorById.clear();
         protectorIdByCoordinate.clear();
         lastId = tagCompound.getInt("lastId");
@@ -120,34 +113,34 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     private void readDestinationsFromNBT(CompoundNBT tagCompound) {
-        ListNBT lst = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
-            int dim = tc.getInteger("dim");
+        ListNBT lst = tagCompound.getList("blocks", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.size() ; i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            BlockPos c = new BlockPos(tc.getInt("x"), tc.getInt("y"), tc.getInt("z"));
+            int dim = tc.getInt("dim");
 
             GlobalCoordinate gc = new GlobalCoordinate(c, dim);
-            int id = tc.getInteger("id");
+            int id = tc.getInt("id");
             protectorById.put(id, gc);
             protectorIdByCoordinate.put(gc, id);
         }
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
+    public CompoundNBT write(CompoundNBT tagCompound) {
         ListNBT lst = new ListNBT();
         for (GlobalCoordinate destination : protectorIdByCoordinate.keySet()) {
             CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
-            tc.setInteger("x", c.getX());
-            tc.setInteger("y", c.getY());
-            tc.setInteger("z", c.getZ());
-            tc.setInteger("dim", destination.getDimension());
+            tc.putInt("x", c.getX());
+            tc.putInt("y", c.getY());
+            tc.putInt("z", c.getZ());
+            tc.putInt("dim", destination.getDimension());
             Integer id = protectorIdByCoordinate.get(new GlobalCoordinate(c, destination.getDimension()));
-            tc.setInteger("id", id);
-            lst.appendTag(tc);
+            tc.putInt("id", id);
+            lst.add(tc);
         }
-        tagCompound.setTag("blocks", lst);
+        tagCompound.put("blocks", lst);
         tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }

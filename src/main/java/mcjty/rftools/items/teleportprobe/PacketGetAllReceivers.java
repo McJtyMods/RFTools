@@ -33,7 +33,7 @@ public class PacketGetAllReceivers {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity player = ctx.getSender();
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
             List<TeleportDestinationClientInfo> destinationList = new ArrayList<> (destinations.getValidDestinations(player.getEntityWorld(), null));
             addDimensions(destinationList);
             addRfToolsDimensions(player.getEntityWorld(), destinationList);

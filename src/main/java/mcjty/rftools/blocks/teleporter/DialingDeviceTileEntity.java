@@ -7,7 +7,6 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.OrientationTools;
-import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -182,8 +181,9 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
         List<ServerPlayerEntity> list = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
         for (ServerPlayerEntity ServerPlayerEntity : list) {
             if (playerName.equals(ServerPlayerEntity.getName())) {
-                FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
-                favoriteDestinations.setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
+                PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity).ifPresent(h -> {
+                    h.setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
+                });
                 return;
             }
         }

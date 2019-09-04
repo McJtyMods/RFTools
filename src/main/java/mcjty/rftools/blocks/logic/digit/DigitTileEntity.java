@@ -10,12 +10,18 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_DIGIT;
+
 public class DigitTileEntity extends LogicTileEntity {
 
     public static IntegerProperty VALUE = IntegerProperty.create("value", 0, 15);
 
     public int getPowerLevel() {
         return powerLevel;
+    }
+
+    public DigitTileEntity() {
+        super(TYPE_DIGIT);
     }
 
     @Override

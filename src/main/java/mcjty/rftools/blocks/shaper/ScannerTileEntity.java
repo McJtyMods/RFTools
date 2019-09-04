@@ -142,7 +142,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     public int getScanId() {
         if (scanId == 0) {
             if (!world.isRemote) {
-                scanId = ScanDataManager.getScans().newScan(world);
+                scanId = ScanDataManager.get().newScan(world);
                 markDirtyQuick();
             }
         }
@@ -462,7 +462,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
     private void stopScanArea() {
         this.dataDim = new BlockPos(progress.dimX, progress.dimY, progress.dimZ);
-        ScanDataManager scan = ScanDataManager.getScans();
+        ScanDataManager scan = ScanDataManager.get();
         scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
         scan.save(getScanId());
         if (renderStack.isEmpty()) {

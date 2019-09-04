@@ -3,6 +3,7 @@ package mcjty.rftools.playerprops;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.LazyOptional;
 
 public class PlayerExtendedProperties {
 
@@ -12,11 +13,11 @@ public class PlayerExtendedProperties {
     @CapabilityInject(BuffProperties.class)
     public static Capability<BuffProperties> BUFF_CAPABILITY;
 
-    public static FavoriteDestinationsProperties getFavoriteDestinations(PlayerEntity player) {
-        return player.getCapability(FAVORITE_DESTINATIONS_CAPABILITY, null);
+    public static LazyOptional<FavoriteDestinationsProperties> getFavoriteDestinations(PlayerEntity player) {
+        return player.getCapability(FAVORITE_DESTINATIONS_CAPABILITY);
     }
 
-    public static BuffProperties getBuffProperties(PlayerEntity player) {
-        return player.getCapability(BUFF_CAPABILITY, null);
+    public static LazyOptional<BuffProperties> getBuffProperties(PlayerEntity player) {
+        return player.getCapability(BUFF_CAPABILITY);
     }
 }

@@ -32,7 +32,7 @@ public class CmdListReceivers extends AbstractRfToolsCommand {
 
     @Override
     public void execute(PlayerEntity sender, String[] args) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(sender.getEntityWorld());
+        TeleportDestinations destinations = TeleportDestinations.get();
 
         Collection<TeleportDestinationClientInfo> validDestinations = destinations.getValidDestinations(sender.getEntityWorld(), null);
         for (TeleportDestinationClientInfo clientInfo : validDestinations) {

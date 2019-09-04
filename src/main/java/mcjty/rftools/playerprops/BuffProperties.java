@@ -109,21 +109,24 @@ public class BuffProperties {
     }
 
     public static void enableElevatorMode(PlayerEntity player) {
-        BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-        buffProperties.onElevator = true;
-        buffProperties.performBuffs((ServerPlayerEntity) player);
+        PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
+            h.onElevator = true;
+            h.performBuffs((ServerPlayerEntity) player);
+        });
     }
 
     public static void disableElevatorMode(PlayerEntity player) {
-        BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-        buffProperties.onElevator = false;
-        player.abilities.isFlying = false;
-        buffProperties.performBuffs((ServerPlayerEntity) player);
+        PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
+            h.onElevator = false;
+            player.abilities.isFlying = false;
+            h.performBuffs((ServerPlayerEntity) player);
+        });
     }
 
     public static void addBuffToPlayer(PlayerEntity player, PlayerBuff buff, int ticks) {
-        BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-        buffProperties.addBuff((ServerPlayerEntity) player, buff, ticks);
+        PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
+            h.addBuff((ServerPlayerEntity) player, buff, ticks);
+        });
     }
 
     public void addBuff(ServerPlayerEntity player, PlayerBuff buff, int ticks) {

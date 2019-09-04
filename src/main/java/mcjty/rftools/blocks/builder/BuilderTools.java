@@ -34,7 +34,7 @@ public class BuilderTools {
             return;
         }
 
-        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(player.getEntityWorld());
+        SpaceChamberRepository repository = SpaceChamberRepository.get();
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
         if (chamberChannel == null) {
             return;

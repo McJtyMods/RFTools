@@ -900,7 +900,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
     }
 
     private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
-        ScanDataManager scans = ScanDataManager.getScans();
+        ScanDataManager scans = ScanDataManager.get();
         scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
         scans.save(scanId);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());

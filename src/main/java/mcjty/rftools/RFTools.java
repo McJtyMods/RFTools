@@ -42,7 +42,7 @@ public class RFTools implements ModBase {
 
 
         // @todo where? 1.14
-        SpawnerConfiguration.readMobSpawnAmountConfig(ConfigSetup.mainConfig);
+//        SpawnerConfiguration.readMobSpawnAmountConfig(ConfigSetup.mainConfig);
     }
 
     @Override

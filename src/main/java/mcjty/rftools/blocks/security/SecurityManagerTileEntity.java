@@ -61,7 +61,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
         }
         CompoundNBT tagCompound = cardStack.getOrCreateTag();
         if (!tagCompound.contains("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+            SecurityChannels securityChannels = SecurityChannels.get();
             int id = securityChannels.newChannel();
             tagCompound.putInt("channel", id);
             securityChannels.save();
@@ -96,7 +96,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     private void addPlayer(String player) {
         getCardInfo().ifPresent(tagCompound -> {
             if (tagCompound.contains("channel")) {
-                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                SecurityChannels securityChannels = SecurityChannels.get();
                 int id = tagCompound.getInt("channel");
                 SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
                 channel.addPlayer(player);
@@ -109,7 +109,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     private void delPlayer(String player) {
         getCardInfo().ifPresent(tagCompound -> {
             if (tagCompound.contains("channel")) {
-                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                SecurityChannels securityChannels = SecurityChannels.get();
                 int id = tagCompound.getInt("channel");
                 SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
                 channel.delPlayer(player);
@@ -122,7 +122,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     private void setWhiteListMode(boolean whitelist) {
         getCardInfo().ifPresent(tagCompound -> {
             if (tagCompound.contains("channel")) {
-                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                SecurityChannels securityChannels = SecurityChannels.get();
                 int id = tagCompound.getInt("channel");
                 SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
                 channel.setWhitelist(whitelist);
@@ -135,7 +135,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     private void setChannelName(String name) {
         getCardInfo().ifPresent(tagCompound -> {
             if (tagCompound.contains("channel")) {
-                SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                SecurityChannels securityChannels = SecurityChannels.get();
                 int id = tagCompound.getInt("channel");
                 SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
                 channel.setName(name);

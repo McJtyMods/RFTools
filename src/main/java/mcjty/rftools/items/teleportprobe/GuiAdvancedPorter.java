@@ -12,6 +12,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
@@ -38,16 +39,16 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         int k = (this.width - xSize) / 2;
         int l = (this.height - ySize) / 2;
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(0));
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(0));
 
         for (int i = 0 ; i < AdvancedChargedPorterItem.MAXTARGETS ; i++) {
-            destinations[i] = new TextField(mc, this);
+            destinations[i] = new TextField(minecraft, this);
             panels[i] = createPanel(destinations[i], i);
             toplevel.addChild(panels[i]);
         }
@@ -60,15 +61,15 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     }
 
     private Panel createPanel(final TextField destination, final int i) {
-        return new Panel(mc, this).setLayout(new HorizontalLayout())
+        return new Panel(minecraft, this).setLayout(new HorizontalLayout())
                     .addChild(destination)
-                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
+                    .addChild(new Button(minecraft, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
                         if (targets[i] != -1) {
                             RFToolsMessages.sendToServer(CommandHandler.CMD_SET_TARGET, TypedMap.builder().put(CommandHandler.PARAM_TARGET, targets[i]));
                             target = targets[i];
                         }
                     }))
-                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(parent -> {
+                    .addChild(new Button(minecraft, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(parent -> {
                         if (targets[i] != -1 && targets[i] == target) {
                             target = -1;
                         }
@@ -94,8 +95,8 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     }
 
     @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+    public void render(int xSize_lo, int ySize_lo, float par3) {
+        super.render(xSize_lo, ySize_lo, par3);
 
         for (int i = 0 ; i < AdvancedChargedPorterItem.MAXTARGETS ; i++) {
             setTarget(i);

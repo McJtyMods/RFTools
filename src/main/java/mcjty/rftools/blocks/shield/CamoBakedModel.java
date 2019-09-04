@@ -62,7 +62,7 @@ public class CamoBakedModel implements IBakedModel {
 
     private IBakedModel getModel(@Nonnull BlockState facadeState) {
         initTextures();
-        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(facadeState);
+        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(facadeState);
         return model;
     }
 

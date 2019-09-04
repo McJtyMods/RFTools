@@ -20,18 +20,12 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
 
     private final Map<Integer,SecurityChannel> channels = new HashMap<>();
 
-    public SecurityChannels(String name) {
-        super(name);
+    public SecurityChannels() {
+        super(SECURITY_CHANNELS_NAME);
     }
 
-    @Override
-    public void clear() {
-        channels.clear();
-        lastId = 0;
-    }
-
-    public static SecurityChannels getChannels(World world) {
-        return getData(world, SecurityChannels.class, SECURITY_CHANNELS_NAME);
+    public static SecurityChannels get() {
+        return getData(SecurityChannels::new, SECURITY_CHANNELS_NAME);
     }
 
     public SecurityChannel getOrCreateChannel(int id) {
@@ -57,22 +51,22 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         channels.clear();
-        ListNBT lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            int channel = tc.getInteger("channel");
+        ListNBT lst = tagCompound.getList("channels", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.size() ; i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            int channel = tc.getInt("channel");
 
             SecurityChannel value = new SecurityChannel();
             value.setName(tc.getString("name"));
             value.setWhitelist(tc.getBoolean("whitelist"));
 
             value.clearPlayers();
-            ListNBT playerList = tc.getTagList("players", Constants.NBT.TAG_STRING);
+            ListNBT playerList = tc.getList("players", Constants.NBT.TAG_STRING);
             if (playerList != null) {
-                for (int j = 0 ; j < playerList.tagCount() ; j++) {
-                    String player = playerList.getStringTagAt(j);
+                for (int j = 0 ; j < playerList.size() ; j++) {
+                    String player = playerList.getString(j);
                     value.addPlayer(player);
                 }
             }
@@ -83,24 +77,24 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
+    public CompoundNBT write(CompoundNBT tagCompound) {
         ListNBT lst = new ListNBT();
         for (Map.Entry<Integer, SecurityChannel> entry : channels.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
-            tc.setInteger("channel", entry.getKey());
+            tc.putInt("channel", entry.getKey());
             SecurityChannel channel = entry.getValue();
-            tc.setString("name", channel.getName());
-            tc.setBoolean("whitelist", channel.isWhitelist());
+            tc.putString("name", channel.getName());
+            tc.putBoolean("whitelist", channel.isWhitelist());
 
             ListNBT playerTagList = new ListNBT();
             for (String player : channel.getPlayers()) {
-                playerTagList.appendTag(new StringNBT(player));
+                playerTagList.add(new StringNBT(player));
             }
-            tc.setTag("players", playerTagList);
+            tc.put("players", playerTagList);
 
-            lst.appendTag(tc);
+            lst.add(tc);
         }
-        tagCompound.setTag("channels", lst);
+        tagCompound.put("channels", lst);
         tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }

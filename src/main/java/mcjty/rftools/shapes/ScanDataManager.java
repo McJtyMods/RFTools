@@ -12,8 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -32,20 +30,13 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
     // This data is not persisted
     private final Map<Integer, ScanExtraData> scanData = new HashMap<>();
 
-    public ScanDataManager(String name) {
-        super(name);
-    }
-
-    @Override
-    public void clear() {
-        scans.clear();
-        scanData.clear();
-        lastId = 0;
+    public ScanDataManager() {
+        super(SCANDATA_NETWORK_NAME);
     }
 
     public void save(int scanId) {
         World world = WorldTools.getOverworld();
-        File dataDir = new File(((ServerWorld) world).getChunkSaveLocation(), "rftoolsscans");
+        File dataDir = null; // @todo 1.14 new File(((ServerWorld) world).getChunkSaveLocation(), "rftoolsscans");
         dataDir.mkdirs();
         File file = new File(dataDir, "scan" + scanId);
         Scan scan = getOrCreateScan(scanId);
@@ -56,8 +47,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
         } catch (IOException e) {
             throw new UncheckedIOException("Error writing to file 'scan" + scan + "'!", e);
         }
-        world.setData(SCANDATA_NETWORK_NAME, this);
-        markDirty();
+        save();
     }
 
     public ScanExtraData getExtraData(int id) {
@@ -75,8 +65,8 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
         return data;
     }
 
-    public static ScanDataManager getScans() {
-        return getData(ScanDataManager.class, SCANDATA_NETWORK_NAME);
+    public static ScanDataManager get() {
+        return getData(ScanDataManager::new, SCANDATA_NETWORK_NAME);
     }
 
     @Nonnull
@@ -97,7 +87,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
             if (scan == null) {
                 scan = new Scan();
             }
-            File dataDir = new File(((ServerWorld) world).getChunkSaveLocation(), "rftoolsscans");
+            File dataDir = null; // @todo 1.14 new File(((ServerWorld) world).getChunkSaveLocation(), "rftoolsscans");
             dataDir.mkdirs();
             File file = new File(dataDir, "scan" + id);
             if (file.exists()) {
@@ -113,7 +103,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
     }
 
     public static void listScans(PlayerEntity sender) {
-        ScanDataManager scans = getScans();
+        ScanDataManager scans = get();
         for (Map.Entry<Integer, Scan> entry : scans.scans.entrySet()) {
             Integer scanid = entry.getKey();
             scans.loadScan(scanid);
@@ -135,18 +125,17 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
 
     public int newScan(World world) {
         lastId++;
-        world.setData(SCANDATA_NETWORK_NAME, this);
-        markDirty();
+        save();
         return lastId;
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         scans.clear();
-        ListNBT lst = tagCompound.getTagList("scans", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < lst.tagCount(); i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            int id = tc.getInteger("scan");
+        ListNBT lst = tagCompound.getList("scans", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < lst.size(); i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            int id = tc.getInt("scan");
             Scan scan = new Scan();
             scan.readFromNBT(tc);
             scans.put(id, scan);
@@ -156,15 +145,15 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
+    public CompoundNBT write(CompoundNBT tagCompound) {
         ListNBT lst = new ListNBT();
         for (Map.Entry<Integer, Scan> entry : scans.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
-            tc.setInteger("scan", entry.getKey());
+            tc.putInt("scan", entry.getKey());
             entry.getValue().writeToNBT(tc);
-            lst.appendTag(tc);
+            lst.add(tc);
         }
-        tagCompound.setTag("scans", lst);
+        tagCompound.put("scans", lst);
         tagCompound.putInt("lastId", lastId);
         return tagCompound;
     }

@@ -8,10 +8,16 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
+import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_SPACE_CHAMBER;
+
 public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     private BlockPos minCorner;
     private BlockPos maxCorner;
     private int channel = -1;
+
+    public SpaceChamberControllerTileEntity() {
+        super(TYPE_SPACE_CHAMBER);
+    }
 
     public BlockPos getMinCorner() {
         return minCorner;
@@ -98,7 +104,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
 
         Logging.message(player, TextFormatting.WHITE + "Chamber succesfully created!");
 
-        SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(getWorld());
+        SpaceChamberRepository chamberRepository = SpaceChamberRepository.get();
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = chamberRepository.getOrCreateChannel(channel);
         chamberChannel.setDimension(getWorld().getDimension().getType().getId());
         chamberChannel.setMinCorner(minCorner);
@@ -128,29 +134,29 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        minCorner = BlockPosTools.readFromNBT(tagCompound, "minCorner");
-        maxCorner = BlockPosTools.readFromNBT(tagCompound, "maxCorner");
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        minCorner = BlockPosTools.read(tagCompound, "minCorner");
+        maxCorner = BlockPosTools.read(tagCompound, "maxCorner");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         channel = tagCompound.getInt("channel");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        BlockPosTools.writeToNBT(tagCompound, "minCorner", minCorner);
-        BlockPosTools.writeToNBT(tagCompound, "maxCorner", maxCorner);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        BlockPosTools.write(tagCompound, "minCorner", minCorner);
+        BlockPosTools.write(tagCompound, "maxCorner", maxCorner);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putInt("channel", channel);
     }
 }

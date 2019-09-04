@@ -5,27 +5,28 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
 
 public class PropertiesDispatcher implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
 
     private FavoriteDestinationsProperties favoriteDestinationsProperties = new FavoriteDestinationsProperties();
     private BuffProperties buffProperties = new BuffProperties();
 
-    @Override
-    public boolean hasCapability(Capability<?> capability, Direction facing) {
-        return capability == PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY
-                || capability == PlayerExtendedProperties.BUFF_CAPABILITY;
-    }
+    private LazyOptional<FavoriteDestinationsProperties> favoriteDestinations = LazyOptional.of(() -> favoriteDestinationsProperties);
+    private LazyOptional<BuffProperties> buffs = LazyOptional.of(() -> buffProperties);
 
+    @Nonnull
     @Override
-    public <T> T getCapability(Capability<T> capability, Direction facing) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction direction) {
         if (capability == PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY) {
-            return (T) favoriteDestinationsProperties;
+            return favoriteDestinations.cast();
         }
         if (capability == PlayerExtendedProperties.BUFF_CAPABILITY) {
-            return (T) buffProperties;
+            return buffs.cast();
         }
-        return null;
+        return LazyOptional.empty();
     }
 
     @Override

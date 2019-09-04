@@ -6,11 +6,13 @@ import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,54 +20,46 @@ import java.util.Map;
 public class RFToolsTools {
 
     public static boolean hasModuleTarget(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
+        if (!stack.hasTag()) {
             return false;
         }
-        return stack.getTag().hasKey("monitorx");
+        return stack.getTag().contains("monitorx");
     }
 
     public static int getDimensionFromModule(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
+        if (!stack.hasTag()) {
             return 0;
         }
-        return stack.getTag().getInteger("monitordim");
+        return stack.getTag().getInt("monitordim");
     }
 
     public static void setPositionInModule(ItemStack stack, Integer dimension, BlockPos pos, String name) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new CompoundNBT());
-        }
+        CompoundNBT tag = stack.getOrCreateTag();
         if (dimension != null) {
-            stack.getTag().setInteger("monitordim", dimension);
+            tag.putInt("monitordim", dimension);
         }
         if (name != null) {
-            stack.getTag().setString("monitorname", name);
+            tag.putString("monitorname", name);
         }
-        stack.getTag().setInteger("monitorx", pos.getX());
-        stack.getTag().setInteger("monitory", pos.getY());
-        stack.getTag().setInteger("monitorz", pos.getZ());
+        tag.putInt("monitorx", pos.getX());
+        tag.putInt("monitory", pos.getY());
+        tag.putInt("monitorz", pos.getZ());
     }
 
     public static void clearPositionInModule(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new CompoundNBT());
-        }
-        CompoundNBT tagCompound = stack.getTag();
-        tagCompound.removeTag("monitordim");
-        tagCompound.removeTag("monitorx");
-        tagCompound.removeTag("monitory");
-        tagCompound.removeTag("monitorz");
-        tagCompound.removeTag("monitorname");
+        CompoundNBT tag = stack.getOrCreateTag();
+        tag.remove("monitordim");
+        tag.remove("monitorx");
+        tag.remove("monitory");
+        tag.remove("monitorz");
+        tag.remove("monitorname");
     }
 
     public static BlockPos getPositionFromModule(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            return null;
-        }
-        CompoundNBT tagCompound = stack.getTag();
-        int monitorx = tagCompound.getInt("monitorx");
-        int monitory = tagCompound.getInt("monitory");
-        int monitorz = tagCompound.getInt("monitorz");
+        CompoundNBT tag = stack.getOrCreateTag();
+        int monitorx = tag.getInt("monitorx");
+        int monitory = tag.getInt("monitory");
+        int monitorz = tag.getInt("monitorz");
         return new BlockPos(monitorx, monitory, monitorz);
     }
 
@@ -91,6 +85,6 @@ public class RFToolsTools {
             }
         }
 
-        RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), (ServerPlayerEntity) player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), ((ServerPlayerEntity) player).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

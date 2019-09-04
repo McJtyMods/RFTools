@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
@@ -15,6 +16,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 public class PorterTools {
 
@@ -30,9 +32,9 @@ public class PorterTools {
         if (tagCompound.contains("target"+ index)) {
             int id = tagCompound.getInt("target"+ index);
             if (tagCompound.contains("target") && tagCompound.getInt("target") == id) {
-                tagCompound.removeTag("target");
+                tagCompound.remove("target");
             }
-            tagCompound.removeTag("target"+ index);
+            tagCompound.remove("target"+ index);
         }
     }
 
@@ -61,7 +63,7 @@ public class PorterTools {
             if (tagCompound == null) {
                 return;
             }
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
 
             int curtarget = tagCompound.getInt("target");
 
@@ -109,7 +111,7 @@ public class PorterTools {
 
     public static void returnDestinationInfo(PlayerEntity player, int receiverId) {
         World world = player.getEntityWorld();
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        TeleportDestinations destinations = TeleportDestinations.get();
         String name = TeleportDestinations.getDestinationName(destinations, receiverId);
         RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_DESTINATION_INFO,
                 TypedMap.builder().put(ClientCommandHandler.PARAM_ID, receiverId).put(ClientCommandHandler.PARAM_NAME, name));
@@ -137,7 +139,7 @@ public class PorterTools {
         int target = -1;
         int targets[] = new int[AdvancedChargedPorterItem.MAXTARGETS];
         String names[] = new String[AdvancedChargedPorterItem.MAXTARGETS];
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
+        TeleportDestinations destinations = TeleportDestinations.get();
 
         if (tagCompound != null) {
             if (tagCompound.contains("target")) {
@@ -168,6 +170,6 @@ public class PorterTools {
         }
 
         PacketTargetsReady msg = new PacketTargetsReady(target, targets, names);
-        RFToolsMessages.INSTANCE.sendTo(msg, (ServerPlayerEntity) player);
+        RFToolsMessages.INSTANCE.sendTo(msg, ((ServerPlayerEntity) player).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 }

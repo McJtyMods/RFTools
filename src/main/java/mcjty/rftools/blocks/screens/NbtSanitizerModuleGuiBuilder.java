@@ -36,60 +36,60 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
 
         for(Map.Entry<String, Set<String>> entry : enumKeys.entrySet()) {
             String key = entry.getKey();
-            if(fromClient.hasKey(key, Constants.NBT.TAG_STRING)) {
+            if(fromClient.contains(key, Constants.NBT.TAG_STRING)) {
                 String value = fromClient.getString(key);
                 if(entry.getValue().contains(value)) {
-                    newCompound.setString(key, value);
+                    newCompound.putString(key, value);
                 }
             }
         }
 
         for(String key : stringKeys) {
-            if(fromClient.hasKey(key, Constants.NBT.TAG_STRING)) {
-                newCompound.setString(key, fromClient.getString(key));
+            if(fromClient.contains(key, Constants.NBT.TAG_STRING)) {
+                newCompound.putString(key, fromClient.getString(key));
             }
         }
 
         for(Map.Entry<String, Integer> entry : boundedIntegerKeys.entrySet()) {
             String key = entry.getKey();
-            if(fromClient.hasKey(key, Constants.NBT.TAG_INT)) {
-                int value = fromClient.getInteger(key);
+            if(fromClient.contains(key, Constants.NBT.TAG_INT)) {
+                int value = fromClient.getInt(key);
                 if(value >= 0 && value < entry.getValue()) {
-                    newCompound.setInteger(key, value);
+                    newCompound.putInt(key, value);
                 }
             }
         }
 
         for(String key : integerKeys) {
-            if(fromClient.hasKey(key, Constants.NBT.TAG_INT)) {
-                newCompound.setInteger(key, fromClient.getInteger(key));
+            if(fromClient.contains(key, Constants.NBT.TAG_INT)) {
+                newCompound.putInt(key, fromClient.getInt(key));
             }
         }
 
-        if(hasModeKeys && fromClient.hasKey("showdiff", Constants.NBT.TAG_BYTE) && fromClient.hasKey("showpct", Constants.NBT.TAG_BYTE) && fromClient.hasKey("hidetext", Constants.NBT.TAG_BYTE)) {
+        if(hasModeKeys && fromClient.contains("showdiff", Constants.NBT.TAG_BYTE) && fromClient.contains("showpct", Constants.NBT.TAG_BYTE) && fromClient.contains("hidetext", Constants.NBT.TAG_BYTE)) {
             boolean showdiff = fromClient.getBoolean("showdiff");
             boolean showpct = fromClient.getBoolean("showpct");
             boolean hidetext = fromClient.getBoolean("hidetext");
             if(!((showdiff && showpct) || (showdiff && hidetext) || (showpct && hidetext))) {
-                newCompound.setBoolean("showdiff", showdiff);
-                newCompound.setBoolean("showpct", showpct);
-                newCompound.setBoolean("hidetext", hidetext);
+                newCompound.putBoolean("showdiff", showdiff);
+                newCompound.putBoolean("showpct", showpct);
+                newCompound.putBoolean("hidetext", hidetext);
             }
         }
 
         for(String key : booleanKeys) {
-            if(fromClient.hasKey(key, Constants.NBT.TAG_BYTE)) {
-                newCompound.setBoolean(key, fromClient.getBoolean(key));
+            if(fromClient.contains(key, Constants.NBT.TAG_BYTE)) {
+                newCompound.putBoolean(key, fromClient.getBoolean(key));
             }
         }
 
         for(String key : itemKeys) {
-            if(fromClient.hasKey(key, Constants.NBT.TAG_COMPOUND)) {
+            if(fromClient.contains(key, Constants.NBT.TAG_COMPOUND)) {
                 CompoundNBT tag = new CompoundNBT();
-                new ItemStack(fromClient.getCompoundTag(key)).writeToNBT(tag);
-                newCompound.setTag(key, tag);
+                ItemStack.read(fromClient.getCompound(key)).write(tag);
+                newCompound.put(key, tag);
             } else {
-                newCompound.removeTag(key);
+                newCompound.remove(key);
             }
         }
 

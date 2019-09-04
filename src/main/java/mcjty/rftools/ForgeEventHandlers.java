@@ -13,8 +13,6 @@ import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.rftools.playerprops.BuffProperties;
-import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
 import mcjty.rftools.shapes.ShapeDataManagerServer;
@@ -78,10 +76,9 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.getEntityWorld().isRemote) {
-            BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(event.player);
-            if (buffProperties != null) {
-                buffProperties.tickBuffs((ServerPlayerEntity) event.player);
-            }
+            PlayerExtendedProperties.getBuffProperties(event.player).ifPresent(h -> {
+                h.tickBuffs((ServerPlayerEntity) event.player);
+            });
         }
     }
 
@@ -206,15 +203,14 @@ public class ForgeEventHandlers {
     public void onLivingFall(LivingFallEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-            if (buffProperties != null) {
-                if (buffProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
+            PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
+                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
                     event.setDamageMultiplier(event.getDamageMultiplier() / 2);
                 }
-                if (buffProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
+                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
                     event.setCanceled(true);
                 }
-            }
+            });
         }
     }
 
@@ -255,8 +251,9 @@ public class ForgeEventHandlers {
         if (event.isWasDeath()) {
             // We need to copyFrom the capabilities
             event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY).ifPresent(oldFavorites -> {
-                FavoriteDestinationsProperties newFavorites = PlayerExtendedProperties.getFavoriteDestinations(event.getEntityPlayer());
-                newFavorites.copyFrom(oldFavorites);
+                PlayerExtendedProperties.getFavoriteDestinations(event.getPlayer()).ifPresent(h -> {
+                    h.copyFrom(oldFavorites);
+                });
             });
         }
     }

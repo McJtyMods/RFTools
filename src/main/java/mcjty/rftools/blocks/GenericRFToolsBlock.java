@@ -38,7 +38,7 @@ public abstract class GenericRFToolsBlock extends BaseBlock {
             if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getUniqueID().equals(genericTileEntity.getOwnerUUID()))) {
                 int securityChannel = genericTileEntity.getSecurityChannel();
                 if (securityChannel != -1) {
-                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
+                    SecurityChannels securityChannels = SecurityChannels.get();
                     SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
                     // @todo 1.14 check: is this still correct? Use UUID
                     boolean playerListed = channel.getPlayers().contains(player.getDisplayName().getFormattedText());

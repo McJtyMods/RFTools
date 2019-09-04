@@ -40,13 +40,13 @@ public class FavoriteDestinationsProperties {
         for (GlobalCoordinate destination : destinations) {
             CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
-            tc.setInteger("x", c.getX());
-            tc.setInteger("y", c.getY());
-            tc.setInteger("z", c.getZ());
-            tc.setInteger("dim", destination.getDimension());
-            lst.appendTag(tc);
+            tc.putInt("x", c.getX());
+            tc.putInt("y", c.getY());
+            tc.putInt("z", c.getZ());
+            tc.putInt("dim", destination.getDimension());
+            lst.add(tc);
         }
-        tagCompound.setTag("destinations", lst);
+        tagCompound.put("destinations", lst);
     }
 
     public void loadNBTData(CompoundNBT compound) {
@@ -55,11 +55,11 @@ public class FavoriteDestinationsProperties {
     }
 
     private static void readCoordinatesFromNBT(CompoundNBT tagCompound, Set<GlobalCoordinate> destinations) {
-        ListNBT lst = tagCompound.getTagList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
-            destinations.add(new GlobalCoordinate(c, tc.getInteger("dim")));
+        ListNBT lst = tagCompound.getList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.size() ; i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            BlockPos c = new BlockPos(tc.getInt("x"), tc.getInt("y"), tc.getInt("z"));
+            destinations.add(new GlobalCoordinate(c, tc.getInt("dim")));
         }
     }
 

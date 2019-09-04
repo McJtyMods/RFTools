@@ -33,6 +33,8 @@ public class ShieldSetup {
     public static TileEntityType<?> TYPE_SHIELD_INV_NO_TICK_BLOCK;
     @ObjectHolder("rftools:shield_solid_no_tickblock")
     public static TileEntityType<?> TYPE_SHIELD_SOLID_NO_TICK_BLOCK;
+    @ObjectHolder("rftools:shield_camo_block")
+    public static TileEntityType<?> TYPE_SHIELD_CAMO_BLOCK;
 
     @ObjectHolder("rftools:shield_solid")
     public static TileEntityType<?> TYPE_SHIELD_SOLID;

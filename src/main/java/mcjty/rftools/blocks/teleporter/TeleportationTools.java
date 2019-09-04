@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
@@ -7,9 +8,9 @@ import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.ModSounds;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -17,21 +18,23 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class TeleportationTools {
     public static final int STATUS_OK = 0;
     public static final int STATUS_WARN = 1;
     public static final int STATUS_UNKNOWN = 2;
 
-    public static Effect confusion;
-    public static Effect harm;
-    public static Effect wither;
+    public static Potion confusion;
+    public static Potion harm;
+    public static Potion wither;
 
     public static void getPotions() {
         if (confusion == null) {
-            confusion = Potion.REGISTRY.getObject(new ResourceLocation("nausea"));
-            harm = Potion.REGISTRY.getObject(new ResourceLocation("instant_damage"));
-            wither = Potion.REGISTRY.getObject(new ResourceLocation("wither"));
+            confusion = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation("nausea"));
+            harm = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation("instant_damage"));
+            wither = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation("wither"));
         }
     }
 
@@ -40,47 +43,57 @@ public class TeleportationTools {
         switch (severity) {
             case 1:
                 if (boostNeeded) {
-                    player.addPotionEffect(new Effect(confusion, 100));
-                    player.addPotionEffect(new Effect(harm, 5));
+                    // @todo 1.14
+//                    player.addPotionEffect(new Effect(confusion, 100));
+//                    player.addPotionEffect(new Effect(harm, 5));
                 }
                 break;
             case 2:
-                player.addPotionEffect(new Effect(harm, 100));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 100));
                 break;
             case 3:
-                player.addPotionEffect(new Effect(harm, 100));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 100));
                 player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 4:
-                player.addPotionEffect(new Effect(harm, 200));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 5:
-                player.addPotionEffect(new Effect(harm, 200));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 6:
-                player.addPotionEffect(new Effect(harm, 300));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 300));
                 player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 7:
-                player.addPotionEffect(new Effect(harm, 300));
-                player.addPotionEffect(new Effect(wither, 200));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 300));
+//                player.addPotionEffect(new Effect(wither, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 8:
-                player.addPotionEffect(new Effect(harm, 400));
-                player.addPotionEffect(new Effect(wither, 300));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 400));
+//                player.addPotionEffect(new Effect(wither, 300));
                 player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 9:
-                player.addPotionEffect(new Effect(harm, 400));
-                player.addPotionEffect(new Effect(wither, 400));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 400));
+//                player.addPotionEffect(new Effect(wither, 400));
                 player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
             case 10:
-                player.addPotionEffect(new Effect(harm, 500));
-                player.addPotionEffect(new Effect(wither, 500));
+                // @todo 1.14
+//                player.addPotionEffect(new Effect(harm, 500));
+//                player.addPotionEffect(new Effect(wither, 500));
                 player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
         }
@@ -198,7 +211,7 @@ public class TeleportationTools {
         BlockPos c = teleportDestination.getCoordinate();
         World recWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(teleportDestination.getDimension());
         if (recWorld == null) {
-            recWorld = worldObj.getMinecraftServer().getWorld(teleportDestination.getDimension());
+            recWorld = WorldTools.getWorld(teleportDestination.getDimension());
             if (recWorld == null) {
                 return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
             }
@@ -220,14 +233,18 @@ public class TeleportationTools {
         }
 
         if (dialingDeviceTileEntity != null) {
-            int cost = TeleportConfiguration.rfPerDial.get();
-            cost = (int) (cost * (2.0f - dialingDeviceTileEntity.getInfusedFactor()) / 2.0f);
+            if (!dialingDeviceTileEntity.getCapability(CapabilityEnergy.ENERGY).map(h -> {
+                int cost = TeleportConfiguration.rfPerDial.get();
+                cost = (int) (cost * (2.0f - dialingDeviceTileEntity.getInfusedFactor()) / 2.0f);
 
-            if (dialingDeviceTileEntity.getStoredPower() < cost) {
+                if (h.getEnergyStored() < cost) {
+                    return false;
+                }
+                ((GenericEnergyStorage)h).consumeEnergy(cost);
+                return true;
+            }).orElse(false)) {
                 return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
             }
-
-            dialingDeviceTileEntity.consumeEnergy(cost);
         }
 
         transmitterTileEntity.setTeleportDestination(teleportDestination, once);
@@ -252,26 +269,28 @@ public class TeleportationTools {
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-        int rf = TeleportConfiguration.rfPerTeleportReceiver.get();
-        rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
 
-        if (rf <= 0) {
-            return 0;
-        }
+        return matterReceiverTileEntity.getCapability(CapabilityEnergy.ENERGY).map(h -> {
+            int rf = TeleportConfiguration.rfPerTeleportReceiver.get();
+            rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
 
-        int extracted = (int)Math.min(rf, matterReceiverTileEntity.getStoredPower());
-        matterReceiverTileEntity.consumeEnergy(rf);
+            if (rf <= 0) {
+                return 0;
+            }
+            int extracted = Math.min(rf, h.getEnergyStored());
+            ((GenericEnergyStorage)h).consumeEnergy(rf);
 
-        long remainingRf = matterReceiverTileEntity.getStoredPower();
-        if (remainingRf <= 1) {
-            Logging.warn(player, "The matter receiver has run out of power!");
-        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 10)) {
-            Logging.warn(player, "The matter receiver is getting very low on power!");
-        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 5)) {
-            Logging.warn(player, "The matter receiver is getting low on power!");
-        }
+            long remainingRf = ((GenericEnergyStorage) h).getEnergy();
+            if (remainingRf <= 1) {
+                Logging.warn(player, "The matter receiver has run out of power!");
+            } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 10)) {
+                Logging.warn(player, "The matter receiver is getting very low on power!");
+            } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 5)) {
+                Logging.warn(player, "The matter receiver is getting low on power!");
+            }
 
-        return 10 - (extracted * 10 / rf);
+            return 10 - (extracted * 10 / rf);
+        }).orElse(0);
     }
 
     /**
@@ -328,7 +347,7 @@ public class TeleportationTools {
     }
 
     public static TeleportDestination findDestination(World worldObj, BlockPos coordinate, int dimension) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestinations destinations = TeleportDestinations.get();
         return destinations.getDestination(coordinate, dimension);
     }
 

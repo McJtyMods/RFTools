@@ -1,13 +1,21 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.tileentity.GenericTileEntity;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
+
+import static mcjty.rftools.blocks.screens.ScreenSetup.TYPE_SCREEN_HIT;
 
 public class ScreenHitTileEntity extends GenericTileEntity {
 
     private int dx;
     private int dy;
     private int dz;
+
+    public ScreenHitTileEntity() {
+        super(TYPE_SCREEN_HIT);
+    }
 
     public void setRelativeLocation(int dx, int dy, int dz) {
         this.dx = dx;
@@ -19,8 +27,8 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         dx = tagCompound.getInt("dx");
         dy = tagCompound.getInt("dy");
         dz = tagCompound.getInt("dz");
@@ -39,8 +47,8 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         tagCompound.putInt("dx", dx);
         tagCompound.putInt("dy", dy);
         tagCompound.putInt("dz", dz);

@@ -7,19 +7,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
 
+// @todo 1.14 convert to IItemHandler
 public class ModifierInventory implements IInventory {
 
-    private final PlayerEntity PlayerEntity;
+    private final PlayerEntity playerEntity;
 
     public ModifierInventory(PlayerEntity player) {
-        this.PlayerEntity = player;
-        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
-        if (tagCompound == null) {
-            tagCompound = new CompoundNBT();
-            PlayerEntity.getHeldItem(Hand.MAIN_HAND).setTagCompound(tagCompound);
-        }
+        this.playerEntity = player;
+        playerEntity.getHeldItem(Hand.MAIN_HAND).getOrCreateTag();
     }
 
     @Override
@@ -29,14 +25,14 @@ public class ModifierInventory implements IInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
+        CompoundNBT tagCompound = playerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
+        CompoundNBT tagCompound = playerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return ItemStack.EMPTY;
@@ -49,7 +45,7 @@ public class ModifierInventory implements IInventory {
                 markDirty();
                 return old;
             }
-            ItemStack its = stacks.get(index).splitStack(amount);
+            ItemStack its = stacks.get(index).split(amount);
             if (stacks.get(index).isEmpty()) {
                 stacks.set(index, ItemStack.EMPTY);
                 convertItemsToNBT(tagCompound, stacks);
@@ -67,7 +63,7 @@ public class ModifierInventory implements IInventory {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
+        CompoundNBT tagCompound = playerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return;
@@ -91,11 +87,11 @@ public class ModifierInventory implements IInventory {
         for (ItemStack stack : stacks) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(CompoundNBT);
+                stack.write(CompoundNBT);
             }
-            bufferTagList.appendTag(CompoundNBT);
+            bufferTagList.add(CompoundNBT);
         }
-        tagCompound.setTag("Items", bufferTagList);
+        tagCompound.put("Items", bufferTagList);
     }
 
     @Override
@@ -131,37 +127,7 @@ public class ModifierInventory implements IInventory {
     }
 
     @Override
-    public int getField(int id) {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value) {
-
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    @Override
     public void clear() {
 
-    }
-
-    @Override
-    public String getName() {
-        return "modifier";
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return false;
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return null;
     }
 }

@@ -59,7 +59,7 @@ public class DumpClientScreenModule implements IClientScreenModule<IModuleData> 
             }
             for (int i = 0 ; i < stacks.length ; i++) {
                 if (tagCompound.contains("stack"+i)) {
-                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
+                    stacks[i] = ItemStack.read(tagCompound.getCompound("stack" + i));
                 }
             }
         }

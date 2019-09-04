@@ -70,7 +70,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     @Override
     public ScreenModuleGuiBuilder text(final String tagname, String... tooltip) {
         TextField textField = new TextField(mc, gui).setDesiredHeight(15).setTooltips(tooltip).addTextEvent((parent, newText) -> {
-            currentData.setString(tagname, newText);
+            currentData.putString(tagname, newText);
             moduleGuiChanged.updateData();
         });
         row.add(textField);
@@ -89,13 +89,13 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             } catch (NumberFormatException e) {
                 value = 0;
             }
-            currentData.setInteger(tagname, value);
+            currentData.putInt(tagname, value);
             moduleGuiChanged.updateData();
         });
         row.add(textField);
         if (currentData != null) {
-            if (currentData.hasKey(tagname)) {
-                int dd = currentData.getInteger(tagname);
+            if (currentData.contains(tagname)) {
+                int dd = currentData.getInt(tagname);
                 textField.setText(Integer.toString(dd));
             }
         }
@@ -106,7 +106,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     public ScreenModuleGuiBuilder toggle(final String tagname, String label, String... tooltip) {
         final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setCheckMarker(true);
         toggleButton.addButtonEvent(parent -> {
-            currentData.setBoolean(tagname, toggleButton.isPressed());
+            currentData.putBoolean(tagname, toggleButton.isPressed());
             moduleGuiChanged.updateData();
         });
 
@@ -121,7 +121,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     public ScreenModuleGuiBuilder toggleNegative(final String tagname, String label, String... tooltip) {
         final ToggleButton toggleButton = new ToggleButton(mc, gui).setText(label).setTooltips(tooltip).setDesiredHeight(14).setDesiredWidth(36).setCheckMarker(true);
         toggleButton.addButtonEvent(parent -> {
-            currentData.setBoolean(tagname, !toggleButton.isPressed());
+            currentData.putBoolean(tagname, !toggleButton.isPressed());
             moduleGuiChanged.updateData();
         });
 
@@ -138,12 +138,12 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     public ScreenModuleGuiBuilder color(final String tagname, String... tooltip) {
         ColorSelector colorSelector = new ColorSelector(mc, gui).setTooltips(tooltip)
                 .setDesiredWidth(20).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
-                    currentData.setInteger(tagname, newColor);
+                    currentData.putInt(tagname, newColor);
                     moduleGuiChanged.updateData();
                 });
         row.add(colorSelector);
         if (currentData != null) {
-            int currentColor = currentData.getInteger(tagname);
+            int currentColor = currentData.getInt(tagname);
             if (currentColor != 0) {
                 colorSelector.setCurrentColor(currentColor);
             }
@@ -159,7 +159,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             choiceLabel.addChoices(s);
         }
         choiceLabel.addChoiceEvent((parent, newChoice) -> {
-            currentData.setString(tagname, newChoice);
+            currentData.putString(tagname, newChoice);
             moduleGuiChanged.updateData();
         });
         row.add(choiceLabel);
@@ -185,12 +185,12 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             choiceLabel.setChoiceTooltip(name, c.getTooltips());
         }
         choiceLabel.addChoiceEvent((parent, newChoice) -> {
-            currentData.setInteger(tagname, choicesMap.get(newChoice));
+            currentData.putInt(tagname, choicesMap.get(newChoice));
             moduleGuiChanged.updateData();
         });
         row.add(choiceLabel);
         if (currentData != null) {
-            int currentChoice = currentData.getInteger(tagname);
+            int currentChoice = currentData.getInt(tagname);
             if (currentChoice < choices.length && currentChoice >= 0) {
                 choiceLabel.setChoice(choices[currentChoice].getName());
             }
@@ -215,19 +215,19 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     @Override
     public ScreenModuleGuiBuilder block(String tagnamePos) {
         String monitoring;
-        if (currentData.hasKey(tagnamePos + "x")) {
+        if (currentData.contains(tagnamePos + "x")) {
             int dim;
-            if (currentData.hasKey(tagnamePos + "dim")) {
-                dim = currentData.getInteger(tagnamePos + "dim");
+            if (currentData.contains(tagnamePos + "dim")) {
+                dim = currentData.getInt(tagnamePos + "dim");
             } else {
                 // For compatibility reasons.
-                dim = currentData.getInteger("dim");
+                dim = currentData.getInt("dim");
             }
             World world = getWorld();
             if (dim == world.getDimension().getType().getId()) {
-                int x = currentData.getInteger(tagnamePos+"x");
-                int y = currentData.getInteger(tagnamePos+"y");
-                int z = currentData.getInteger(tagnamePos+"z");
+                int x = currentData.getInt(tagnamePos+"x");
+                int y = currentData.getInt(tagnamePos+"y");
+                int z = currentData.getInt(tagnamePos+"z");
                 monitoring = currentData.getString(tagnamePos+"name");
                 Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
                 row.add(new BlockRender(mc, gui).setRenderItem(block).setDesiredWidth(20));
@@ -246,8 +246,8 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     @Override
     public IModuleGuiBuilder ghostStack(String tagname) {
         ItemStack stack = ItemStack.EMPTY;
-        if (currentData.hasKey(tagname)) {
-            stack = new ItemStack(currentData.getCompoundTag(tagname));
+        if (currentData.contains(tagname)) {
+            stack = ItemStack.read(currentData.getCompound(tagname));
         }
 
         BlockRender blockRender = new BlockRender(mc, gui).setRenderItem(stack).setDesiredWidth(18).setDesiredHeight(18).setFilledRectThickness(1).setFilledBackground(0xff555555);
@@ -257,15 +257,15 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             public void select(Widget<?> widget) {
                 ItemStack holding = Minecraft.getInstance().player.inventory.getItemStack();
                 if (holding.isEmpty()) {
-                    currentData.removeTag(tagname);
+                    currentData.remove(tagname);
                     blockRender.setRenderItem(null);
                 } else {
                     ItemStack copy = holding.copy();
                     copy.setCount(1);
                     blockRender.setRenderItem(copy);
                     CompoundNBT tc = new CompoundNBT();
-                    copy.writeToNBT(tc);
-                    currentData.setTag(tagname, tc);
+                    copy.write(tc);
+                    currentData.put(tagname, tc);
                 }
                 moduleGuiChanged.updateData();
             }
@@ -305,12 +305,12 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 setChoiceTooltip(modeCompact, "Compact format: 3.1M").
                 setChoiceTooltip(modeCommas, "Comma format: 3,123,555").
                 addChoiceEvent((parent, newChoice) -> {
-//                    currentData.setInteger(tagname, FormatStyle.getStyle(newChoice).ordinal());
-                    currentData.setString(tagname, FormatStyle.getStyle(newChoice).getName());
+//                    currentData.putInt(tagname, FormatStyle.getStyle(newChoice).ordinal());
+                    currentData.putString(tagname, FormatStyle.getStyle(newChoice).getName());
                     moduleGuiChanged.updateData();
                 });
 
-        //FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger(tagname)];
+        //FormatStyle currentFormat = FormatStyle.values()[currentData.getInt(tagname)];
         FormatStyle currentFormat = FormatStyle.getStyle(currentData.getString(tagname));
         modeButton.setChoice(currentFormat.getName());
 
@@ -328,21 +328,21 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 setChoiceTooltip(modePct, "Show the amount of "+componentName, "as a percentage").
                 addChoiceEvent((parent, newChoice) -> {
                     if (componentName.equals(newChoice)) {
-                        currentData.setBoolean("showdiff", false);
-                        currentData.setBoolean("showpct", false);
-                        currentData.setBoolean("hidetext", false);
+                        currentData.putBoolean("showdiff", false);
+                        currentData.putBoolean("showpct", false);
+                        currentData.putBoolean("hidetext", false);
                     } else if (modePertick.equals(newChoice)) {
-                        currentData.setBoolean("showdiff", true);
-                        currentData.setBoolean("showpct", false);
-                        currentData.setBoolean("hidetext", false);
+                        currentData.putBoolean("showdiff", true);
+                        currentData.putBoolean("showpct", false);
+                        currentData.putBoolean("hidetext", false);
                     } else if (modePct.equals(newChoice)) {
-                        currentData.setBoolean("showdiff", false);
-                        currentData.setBoolean("showpct", true);
-                        currentData.setBoolean("hidetext", false);
+                        currentData.putBoolean("showdiff", false);
+                        currentData.putBoolean("showpct", true);
+                        currentData.putBoolean("hidetext", false);
                     } else {
-                        currentData.setBoolean("showdiff", false);
-                        currentData.setBoolean("showpct", false);
-                        currentData.setBoolean("hidetext", true);
+                        currentData.putBoolean("showdiff", false);
+                        currentData.putBoolean("showpct", false);
+                        currentData.putBoolean("hidetext", true);
                     }
                     moduleGuiChanged.updateData();
                 });

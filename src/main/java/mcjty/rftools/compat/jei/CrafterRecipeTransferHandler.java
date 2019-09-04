@@ -1,6 +1,5 @@
 package mcjty.rftools.compat.jei;
 
-import mcjty.rftools.blocks.crafter.CrafterBaseTE;
 import mcjty.rftools.blocks.crafter.CrafterContainer;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -10,6 +9,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<Craf
     public IRecipeTransferError transferRecipe(@Nonnull CrafterContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull PlayerEntity player, boolean maxTransfer, boolean doTransfer) {
         Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients = recipeLayout.getItemStacks().getGuiIngredients();
 
-        CrafterBaseTE inventory = container.getCrafterTE();
+        TileEntity inventory = container.getTe();
         BlockPos pos = inventory.getPos();
 
         if (doTransfer) {

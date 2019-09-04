@@ -12,14 +12,12 @@ import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.security.SecurityTools;
 import mcjty.rftools.blocks.shaper.ShaperTools;
-import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.items.teleportprobe.PorterTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 
 public class CommandHandler {
 
@@ -148,14 +146,15 @@ public class CommandHandler {
                 return true;
             });
         }
-        McJtyLib.registerCommand(RFTools.MODID, CMD_CRAFT_FROM_GRID, (player, arguments) -> {
-            StorageCraftingTools.craftFromGrid(player, arguments.get(PARAM_COUNT), arguments.get(PARAM_TEST), arguments.get(PARAM_POS));
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_GRID_SYNC, (player, arguments) -> {
-            StorageCraftingTools.requestGridSync(player, arguments.get(PARAM_POS));
-            return true;
-        });
+        // @todo 1.14
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_CRAFT_FROM_GRID, (player, arguments) -> {
+//            StorageCraftingTools.craftFromGrid(player, arguments.get(PARAM_COUNT), arguments.get(PARAM_TEST), arguments.get(PARAM_POS));
+//            return true;
+//        });
+//        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_GRID_SYNC, (player, arguments) -> {
+//            StorageCraftingTools.requestGridSync(player, arguments.get(PARAM_POS));
+//            return true;
+//        });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_COUNTER_INFO, (player, arguments) -> {
             ServerWorld world = WorldTools.getWorld(arguments.get(PARAM_DIMENSION));
             if (world != null) {

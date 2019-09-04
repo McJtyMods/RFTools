@@ -31,6 +31,8 @@ public class ScreenSetup {
 
     @ObjectHolder("rftools:screen")
     public static TileEntityType<?> TYPE_SCREEN;
+    @ObjectHolder("rftools:screen_hit")
+    public static TileEntityType<?> TYPE_SCREEN_HIT;
     @ObjectHolder("rftools:screen_controller")
     public static TileEntityType<?> TYPE_SCREEN_CONTROLLER;
 

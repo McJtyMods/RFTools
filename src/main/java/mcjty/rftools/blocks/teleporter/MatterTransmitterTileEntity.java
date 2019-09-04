@@ -278,7 +278,7 @@ public class MatterTransmitterTileEntity extends GenericTileEntity implements Ma
 
     public TeleportDestination getTeleportDestination() {
         if (teleportId != null) {
-            TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(world);
+            TeleportDestinations teleportDestinations = TeleportDestinations.get();
             GlobalCoordinate gc = teleportDestinations.getCoordinateForId(teleportId);
             if (gc == null) {
                 return null;
@@ -294,7 +294,7 @@ public class MatterTransmitterTileEntity extends GenericTileEntity implements Ma
         this.teleportId = null;
         this.once = once;
         if (teleportDestination != null) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+            TeleportDestinations destinations = TeleportDestinations.get();
             Integer id = destinations.getIdForCoordinate(new GlobalCoordinate(teleportDestination.getCoordinate(), teleportDestination.getDimension()));
             if (id == null) {
                 this.teleportDestination = teleportDestination;
@@ -556,7 +556,7 @@ public class MatterTransmitterTileEntity extends GenericTileEntity implements Ma
 
     private boolean isDestinationStillValid() {
         TeleportDestination dest = getTeleportDestination();
-        return TeleportDestinations.getDestinations(world).isDestinationValid(dest);
+        return TeleportDestinations.get().isDestinationValid(dest);
     }
 
     private void handleEnergyShortage() {

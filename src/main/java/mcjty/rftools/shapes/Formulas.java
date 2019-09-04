@@ -97,7 +97,7 @@ public class Formulas {
 
             int scanId = card.getInt("scanid");
             if (scanId != 0) {
-                Scan scan = ScanDataManager.getScans().loadScan(scanId);
+                Scan scan = ScanDataManager.get().loadScan(scanId);
                 palette = new ArrayList<>(scan.getMaterialPalette());
                 byte[] datas = scan.getRledata();
                 data = new byte[dx * dy * dz];

@@ -269,7 +269,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
 
     public int getOrCalculateID() {
         if (id == -1) {
-            BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
+            BlockProtectors protectors = BlockProtectors.get();
             GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
             id = protectors.getNewId(gc);
             protectors.save();
@@ -292,7 +292,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
      * the destination.
      */
     public void updateDestination() {
-        BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
+        BlockProtectors protectors = BlockProtectors.get();
 
         GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
 

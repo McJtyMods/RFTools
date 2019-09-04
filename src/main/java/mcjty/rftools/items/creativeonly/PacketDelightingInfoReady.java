@@ -14,7 +14,6 @@ public class PacketDelightingInfoReady {
     private List<String> blockClasses;
     private List<String> teClasses;
     private Map<String,DelightingInfoHelper.NBTDescription> nbtData;
-    private int metadata;
 
     public void toBytes(PacketBuffer buf) {
         buf.writeInt(blockClasses.size());
@@ -33,7 +32,6 @@ public class PacketDelightingInfoReady {
             NetworkTools.writeString(buf, value.getType());
             NetworkTools.writeString(buf, value.getValue());
         }
-        buf.writeInt(metadata);
     }
 
     public PacketDelightingInfoReady() {
@@ -61,15 +59,12 @@ public class PacketDelightingInfoReady {
 
             nbtData.put(key, new DelightingInfoHelper.NBTDescription(type, value));
         }
-
-        metadata = buf.readInt();
     }
 
-    public PacketDelightingInfoReady(List<String> blockClasses, List<String> teClasses, Map<String,DelightingInfoHelper.NBTDescription> nbtData, int metadata) {
+    public PacketDelightingInfoReady(List<String> blockClasses, List<String> teClasses, Map<String,DelightingInfoHelper.NBTDescription> nbtData) {
         this.blockClasses = new ArrayList<>(blockClasses);
         this.teClasses = new ArrayList<>(teClasses);
         this.nbtData = new HashMap<>(nbtData);
-        this.metadata = metadata;
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
@@ -78,7 +73,6 @@ public class PacketDelightingInfoReady {
             GuiDevelopersDelight.setServerBlockClasses(blockClasses);
             GuiDevelopersDelight.setServerTEClasses(teClasses);
             GuiDevelopersDelight.setServerNBTData(nbtData);
-            GuiDevelopersDelight.setMetadata(metadata);
         });
         ctx.setPacketHandled(true);
     }

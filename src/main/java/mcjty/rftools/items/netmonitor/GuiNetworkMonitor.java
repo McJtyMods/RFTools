@@ -7,10 +7,10 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
@@ -18,6 +18,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.varia.BlockInfo;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
@@ -74,30 +75,30 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(minecraft, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget<?> parent, int index) {
                 hilightBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("list");
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
+        Slider listSlider = new Slider(minecraft, this).setDesiredWidth(11).setVertical().setScrollableName("list");
+        Panel listPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
 
-        showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").setDesiredWidth(80).addButtonEvent(parent -> previousRfMillis = 0).setDesiredHeight(14);
-        filterTextField = new TextField(mc, this).setDesiredHeight(14).addTextEvent((parent, newText) -> {
+        showRfPerTick = new ToggleButton(minecraft, this).setCheckMarker(true).setText("RF/tick").setDesiredWidth(80).addButtonEvent(parent -> previousRfMillis = 0).setDesiredHeight(14);
+        filterTextField = new TextField(minecraft, this).setDesiredHeight(14).addTextEvent((parent, newText) -> {
             filter = filterTextField.getText();
             if (filter.trim().isEmpty()) {
                 filter = null;
             }
             connectedBlocks = null;
         });
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(17);
+        Panel buttonPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(minecraft, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(17);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3)).addChild(listPanel).addChild(buttonPanel);
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3)).addChild(listPanel).addChild(buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -111,7 +112,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         }
         BlockPos c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime.get());
-        Logging.message(mc.player, "The block is now highlighted");
+        Logging.message(minecraft.player, "The block is now highlighted");
         Minecraft.getInstance().player.closeScreen();
     }
 
@@ -170,7 +171,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
                 BlockInfo blockInfo = me.getValue();
                 BlockPos coordinate = me.getKey();
-                if (mc.world.isAirBlock(coordinate)) {
+                if (minecraft.world.isAirBlock(coordinate)) {
                     continue;
                 }
 
@@ -179,8 +180,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
                 int color = getTextColor(blockInfo);
 
-                BlockState state = mc.world.getBlockState(coordinate);
-                String displayName = BlockTools.getReadableName(mc.world, coordinate);
+                BlockState state = minecraft.world.getBlockState(coordinate);
+                String displayName = BlockTools.getReadableName(minecraft.world, coordinate);
 
                 if (filter != null) {
                     if (!displayName.toLowerCase().contains(filter)) {
@@ -188,14 +189,14 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                     }
                 }
 
-                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+                Panel panel = new Panel(minecraft, this).setLayout(new HorizontalLayout());
 
-                panel.addChild(new BlockRender(mc, this).setRenderItem(state.getBlock()));
-                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
-                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(BlockPosTools.toString(coordinate)).setColor(color).setDesiredWidth(75));
+                panel.addChild(new BlockRender(minecraft, this).setRenderItem(state.getBlock()));
+                panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
+                panel.addChild(new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(BlockPosTools.toString(coordinate)).setColor(color).setDesiredWidth(75));
                 EnergyBar energyLabel = oldLabelMap == null ? null : oldLabelMap.get(coordinate);
                 if (energyLabel == null) {
-                    energyLabel = new EnergyBar(mc, this).setHorizontal();
+                    energyLabel = new EnergyBar(minecraft, this).setHorizontal();
                 }
                 setEnergyLabel(millis, rftick, recalcPerTick, me, energy, maxEnergy, energyLabel);
 
@@ -218,8 +219,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+    public void render(int xSize_lo, int ySize_lo, float par3) {
+        super.render(xSize_lo, ySize_lo, par3);
 
         listDirty--;
         if (listDirty <= 0) {

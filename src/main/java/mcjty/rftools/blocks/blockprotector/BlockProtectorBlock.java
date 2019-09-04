@@ -116,7 +116,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusabl
         if (world.isRemote) {
             return rc;
         }
-        BlockProtectors protectors = BlockProtectors.getProtectors(world);
+        BlockProtectors protectors = BlockProtectors.get();
 
         BlockPos pos = context.getPos();
         GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType().getId());
@@ -150,7 +150,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusabl
         if (world.isRemote) {
             return;
         }
-        BlockProtectors protectors = BlockProtectors.getProtectors(world);
+        BlockProtectors protectors = BlockProtectors.get();
         protectors.removeDestination(pos, world.getDimension().getType().getId());
         protectors.save();
     }
