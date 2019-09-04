@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WorldTools;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -13,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -28,8 +28,8 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
-    public TeleportDestinations(String name) {
-        super(name);
+    public TeleportDestinations() {
+        super(TPDESTINATIONS_NAME);
     }
 
 //    @Override
@@ -86,8 +86,8 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         }
     }
 
-    public static TeleportDestinations getDestinations(World world) {
-        return getData(world, TeleportDestinations.class, TPDESTINATIONS_NAME);
+    public static TeleportDestinations get() {
+        return getData(TeleportDestinations::new, TPDESTINATIONS_NAME);
     }
 
 
@@ -98,7 +98,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
             MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
             List<ServerPlayerEntity> list = server.getPlayerList().getPlayers();
             for (ServerPlayerEntity ServerPlayerEntity : list) {
-                if (playerName.equals(ServerPlayerEntity.getName())) {
+                if (playerName.equals(ServerPlayerEntity.getName())) {  // @todo 1.14 use UUID?
                     properties = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
                     break;
                 }
@@ -109,10 +109,10 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
             BlockPos c = destination.getCoordinate();
-            World world = DimensionManager.getWorld(destination.getDimension());
+            World world = WorldTools.getWorld(destination.getDimension());
             String dimName = null;
             if (world != null) {
-                dimName = DimensionManager.getProvider(destination.getDimension()).getDimensionType().getName();
+                dimName = world.getDimension().getType().getRegistryName().getPath();// @todo 1.14DimensionManager.getProvider(destination.getDimension()).getDimensionType().getName();
             }
 
             // @todo
@@ -225,7 +225,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
+    public void read(CompoundNBT tagCompound) {
         destinations.clear();
         destinationById.clear();
         destinationIdByCoordinate.clear();
@@ -234,11 +234,11 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     }
 
     private void readDestinationsFromNBT(CompoundNBT tagCompound) {
-        ListNBT lst = tagCompound.getTagList("destinations", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
-            CompoundNBT tc = lst.getCompoundTagAt(i);
-            BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
-            int dim = tc.getInteger("dim");
+        ListNBT lst = tagCompound.getList("destinations", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < lst.size() ; i++) {
+            CompoundNBT tc = lst.getCompound(i);
+            BlockPos c = new BlockPos(tc.getInt("x"), tc.getInt("y"), tc.getInt("z"));
+            int dim = tc.getInt("dim");
             String name = tc.getString("name");
 
             TeleportDestination destination = new TeleportDestination(c, dim);
@@ -247,8 +247,8 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
             destinations.put(gc, destination);
 
             int id;
-            if (tc.hasKey("id")) {
-                id = tc.getInteger("id");
+            if (tc.contains("id")) {
+                id = tc.getInt("id");
                 destinationById.put(id, gc);
                 destinationIdByCoordinate.put(gc, id);
             }
@@ -256,7 +256,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
+    public CompoundNBT write(CompoundNBT tagCompound) {
         writeDestinationsToNBT(tagCompound, destinations.values(), destinationIdByCoordinate);
         tagCompound.putInt("lastId", lastId);
         return tagCompound;
@@ -268,19 +268,19 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         for (TeleportDestination destination : destinations) {
             CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
-            tc.setInteger("x", c.getX());
-            tc.setInteger("y", c.getY());
-            tc.setInteger("z", c.getZ());
-            tc.setInteger("dim", destination.getDimension());
-            tc.setString("name", destination.getName());
+            tc.putInt("x", c.getX());
+            tc.putInt("y", c.getY());
+            tc.putInt("z", c.getZ());
+            tc.putInt("dim", destination.getDimension());
+            tc.putString("name", destination.getName());
             if (coordinateToInteger != null) {
                 Integer id = coordinateToInteger.get(new GlobalCoordinate(c, destination.getDimension()));
                 if (id != null) {
-                    tc.setInteger("id", id);
+                    tc.putInt("id", id);
                 }
             }
-            lst.appendTag(tc);
+            lst.add(tc);
         }
-        tagCompound.setTag("destinations", lst);
+        tagCompound.put("destinations", lst);
     }
 }

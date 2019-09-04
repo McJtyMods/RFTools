@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class MachineInformationScreenModule implements IScreenModule<IModuleDataString> {
     private int tag;
@@ -21,7 +20,7 @@ public class MachineInformationScreenModule implements IScreenModule<IModuleData
 
     @Override
     public IModuleDataString getData(IScreenDataHelper helper, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }

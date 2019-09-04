@@ -1,6 +1,7 @@
 package mcjty.rftools.shapes;
 
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WorldTools;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,7 +44,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
     }
 
     public void save(int scanId) {
-        World world = DimensionManager.getWorld(0);
+        World world = WorldTools.getOverworld();
         File dataDir = new File(((ServerWorld) world).getChunkSaveLocation(), "rftoolsscans");
         dataDir.mkdirs();
         File file = new File(dataDir, "scan" + scanId);
@@ -90,7 +91,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
 
     @Nonnull
     public Scan loadScan(int id) {
-        World world = DimensionManager.getWorld(0);
+        World world = WorldTools.getOverworld();
         Scan scan = scans.get(id);
         if (scan == null || scan.getDataInt() == null) {
             if (scan == null) {

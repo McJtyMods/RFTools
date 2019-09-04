@@ -5,6 +5,7 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.PacketSendClientCommand;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -34,6 +35,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -41,6 +44,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static mcjty.rftools.blocks.endergen.EndergenicSetup.TYPE_ENDERGENIC;
 
 public class EndergenicTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation,
         IHudSupport, IMachineInformation, TickOrderHandler.ICheckStateServer {
@@ -62,6 +67,9 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     public static final int CHARGE_HOLDING = -1;
 
     public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
+
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(
+            this, false, 5000000, 20000));
 
     @Override
     public IValue<?>[] getValues() {
@@ -126,10 +134,6 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
-    public EndergenicTileEntity() {
-        super(5000000, 20000);
-    }
-
     @Override
     public long getEnergyDiffPerTick() {
         return rfGained - rfLost;
@@ -157,8 +161,12 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         return null;
     }
 
+    public EndergenicTileEntity() {
+        super(TYPE_ENDERGENIC);
+    }
+
     @Override
-    public void update() {
+    public void tick() {
         // bad and good counter are handled both client and server side
         if (badCounter > 0) {
             badCounter--;
@@ -169,7 +177,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
             markDirtyQuick();
         }
 
-        if (!getWorld().isRemote) {
+        if (!world.isRemote) {
             TickOrderHandler.queueEndergenic(this);
         }
     }
@@ -181,7 +189,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
     @Override
     public boolean isBlockAboveAir() {
-        return getWorld().isAirBlock(pos.up());
+        return world.isAirBlock(pos.up());
     }
 
     public List<String> getHudLog() {
@@ -322,19 +330,21 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            long rf = EndergenicConfiguration.rfToHoldPearl.get();
-            rf = (long) (rf * (3.0f - getInfusedFactor()) / 3.0f);
+            energyHandler.ifPresent(h -> {
+                long rf = EndergenicConfiguration.rfToHoldPearl.get();
+                rf = (long) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
-            long rfStored = getStoredPower();
-            if (rfStored < rf) {
-                // Not enough energy. Pearl is lost.
-                log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
-                discardPearl("Not enough energy to hold pearl");
-            } else {
-                long rfExtracted = storage.extractEnergy(rf, false);
-                log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
-                rfLost += rfExtracted;
-            }
+                long rfStored = h.getEnergy();
+                if (rfStored < rf) {
+                    // Not enough energy. Pearl is lost.
+                    log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
+                    discardPearl("Not enough energy to hold pearl");
+                } else {
+                    long rfExtracted = h.extractEnergy((int) rf, false);
+                    log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
+                    rfLost += rfExtracted;
+                }
+            });
             return;
         }
 
@@ -383,7 +393,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     }
 
     private void log(String message) {
-        /* RFTools.log(getWorld(), this, message);*/
+        /* RFTools.log(world, this, message);*/
     }
 
     public static final Direction[] HORIZ_DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
@@ -397,10 +407,10 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         BlockPos pos = getPos();
         for (Direction dir : OrientationTools.DIRECTION_VALUES) {
             BlockPos c = pos.offset(dir);
-            TileEntity te = getWorld().getTileEntity(c);
+            TileEntity te = world.getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                Direction inputSide = enderMonitorTileEntity.getFacing(getWorld().getBlockState(c)).getInputSide();
+                Direction inputSide = enderMonitorTileEntity.getFacing(world.getBlockState(c)).getInputSide();
                 if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
@@ -409,24 +419,26 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     }
 
     private void handleSendingEnergy() {
-        long energyAvailable = getStoredPower() - EndergenicConfiguration.keepRfInBuffer.get();
-        if (energyAvailable <= 0) {
-            return;
-        }
+        energyHandler.ifPresent(h -> {
+            long energyAvailable = h.getEnergy() - EndergenicConfiguration.keepRfInBuffer.get();
+            if (energyAvailable <= 0) {
+                return;
+            }
 
-        for (Direction dir : OrientationTools.DIRECTION_VALUES) {
-            BlockPos o = getPos().offset(dir);
-            TileEntity te = getWorld().getTileEntity(o);
-            Direction opposite = dir.getOpposite();
-            if (EnergyTools.isEnergyTE(te, opposite)) {
-                long rfToGive = Math.min(EndergenicConfiguration.rfOutput.get(), energyAvailable);
-                long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                energyAvailable -= storage.extractEnergy(received, false);
-                if (energyAvailable <= 0) {
-                    break;
+            for (Direction dir : OrientationTools.DIRECTION_VALUES) {
+                BlockPos o = getPos().offset(dir);
+                TileEntity te = world.getTileEntity(o);
+                Direction opposite = dir.getOpposite();
+                if (EnergyTools.isEnergyTE(te, opposite)) {
+                    long rfToGive = Math.min(EndergenicConfiguration.rfOutput.get(), energyAvailable);
+                    long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                    energyAvailable -= h.extractEnergy((int) received, false);
+                    if (energyAvailable <= 0) {
+                        break;
+                    }
                 }
             }
-        }
+        });
     }
 
     // Handle all pearls that are currently in transit.
@@ -437,7 +449,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         List<EndergenicPearl> newlist = new ArrayList<>();
         for (EndergenicPearl pearl : pearls) {
             log("Pearls: age=" + pearl.getAge() + ", ticks left=" + pearl.getTicksLeft());
-            if (!pearl.handleTick(getWorld())) {
+            if (!pearl.handleTick(world)) {
                 // Keep the pearl. It has not arrived yet.
                 newlist.add(pearl);
             }
@@ -449,9 +461,10 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
     private void markDirtyClientNoRender() {
         markDirty();
-        if (getWorld() != null) {
-            getWorld().getPlayers(PlayerEntity.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32 * 32)
+        if (world != null) {
+            world.getPlayers()
                     .stream()
+                    .filter(p -> getPos().distanceSq(p.getPosition()) < 32 * 32)
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
                             new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
                                     TypedMap.builder()
@@ -459,7 +472,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
                                             .put(ClientCommandHandler.PARAM_GOODCOUNTER, goodCounter)
                                             .put(ClientCommandHandler.PARAM_BADCOUNTER, badCounter)
                                             .build()),
-                            (ServerPlayerEntity) p));
+                            ((ServerPlayerEntity) p).connection.netManager, NetworkDirection.PLAY_TO_CLIENT));
         }
     }
 
@@ -487,7 +500,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         if (destination == null) {
             return null;
         }
-        TileEntity te = getWorld().getTileEntity(destination);
+        TileEntity te = world.getTileEntity(destination);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         } else {
@@ -560,7 +573,10 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
             rf += rf * a / 100;     // Maximum 200% bonus. Minimum no bonus.
             rfGained += rf;
             log("Receive Pearl: pearl arrives at tick " + chargingMode + ", age=" + age + ", RF=" + rf);
-            modifyEnergyStored(rf);
+            long finalRf = rf;
+            energyHandler.ifPresent(h -> {
+                        h.produceEnergy(finalRf);
+                    });
 
             goodCounter = 10;
             markDirtyClientNoRender();
@@ -582,7 +598,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = getWorld().getTileEntity(coord);
+            tileEntity = world.getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof EndergenicTileEntity)) {
@@ -616,10 +632,11 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         }
     }
 
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
-    }
+    // @todo 1.14
+//    @Override
+//    public boolean shouldRenderInPass(int pass) {
+//        return pass == 1;
+//    }
 
     public int getChargingMode() {
         return chargingMode;
@@ -646,7 +663,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         this.destination = destination;
         distance = calculateDistance(destination);
 
-        if (getWorld().isRemote) {
+        if (world.isRemote) {
             // We're on the client. Send change to server.
             valueToServer(RFToolsMessages.INSTANCE, VALUE_DESTINATION, destination);
         }

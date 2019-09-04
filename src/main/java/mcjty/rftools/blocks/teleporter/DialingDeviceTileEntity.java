@@ -142,8 +142,8 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
-        return new ArrayList<>(destinations.getValidDestinations(getWorld(), playerName));
+        TeleportDestinations destinations = TeleportDestinations.get();
+        return new ArrayList<>(destinations.getValidDestinations(world, playerName));
     }
 
     public List<TransmitterInfo> searchTransmitters() {
@@ -157,14 +157,14 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
         List<TransmitterInfo> transmitters = new ArrayList<>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < getWorld().getHeight()) {
+            if (yy >= 0 && yy < world.getHeight()) {
                 for (int dz = -hrange ; dz <= hrange; dz++) {
                     int zz = z + dz;
                     for (int dx = -hrange ; dx <= hrange ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             BlockPos c = new BlockPos(xx, yy, zz);
-                            TileEntity tileEntity = getWorld().getTileEntity(c);
+                            TileEntity tileEntity = world.getTileEntity(c);
                             if (tileEntity instanceof MatterTransmitterTileEntity) {
                                 MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
                                 transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
@@ -192,7 +192,7 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
     // Server side only
     private int dial(String player, BlockPos transmitter, int transDim, BlockPos coordinate, int dimension, boolean once) {
-        return TeleportationTools.dial(getWorld(), this, player, transmitter, transDim, coordinate, dimension, once);
+        return TeleportationTools.dial(world, this, player, transmitter, transDim, coordinate, dimension, once);
     }
 
     // Server side only
@@ -213,14 +213,14 @@ public class DialingDeviceTileEntity extends GenericTileEntity {
 
         World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(dim);
         if (w == null) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
             destinations.cleanupInvalid();
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c);
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
             destinations.cleanupInvalid();
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }

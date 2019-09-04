@@ -25,7 +25,7 @@ public class RedstoneChannels extends AbstractWorldData<RedstoneChannels> {
     }
 
     public static RedstoneChannels get() {
-        return getData(() -> new RedstoneChannels(), REDSTONE_CHANNELS_NAME);
+        return getData(RedstoneChannels::new, REDSTONE_CHANNELS_NAME);
     }
 
     public RedstoneChannel getOrCreateChannel(int id) {

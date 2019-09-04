@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.McJtyLib;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
@@ -11,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 public class CraftingRecipe {
-    private CraftingInventory inv = new CraftingInventory(new Container() {
+    private CraftingInventory inv = new CraftingInventory(new Container(null, -1) {
         @Override
         public boolean canInteractWith(PlayerEntity var1) {
             return false;
@@ -43,7 +44,7 @@ public class CraftingRecipe {
     private CraftMode craftMode = CraftMode.EXT;
 
     public static IRecipe findRecipe(World world, CraftingInventory inv) {
-        for (IRecipe r : CraftingManager.REGISTRY) {
+        for (IRecipe r : McJtyLib.proxy.getRecipeManager(world).getRecipes()) {
             if (r != null && r.matches(inv, world)) {
                 return r;
             }
@@ -59,7 +60,7 @@ public class CraftingRecipe {
         }
         CompoundNBT resultCompound = tagCompound.getCompound("Result");
         if (resultCompound != null) {
-            result = new ItemStack(resultCompound);
+            result = ItemStack.read(resultCompound);
         } else {
             result = ItemStack.EMPTY;
         }

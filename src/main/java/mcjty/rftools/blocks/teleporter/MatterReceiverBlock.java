@@ -103,7 +103,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         if (world.isRemote) {
             return state;
         }
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        TeleportDestinations destinations = TeleportDestinations.get();
 
         BlockPos pos = context.getPos();
         GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType().getId());
@@ -135,7 +135,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         if (world.isRemote) {
             return;
         }
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+        TeleportDestinations destinations = TeleportDestinations.get();
         destinations.removeDestination(pos, world.getDimension().getType().getId());
         destinations.save();
     }

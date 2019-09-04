@@ -94,7 +94,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
 
     @Override
     public ModuleElevatorInfo getData(IScreenDataHelper helper, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }
@@ -151,7 +151,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             }
             return;
         }
-        World w = DimensionManager.getWorld(dim);
+        World w = WorldTools.getWorld(dim);
         if (w == null) {
             return;
         }

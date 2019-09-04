@@ -11,6 +11,6 @@ public class FeatherFallingPlusEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return (float) EnvironmentalConfiguration.FEATHERFALLINGPLUS_RFPERTICK.get();
+        return (float) (double) EnvironmentalConfiguration.FEATHERFALLINGPLUS_RFPERTICK.get();
     }
 }

@@ -141,14 +141,14 @@ public class RenderData {
             if (useVBO.get()) {
                 if (vbo != null) {
                     vbo.bindBuffer();
-                    GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 16, 0);
-                    GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
-                    GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 12);
+                    GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
+                    GlStateManager.vertexPointer(3, GL11.GL_FLOAT, 16, 0);
+                    GlStateManager.enableClientState(GL11.GL_COLOR_ARRAY);
+                    GlStateManager.colorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 12);
                     vbo.drawArrays(7);
                     vbo.unbindBuffer();
-                    GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
-                    GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+                    GlStateManager.disableClientState(GL11.GL_COLOR_ARRAY);
+                    GlStateManager.disableClientState(GL11.GL_VERTEX_ARRAY);
                 }
             } else {
                 if (glList != -1) {
@@ -163,7 +163,7 @@ public class RenderData {
                 buffer = vboBuffer;
             } else {
                 glList = GLAllocation.generateDisplayLists(1);
-                GlStateManager.glNewList(glList, GL11.GL_COMPILE);
+                GlStateManager.newList(glList, GL11.GL_COMPILE);
             }
             return buffer;
         }
@@ -176,7 +176,7 @@ public class RenderData {
 
             } else {
                 tessellator.draw();
-                GlStateManager.glEndList();
+                GlStateManager.endList();
             }
         }
     }

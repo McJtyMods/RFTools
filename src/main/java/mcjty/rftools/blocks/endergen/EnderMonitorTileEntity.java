@@ -4,9 +4,11 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+
+import static mcjty.rftools.blocks.endergen.EndergenicSetup.TYPE_ENDER_MONITOR;
 
 public class EnderMonitorTileEntity extends LogicTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
@@ -17,6 +19,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     private boolean needpulse = false;
 
     public EnderMonitorTileEntity() {
+        super(TYPE_ENDER_MONITOR);
     }
 
     public EnderMonitorMode getMode() {
@@ -42,8 +45,8 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             TickOrderHandler.queueEnderMonitor(this);
         }
     }
@@ -72,11 +75,11 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
 
         needpulse = tagCompound.getBoolean("needPulse");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         int m = tagCompound.getInt("mode");
         mode = EnderMonitorMode.values()[m];
     }
@@ -86,17 +89,17 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         super.write(tagCompound);
         tagCompound.putBoolean("rs", powerOutput > 0);
         tagCompound.putBoolean("needPulse", needpulse);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         tagCompound.putInt("mode", mode.ordinal());
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

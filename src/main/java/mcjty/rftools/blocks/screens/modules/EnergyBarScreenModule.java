@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -13,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents> {
     protected int dim = 0;
@@ -23,7 +23,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
 
     @Override
     public IModuleDataContents getData(IScreenDataHelper h, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }
@@ -62,7 +62,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
                     if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
                         if(tagCompound.contains("monitorside")) {
-                            side = Direction.VALUES[tagCompound.getInt("monitorside")];
+                            side = OrientationTools.DIRECTION_VALUES[tagCompound.getInt("monitorside")];
                         }
                     }
                 }

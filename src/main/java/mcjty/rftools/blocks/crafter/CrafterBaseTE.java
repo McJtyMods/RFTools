@@ -433,6 +433,37 @@ public class CrafterBaseTE extends GenericTileEntity implements ITickableTileEnt
         }
         return false;
     }
+
+    public boolean isItemValidForSlot(int slot, @Nonnull ItemStack stack) {
+        if (slot >= CrafterContainer.SLOT_CRAFTINPUT && slot <= CrafterContainer.SLOT_CRAFTOUTPUT) {
+            return false;
+        }
+        if (slot >= CrafterContainer.SLOT_BUFFER && slot < CrafterContainer.SLOT_BUFFEROUT) {
+            ItemStack ghostSlot = ghostSlots.get(slot - CrafterContainer.SLOT_BUFFER);
+            if (!ghostSlot.isEmpty()) {
+                if (!ghostSlot.isItemEqual(stack)) {
+                    return false;
+                }
+            }
+            ItemStack filterModule = itemHandler.map(h -> h.getStackInSlot(CrafterContainer.SLOT_FILTER_MODULE)).orElse(ItemStack.EMPTY);
+            if (!filterModule.isEmpty()) {
+                getFilterCache();
+                if (filterCache != null) {
+                    return filterCache.match(stack);
+                }
+            }
+        } else if (slot >= CrafterContainer.SLOT_BUFFEROUT && slot < CrafterContainer.SLOT_FILTER_MODULE) {
+            ItemStack ghostSlot = ghostSlots.get(slot - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE);
+            if (!ghostSlot.isEmpty()) {
+                if (!ghostSlot.isItemEqual(stack)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -460,32 +491,7 @@ public class CrafterBaseTE extends GenericTileEntity implements ITickableTileEnt
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                if (slot >= CrafterContainer.SLOT_CRAFTINPUT && slot <= CrafterContainer.SLOT_CRAFTOUTPUT) {
-                    return false;
-                }
-                if (slot >= CrafterContainer.SLOT_BUFFER && slot < CrafterContainer.SLOT_BUFFEROUT) {
-                    ItemStack ghostSlot = ghostSlots.get(slot - CrafterContainer.SLOT_BUFFER);
-                    if (!ghostSlot.isEmpty()) {
-                        if (!ghostSlot.isItemEqual(stack)) {
-                            return false;
-                        }
-                    }
-                    ItemStack filterModule = itemHandler.map(h -> h.getStackInSlot(CrafterContainer.SLOT_FILTER_MODULE)).orElse(ItemStack.EMPTY);
-                    if (!filterModule.isEmpty()) {
-                        getFilterCache();
-                        if (filterCache != null) {
-                            return filterCache.match(stack);
-                        }
-                    }
-                } else if (slot >= CrafterContainer.SLOT_BUFFEROUT && slot < CrafterContainer.SLOT_FILTER_MODULE) {
-                    ItemStack ghostSlot = ghostSlots.get(slot - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE);
-                    if (!ghostSlot.isEmpty()) {
-                        if (!ghostSlot.isItemEqual(stack)) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+                return isItemValidForSlot(slot, stack);
             }
 
             @Override

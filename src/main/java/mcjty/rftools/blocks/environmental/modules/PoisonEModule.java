@@ -11,7 +11,7 @@ public class PoisonEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return (float) EnvironmentalConfiguration.POISON_RFPERTICK.get();
+        return (float) (double) EnvironmentalConfiguration.POISON_RFPERTICK.get();
     }
 
     @Override

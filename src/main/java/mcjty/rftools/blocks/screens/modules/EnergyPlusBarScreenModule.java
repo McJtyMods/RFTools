@@ -24,7 +24,7 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
                 }
                 coordinate = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                 if(tagCompound.contains("monitorside")) {
-                    side = Direction.VALUES[tagCompound.getInt("monitorside")];
+                    side = OrientationTools.DIRECTION_VALUES[tagCompound.getInt("monitorside")];
                 }
             }
         }

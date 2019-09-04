@@ -1,17 +1,12 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -20,9 +15,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -109,28 +104,25 @@ public class CrafterBlock extends GenericRFToolsBlock implements Infusable, INBT
 //        };
 //    }
 
-    @Override
-    public Container createServerContainer(PlayerEntity PlayerEntity, TileEntity tileEntity) {
-        CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
-        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStack.EMPTY);
-        for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
-            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStack.EMPTY);
-        }
-        return super.createServerContainer(PlayerEntity, tileEntity);
-    }
-
-    @Override
-    public boolean needsRedstoneCheck() {
-        return true;
-    }
+//    @Override
+//    public Container createServerContainer(PlayerEntity PlayerEntity, TileEntity tileEntity) {
+//        CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
+//        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStack.EMPTY);
+//        for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
+//            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStack.EMPTY);
+//        }
+//        return super.createServerContainer(PlayerEntity, tileEntity);
+//    }
 
 //    @Override
 //    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, Direction from) {
 //        return true;
 //    }
 //
+
+    // @todo 1.14 implement me
     @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_CRAFTER;
+    public Collection<String> getTagsToPreserve() {
+        return null;
     }
 }

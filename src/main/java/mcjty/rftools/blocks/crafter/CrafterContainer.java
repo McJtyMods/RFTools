@@ -1,14 +1,18 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.container.*;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.ItemStackList;
-import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nullable;
+
+import static mcjty.rftools.blocks.crafter.CrafterSetup.CONTAINER_CRAFTER;
 
 public class CrafterContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -21,29 +25,32 @@ public class CrafterContainer extends GenericContainer {
     public static final int BUFFEROUT_SIZE = 4;
     public static final int SLOT_FILTER_MODULE = SLOT_BUFFEROUT + BUFFEROUT_SIZE;
 
-    private final CrafterBaseTE crafterBaseTE;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), ContainerFactory.CONTAINER_CONTAINER, SLOT_CRAFTINPUT, 193, 7, 3, 18, 3, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOSTOUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_CRAFTOUTPUT, 193, 65, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 13, 97, 13, 18, 2, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFEROUT, 31, 142, 2, 18, 2, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, ItemStack.EMPTY /* @todo 1.14 filter_module) */), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFEROUT, 157, 43, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
 
-    public CrafterBaseTE getCrafterTE() {
-        return crafterBaseTE;
-    }
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/crafter.gui"));
-
-    public CrafterContainer(PlayerEntity player, IInventory containerInventory) {
-        super(CONTAINER_FACTORY);
-        this.crafterBaseTE = (CrafterBaseTE)containerInventory; // TODO once this method is no longer reflectively called, refactor to remove this cast
-        addInventory(CONTAINER_INVENTORY, containerInventory);
-        addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
-        generateSlots();
+    public CrafterContainer(int id, ContainerFactory factory, BlockPos pos, @Nullable GenericTileEntity te) {
+        super(CONTAINER_CRAFTER, id, factory, pos, te);
+//        generateSlots();
     }
 
     @Override
-    protected Slot createSlot(SlotFactory slotFactory, IInventory inventory, int index, int x, int y, SlotType slotType) {
+    protected Slot createSlot(SlotFactory slotFactory, IItemHandler inventory, int index, int x, int y, SlotType slotType) {
+        CrafterBaseTE c = (CrafterBaseTE) te;
         if (index >= SLOT_BUFFER && index < SLOT_BUFFEROUT && slotType == SlotType.SLOT_INPUT) {
-            return new BaseSlot(inventory, index, x, y) {
+            return new BaseSlot(inventory, te, index, x, y) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
-                    if (!crafterBaseTE.isItemValidForSlot(getSlotIndex(), stack)) {
+                    if (!c.isItemValidForSlot(getSlotIndex(), stack)) {
                         return false;
                     }
                     return super.isItemValid(stack);
@@ -51,15 +58,15 @@ public class CrafterContainer extends GenericContainer {
 
                 @Override
                 public void onSlotChanged() {
-                    crafterBaseTE.noRecipesWork = false;
+                    c.noRecipesWork = false;
                     super.onSlotChanged();
                 }
             };
         } else if (index >= SLOT_BUFFEROUT && index < SLOT_FILTER_MODULE) {
-            return new BaseSlot(inventory, index, x, y) {
+            return new BaseSlot(inventory, te, index, x, y) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
-                    if (!crafterBaseTE.isItemValidForSlot(getSlotIndex(), stack)) {
+                    if (!c.isItemValidForSlot(getSlotIndex(), stack)) {
                         return false;
                     }
                     return super.isItemValid(stack);
@@ -67,7 +74,7 @@ public class CrafterContainer extends GenericContainer {
 
                 @Override
                 public void onSlotChanged() {
-                    crafterBaseTE.noRecipesWork = false;
+                    c.noRecipesWork = false;
                     super.onSlotChanged();
                 }
             };
@@ -82,8 +89,10 @@ public class CrafterContainer extends GenericContainer {
             index >= CrafterContainer.SLOT_BUFFER &&
             index < CrafterContainer.SLOT_BUFFEROUT) {
 
+            CrafterBaseTE c = (CrafterBaseTE) te;
+
             int offset = index - CrafterContainer.SLOT_BUFFER;
-            ItemStackList ghostSlots = crafterBaseTE.getGhostSlots();
+            ItemStackList ghostSlots = c.getGhostSlots();
             ItemStack ghostSlot = ghostSlots.get(offset);
             ItemStack clickedWith = player.inventory.getItemStack();
             if (!ghostSlot.isEmpty() && !ghostSlot.isItemEqual(clickedWith)) {

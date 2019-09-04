@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.ModSounds;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
@@ -16,7 +17,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class TeleportationTools {
     public static final int STATUS_OK = 0;
@@ -244,7 +244,7 @@ public class TeleportationTools {
      * @return 0 in case of success. 10 in case of severe failure
      */
     private static int consumeReceiverEnergy(PlayerEntity player, BlockPos c, int dimension) {
-        World world = DimensionManager.getWorld(dimension);
+        World world = WorldTools.getWorld(dimension);
         TileEntity te = world.getTileEntity(c);
         if (!(te instanceof MatterReceiverTileEntity)) {
             Logging.warn(player, "Something went wrong with the destination!");

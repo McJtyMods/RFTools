@@ -12,8 +12,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> {
     protected int dim = 0;
@@ -22,7 +23,7 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
 
     @Override
     public IModuleDataContents getData(IScreenDataHelper h, World worldObj, long millis) {
-        World world = DimensionManager.getWorld(dim);
+        World world = WorldTools.getWorld(dim);
         if (world == null) {
             return null;
         }
@@ -31,24 +32,24 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
             return null;
         }
 
-        int contents = 0;
-        int maxContents = 0;
+        AtomicInteger contents = new AtomicInteger();
+        AtomicInteger maxContents = new AtomicInteger();
 
         TileEntity te = world.getTileEntity(coordinate);
-        net.minecraftforge.fluids.capability.IFluidHandler handler = CapabilityTools.hasFluidCapabilitySafe(te);
-        if (handler != null) {
-            IFluidTankProperties[] properties = handler.getTankProperties();
+        if (!CapabilityTools.getFluidCapabilitySafe(te).map(hf -> {
+            IFluidTankProperties[] properties = hf.getTankProperties();
             if (properties != null && properties.length > 0) {
                 if (properties[0].getContents() != null) {
-                    contents = properties[0].getContents().amount;
+                    contents.set(properties[0].getContents().amount);
                 }
-                maxContents = properties[0].getCapacity();
+                maxContents.set(properties[0].getCapacity());
             }
-        } else {
+            return true;
+        }).orElse(false)) {
             return null;
         }
 
-        return helper.getContentsValue(millis, contents, maxContents);
+        return helper.getContentsValue(millis, contents.get(), maxContents.get());
     }
 
     @Override

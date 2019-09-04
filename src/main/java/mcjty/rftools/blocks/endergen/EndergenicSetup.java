@@ -6,6 +6,8 @@ import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.ItemStackTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 import static mcjty.lib.varia.ItemStackTools.mapTag;
 
@@ -13,6 +15,16 @@ public class EndergenicSetup {
     public static BaseBlock endergenicBlock;
     public static BaseBlock pearlInjectorBlock;
     public static EnderMonitorBlock enderMonitorBlock;
+
+    @ObjectHolder("rftools:ender_monitor")
+    public static TileEntityType<?> TYPE_ENDER_MONITOR;
+
+    @ObjectHolder("rftools:endergenic")
+    public static TileEntityType<?> TYPE_ENDERGENIC;
+
+    @ObjectHolder("rftools:pearl_injector")
+    public static TileEntityType<?> TYPE_PEARL_INJECTOR;
+
 
     public static void init() {
         endergenicBlock = new BaseBlock("endergenic", new BlockBuilder()

@@ -64,7 +64,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
 
     public int getOrCalculateID() {
         if (id == -1) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
             GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
             id = destinations.getNewId(gc);
 
@@ -85,7 +85,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
 
     public void setName(String name) {
         this.name = name;
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+        TeleportDestinations destinations = TeleportDestinations.get();
         TeleportDestination destination = destinations.getDestination(getPos(), getWorld().getDimension().getType().getId());
         if (destination != null) {
             destination.setName(name);
@@ -110,7 +110,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
 
     private void checkStateServer() {
         if (!getPos().equals(cachedPos)) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            TeleportDestinations destinations = TeleportDestinations.get();
 
             destinations.removeDestination(cachedPos, getWorld().getDimension().getType().getId());
 
@@ -135,7 +135,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
      * the destination.
      */
     public void updateDestination() {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+        TeleportDestinations destinations = TeleportDestinations.get();
 
         GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
         TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());

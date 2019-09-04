@@ -1,41 +1,51 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+
+import static mcjty.rftools.blocks.endergen.EndergenicSetup.TYPE_PEARL_INJECTOR;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
-
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
 
     public static final int BUFFER_SIZE = (9*2);
     public static final int SLOT_BUFFER = 0;
     public static final int SLOT_PLAYERINV = SLOT_BUFFER + BUFFER_SIZE;
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, BUFFER_SIZE);
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ENDER_PEARL)), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 10, 25, 9, 18, 2, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
 
     // For pulse detection.
     private boolean prevIn = false;
 
-    @Override
-    protected boolean needsCustomInvWrapper() {
-        return true;
+    public PearlInjectorTileEntity() {
+        super(TYPE_PEARL_INJECTOR);
     }
 
     public EndergenicTileEntity findEndergenicTileEntity() {
-        BlockState state = getWorld().getBlockState(getPos());
+        BlockState state = world.getBlockState(getPos());
         Direction k = OrientationTools.getOrientation(state);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
         if (te != null) {
@@ -46,7 +56,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
 
     private EndergenicTileEntity getEndergenicGeneratorAt(Direction k) {
         BlockPos o = getPos().offset(k);
-        TileEntity te = getWorld().getTileEntity(o);
+        TileEntity te = world.getTileEntity(o);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         }
@@ -54,8 +64,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             TickOrderHandler.queuePearlInjector(this);
         }
     }
@@ -80,14 +90,16 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
     }
 
     private boolean takePearl() {
-        for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
-            ItemStack stack = inventoryHelper.getStackInSlot(i);
-            if (!stack.isEmpty() && Items.ENDER_PEARL.equals(stack.getItem()) && stack.getCount() > 0) {
-                decrStackSize(i, 1);
-                return true;
+        return itemHandler.map(h -> {
+            for (int i = 0 ; i < h.getSlots() ; i++) {
+                ItemStack stack = h.getStackInSlot(i);
+                if (!stack.isEmpty() && Items.ENDER_PEARL.equals(stack.getItem()) && stack.getCount() > 0) {
+                    h.extractItem(i, 1, false);
+                    return true;
+                }
             }
-        }
-        return false;
+            return false;
+        }).orElse(false);
     }
 
     public void injectPearl() {
@@ -110,67 +122,33 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
     public void read(CompoundNBT tagCompound) {
         super.read(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        readBufferFromNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
         super.write(tagCompound);
         tagCompound.putBoolean("prevIn", prevIn);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
+        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
     }
 
-    @Override
-    public InventoryHelper getInventoryHelper() {
-        return inventoryHelper;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
-        return canPlayerAccess(player);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return Items.ENDER_PEARL.equals(stack.getItem());
-    }
-
-    private int[] accessibleSlots;
-
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        if (accessibleSlots == null) {
-            accessibleSlots = new int[BUFFER_SIZE];
-            for (int i = 0 ; i < BUFFER_SIZE ; i++) {
-                accessibleSlots[i] = i;
+    private NoDirectionItemHander createItemHandler() {
+        return new NoDirectionItemHander(PearlInjectorTileEntity.this, CONTAINER_FACTORY, BUFFER_SIZE) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                return stack.getItem() == Items.ENDER_PEARL;
             }
-        }
-        return accessibleSlots;
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return true;
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
-        return isItemValidForSlot(index, itemStackIn);
+        };
     }
 }

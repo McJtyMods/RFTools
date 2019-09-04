@@ -11,7 +11,7 @@ public class RegenerationEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return (float) EnvironmentalConfiguration.REGENERATION_RFPERTICK.get();
+        return (float) (double) EnvironmentalConfiguration.REGENERATION_RFPERTICK.get();
     }
 
     @Override

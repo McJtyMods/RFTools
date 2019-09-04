@@ -39,7 +39,7 @@ public abstract class BuffEModule implements EnvironmentModule {
         ticks = MAXTICKS;
 
         double maxsqdist = radius * radius;
-        List<PlayerEntity> players = new ArrayList<>(world.playerEntities);
+        List<PlayerEntity> players = new ArrayList<>(world.getPlayers());
         for (PlayerEntity player : players) {
             double py = player.posY;
             if (py >= miny && py <= maxy) {

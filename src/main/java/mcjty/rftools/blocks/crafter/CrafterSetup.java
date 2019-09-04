@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.crafter;
 
 
+import mcjty.lib.container.GenericContainer;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -16,6 +18,9 @@ public class CrafterSetup {
     public static TileEntityType<?> TYPE_CRAFTER2;
     @ObjectHolder("rftools:crafter3")
     public static TileEntityType<?> TYPE_CRAFTER3;
+
+    @ObjectHolder("rftools:crafter")
+    public static ContainerType<GenericContainer> CONTAINER_CRAFTER;
 
     public static void init() {
         if(!CrafterConfiguration.enabled.get()) return;

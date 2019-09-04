@@ -14,10 +14,12 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShapeRenderer {
@@ -441,7 +443,7 @@ public class ShapeRenderer {
         if (elements[type.ordinal()] == null) {
             elements[type.ordinal()] = new RenderData.RenderElement();
             elements[type.ordinal()].createRenderList(buffer);
-            GlStateManager.glLineWidth(3);
+            GlStateManager.lineWidth(3);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
             float r = type.getR();
             float g = type.getG();
@@ -483,13 +485,12 @@ public class ShapeRenderer {
     private static void setupScissor(IShapeParentGui gui) {
         Minecraft mc = Minecraft.getInstance();
 
-        final ScaledResolution scaledresolution = new ScaledResolution(mc);
-        int xScale = scaledresolution.getScaledWidth();
-        int yScale = scaledresolution.getScaledHeight();
-        int sx = (gui.getPreviewLeft() + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (gui.getPreviewTop() + 136) * mc.displayHeight / yScale;
-        int sw = 161 * mc.displayWidth / xScale;
-        int sh = 130 * mc.displayHeight / yScale;
+        int xScale = mc.mainWindow.getScaledWidth();
+        int yScale = mc.mainWindow.getScaledHeight();
+        int sx = (gui.getPreviewLeft() + 84) * mc.mainWindow.getWidth() / xScale;
+        int sy = (mc.mainWindow.getHeight()) - (gui.getPreviewTop() + 136) * mc.mainWindow.getHeight() / yScale;
+        int sw = 161 * mc.mainWindow.getWidth() / xScale;
+        int sh = 130 * mc.mainWindow.getHeight() / yScale;
 
         GL11.glScissor(sx, sy, sw, sh);
     }

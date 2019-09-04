@@ -62,10 +62,10 @@ public class ScreenBlock extends GenericRFToolsBlock {
 //        if(meta > 5) {
 //            meta -= 4;
 //        } else if(meta > 1) {
-//            Direction facing = Direction.VALUES[meta];
+//            Direction facing = OrientationTools.DIRECTION_VALUES[meta];
 //            return getDefaultState().withProperty(FACING, facing).withProperty(HORIZONTAL_FACING, facing);
 //        }
-//        Direction horizontalFacing = Direction.VALUES[(meta >> 1) + 2];
+//        Direction horizontalFacing = OrientationTools.DIRECTION_VALUES[(meta >> 1) + 2];
 //        Direction facing = (meta & 1) == 0 ? Direction.DOWN : Direction.UP;
 //        return getDefaultState().withProperty(HORIZONTAL_FACING, horizontalFacing).withProperty(FACING, facing);
 //    }

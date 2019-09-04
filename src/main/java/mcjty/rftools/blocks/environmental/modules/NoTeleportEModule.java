@@ -16,7 +16,7 @@ public class NoTeleportEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return (float) EnvironmentalConfiguration.NOTELEPORT_RFPERTICK.get();
+        return (float) (double) EnvironmentalConfiguration.NOTELEPORT_RFPERTICK.get();
     }
 
     @Override

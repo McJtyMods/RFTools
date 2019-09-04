@@ -7,7 +7,6 @@ import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class PeacefulAreaManager {
             if (area.getLastTouched() < curtime) {
                 // Hasn't been touched for at least 10 seconds. Probably no longer valid.
                 // To be sure we will first check this by testing if the environmental controller is still active and running.
-                ServerWorld world = DimensionManager.getWorld(entryCoordinate.getDimension());
+                ServerWorld world = WorldTools.getWorld(entryCoordinate.getDimension());
                 if (world != null) {
                     BlockPos c = entryCoordinate.getCoordinate();
                     // If the world is not loaded we don't do anything and we also don't remove the area since we have no information about it.
