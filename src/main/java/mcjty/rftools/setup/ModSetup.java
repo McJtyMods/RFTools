@@ -39,6 +39,7 @@ public class ModSetup extends DefaultModSetup {
 
     @Override
     public void init(FMLCommonSetupEvent e) {
+/*
         super.init(e);
 
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
@@ -59,6 +60,7 @@ public class ModSetup extends DefaultModSetup {
         ModItems.init();
         ModBlocks.init();
 //        ModWorldgen.init();
+*/
     }
 
     @Override

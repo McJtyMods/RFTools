@@ -61,7 +61,7 @@ if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
 group= "com.github.mcjty" // http://maven.apache.org/guideRs/mini/guide-naming-conventions.html
-archivesBaseName = "rftoolsutility"
+archivesBaseName = "rftools"
 
 if (System.getenv('BUILD_NUMBER') != null) {
     version += "-${System.getenv('BUILD_NUMBER')}"

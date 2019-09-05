@@ -3,17 +3,17 @@ package mcjty.rftools;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.base.ModBase;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
-import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
-import mcjty.rftools.config.ConfigSetup;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.setup.ModSetup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 
+@Mod(RFTools.MODID)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "7.72";
