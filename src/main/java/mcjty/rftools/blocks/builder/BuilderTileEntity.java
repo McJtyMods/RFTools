@@ -15,7 +15,6 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.crafter.StorageFilterCache;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -158,7 +157,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
     private ShapeCardType cardType = ShapeCardType.CARD_UNKNOWN;
 
-    private StorageFilterCache filterCache = null;
+    // @todo 1.14
+//    private StorageFilterCache filterCache = null;
 
     // For chunkloading with the quarry.
     // @todo 1.14
@@ -1097,10 +1097,10 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void getFilterCache() {
-        if (filterCache == null) {
-            // @todo 1.14
+        // @todo 1.14
+//        if (filterCache == null) {
 //            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
-        }
+//        }
     }
 
     public static boolean allowedToBreak(BlockState state, World world, BlockPos pos, PlayerEntity player) {
@@ -1147,13 +1147,14 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                 ItemStack filter = itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY);
                 if (!filter.isEmpty()) {
                     getFilterCache();
-                    if (filterCache != null) {
-                        boolean match = filterCache.match(block.getItem(world, srcPos, srcState));
-                        if (!match) {
-                            energyHandler.ifPresent(h -> h.consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get())));
-                            return skip();   // Skip this
-                        }
-                    }
+// @todo 1.14
+                    //                    if (filterCache != null) {
+//                        boolean match = filterCache.match(block.getItem(world, srcPos, srcState));
+//                        if (!match) {
+//                            energyHandler.ifPresent(h -> h.consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get())));
+//                            return skip();   // Skip this
+//                        }
+//                    }
                 }
                 if (!getCachedVoidableBlocks().contains(block)) {
                     if (overflowItems != null) {
@@ -1301,13 +1302,14 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                 ItemStack filter = itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY);
                 if (!filter.isEmpty()) {
                     getFilterCache();
-                    if (filterCache != null) {
-                        boolean match = filterCache.match(block.getItem(world, srcPos, srcState));
-                        if (!match) {
-                            energyHandler.ifPresent(h -> h.consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get())));
-                            return skip();   // Skip this
-                        }
-                    }
+// @todo 1.14
+                    //                    if (filterCache != null) {
+//                        boolean match = filterCache.match(block.getItem(world, srcPos, srcState));
+//                        if (!match) {
+//                            energyHandler.ifPresent(h -> h.consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get())));
+//                            return skip();   // Skip this
+//                        }
+//                    }
                 }
 
                 if (!silent) {
@@ -2365,7 +2367,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                     refreshSettings();
                 }
                 if (index == SLOT_FILTER) {
-                    filterCache = null;
+                    // @todo 1.14
+//                    filterCache = null;
                 }
             }
 

@@ -6,8 +6,6 @@ import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
-import mcjty.rftools.blocks.crafter.CrafterConfiguration;
-import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
@@ -21,7 +19,6 @@ import mcjty.rftools.blocks.teleporter.PacketGetReceivers;
 import mcjty.rftools.blocks.teleporter.PacketGetTransmitters;
 import mcjty.rftools.blocks.teleporter.PacketReceiversReady;
 import mcjty.rftools.blocks.teleporter.PacketTransmittersReady;
-import mcjty.rftools.compat.jei.PacketSendRecipe;
 import mcjty.rftools.items.builder.PacketUpdateNBTItemInventoryShape;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
 import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
@@ -61,10 +58,6 @@ public class RFToolsMessages {
         INSTANCE = net;
 
         // Server side
-        if (CrafterConfiguration.enabled.get()) {
-            net.registerMessage(id(), PacketCrafter.class, PacketCrafter::toBytes, PacketCrafter::new, PacketCrafter::handle);
-        }
-
         net.registerMessage(id(), PacketGetPlayers.class, PacketGetPlayers::toBytes, PacketGetPlayers::new, PacketGetPlayers::handle);
         net.registerMessage(id(), PacketGetReceivers.class, PacketGetReceivers::toBytes, PacketGetReceivers::new, PacketGetReceivers::handle);
         net.registerMessage(id(), PacketGetAllReceivers.class, PacketGetAllReceivers::toBytes, PacketGetAllReceivers::new, PacketGetAllReceivers::handle);
@@ -79,7 +72,6 @@ public class RFToolsMessages {
         if (NetworkMonitorConfiguration.enabled.get()) {
             net.registerMessage(id(), PacketGetConnectedBlocks.class, PacketGetConnectedBlocks::toBytes, PacketGetConnectedBlocks::new, PacketGetConnectedBlocks::handle);
         }
-        net.registerMessage(id(), PacketSendRecipe.class, PacketSendRecipe::toBytes, PacketSendRecipe::new, PacketSendRecipe::handle);
 //        net.registerMessage(id(), PacketGridToServer.class, PacketGridToServer::toBytes, PacketGridToServer::new, PacketGridToServer::handle);
 //        net.registerMessage(id(), PacketRequestItem.class, PacketRequestItem::toBytes, PacketRequestItem::new, PacketRequestItem::handle);
         net.registerMessage(id(), PacketGetHudLog.class, PacketGetHudLog::toBytes, PacketGetHudLog::new, PacketGetHudLog::handle);

@@ -8,13 +8,13 @@ import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.compat.wheelsupport.WheelSupport;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -34,7 +34,7 @@ public class ModSetup extends DefaultModSetup {
     public boolean top = false;
 
     public ModSetup() {
-        createTab("rftools", () -> new ItemStack(CrafterSetup.crafterBlock1));
+        createTab("rftools", () -> new ItemStack(Blocks.DIRT));
     }
 
     @Override

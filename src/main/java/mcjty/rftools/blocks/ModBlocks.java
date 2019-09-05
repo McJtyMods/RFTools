@@ -3,7 +3,6 @@ package mcjty.rftools.blocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.booster.BoosterSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.elevator.ElevatorSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
@@ -29,7 +28,6 @@ public final class ModBlocks {
         initBaseBlocks();
 
 //        CoalGeneratorSetup.init();
-        CrafterSetup.init();
 //        ModularStorageSetup.init();
         TeleporterSetup.init();
         ScreenSetup.init();

@@ -15,7 +15,6 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.blocks.crafter.StorageFilterCache;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
@@ -85,7 +84,8 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         }
     };
 
-    private StorageFilterCache filterCache = null;
+    // @todo 1.14
+//    private StorageFilterCache filterCache = null;
 
     private int scanId = 0;
     private ItemStack renderStack = ItemStack.EMPTY;
@@ -158,10 +158,10 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void getFilterCache() {
-        if (filterCache == null) {
-            // @todo 1.14
+        // @todo 1.14
+//        if (filterCache == null) {
 //            filterCache = StorageFilterItem.getCache(itemHandler.map(h -> h.getStackInSlot(SLOT_FILTER)).orElse(ItemStack.EMPTY));
-        }
+//        }
     }
 
     // @todo 1.14 loot tables
@@ -320,11 +320,11 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                     case FILTER_SLOT: {
                         ItemStack inputItem = inState.getBlock().getItem(world, pos, inState);
                         if (false) { // @todo 1.14 !modifier.getIn().isEmpty() && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
-                            StorageFilterCache filter = null; // @todo 1.14 StorageFilterItem.getCache(modifier.getIn());
-                            if (filter.match(inputItem)) {
-                                outState = getOutput(inState, modifier);
-                                stop = true;
-                            }
+//                            StorageFilterCache filter = null; // @todo 1.14 StorageFilterItem.getCache(modifier.getIn());
+//                            if (filter.match(inputItem)) {
+//                                outState = getOutput(inState, modifier);
+//                                stop = true;
+//                            }
                         } else {
                             // Empty input stack in modifier also matches
                             if (modifier.getIn().isEmpty() || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
@@ -434,12 +434,13 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                 } else {
                     BlockState state = world.getBlockState(mpos);
                     getFilterCache();
-                    if (filterCache != null) {
-                        ItemStack item = state.getBlock().getItem(world, mpos, state);
-                        if (!filterCache.match(item)) {
-                            state = null;
-                        }
-                    }
+                    // @todo 1.14
+//                    if (filterCache != null) {
+//                        ItemStack item = state.getBlock().getItem(world, mpos, state);
+//                        if (!filterCache.match(item)) {
+//                            state = null;
+//                        }
+//                    }
                     if (state != null && state != Blocks.AIR.getDefaultState()) {
                         state = mapState(progress.modifiers, progress.modifierMapping, mpos, state);
                     }
@@ -499,7 +500,8 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
             protected void onUpdate(int index) {
                 super.onUpdate(index);
                 if (index == SLOT_FILTER) {
-                    filterCache = null;
+                    // @todo 1.14
+//                    filterCache = null;
                 }
                 if (index == SLOT_OUT) {
                     ItemStack stack = getStackInSlot(index);

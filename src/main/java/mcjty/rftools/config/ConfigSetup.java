@@ -3,7 +3,6 @@ package mcjty.rftools.config;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.booster.BoosterConfiguration;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
-import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.elevator.ElevatorConfiguration;
 import mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
@@ -24,7 +23,6 @@ public class ConfigSetup {
         GeneralConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         SecurityConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
 //        CoalGeneratorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
-        CrafterConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
 //        ModularStorageConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         ScreenConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
 //        MachineInfuserConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
