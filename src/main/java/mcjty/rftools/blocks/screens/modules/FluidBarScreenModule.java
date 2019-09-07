@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,12 +36,11 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
 
         TileEntity te = world.getTileEntity(coordinate);
         if (!CapabilityTools.getFluidCapabilitySafe(te).map(hf -> {
-            IFluidTankProperties[] properties = hf.getTankProperties();
-            if (properties != null && properties.length > 0) {
-                if (properties[0].getContents() != null) {
-                    contents.set(properties[0].getContents().amount);
+            if (hf.getTanks() > 0) {
+                if (!hf.getFluidInTank(0).isEmpty()) {
+                    contents.set(hf.getFluidInTank(0).getAmount());
                 }
-                maxContents.set(properties[0].getCapacity());
+                maxContents.set(hf.getTankCapacity(0));
             }
             return true;
         }).orElse(false)) {

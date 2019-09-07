@@ -14,7 +14,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -145,12 +144,11 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
 
         TileEntity tileEntity = world.getTileEntity(monitor);
         if (!CapabilityTools.getFluidCapabilitySafe(tileEntity).map(fluidHandler -> {
-            IFluidTankProperties[] properties = fluidHandler.getTankProperties();
-            if (properties != null && properties.length > 0) {
-                if (properties[0].getContents() != null) {
-                    stored.set(properties[0].getContents().amount);
+            if (fluidHandler.getTanks() > 0) {
+                if (!fluidHandler.getFluidInTank(0).isEmpty()) {
+                    stored.set(fluidHandler.getFluidInTank(0).getAmount());
                 }
-                maxContents.set(properties[0].getCapacity());
+                maxContents.set(fluidHandler.getTankCapacity(0));
             }
             return true;
         }).orElseGet(() -> {

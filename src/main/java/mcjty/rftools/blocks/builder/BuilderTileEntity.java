@@ -29,6 +29,7 @@ import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -56,11 +57,9 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -1229,11 +1228,11 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             }
 
             Fluid fluid = stack.getFluid();
-            if (fluid.doesVaporize(stack) && world.getDimension().doesWaterVaporize()) {
-                fluid.vaporize(null, world, srcPos, stack);
+            if (fluid.getAttributes().doesVaporize(world, srcPos, stack) && world.getDimension().doesWaterVaporize()) {
+                fluid.getAttributes().vaporize(null, world, srcPos, stack);
             } else {
                 // We assume here the liquid is placable.
-                Block block = fluid.getBlock();
+                Block block = fluid.getDefaultState().getBlockState().getBlock();   // @todo 1.14 check blockstate
                 FakePlayer fakePlayer = getHarvester();
                 world.setBlockState(srcPos, block.getDefaultState(), 11);
 
@@ -1426,9 +1425,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         if (te != null) {
             return te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).map(h -> {
                 FluidStack fluidStack = new FluidStack(fluid, 1000);
-                int amount = h.fill(fluidStack, false);
+                int amount = h.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE);
                 if (amount == 1000) {
-                    h.fill(fluidStack, true);
+                    h.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
                     return true;
                 }
                 return false;
@@ -1553,12 +1552,12 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private FluidStack findAndConsumeLiquid(IFluidHandler tank, World srcWorld, BlockPos srcPos) {
-        for (IFluidTankProperties properties : tank.getTankProperties()) {
-            FluidStack contents = properties.getContents();
-            if (contents != null) {
+        for (int i = 0 ; i < tank.getTanks() ; i++) {
+            FluidStack contents = tank.getFluidInTank(i);
+            if (!contents.isEmpty()) {
                 if (contents.getFluid() != null) {
-                    if (contents.amount >= 1000) {
-                        FluidStack drained = tank.drain(new FluidStack(contents.getFluid(), 1000, contents.tag), true);
+                    if (contents.getAmount() >= 1000) {
+                        FluidStack drained = tank.drain(new FluidStack(contents.getFluid(), 1000, contents.getTag()), IFluidHandler.FluidAction.EXECUTE);
 //                        System.out.println("drained = " + drained);
                         return drained;
                     }

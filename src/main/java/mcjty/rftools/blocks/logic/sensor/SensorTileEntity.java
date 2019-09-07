@@ -19,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -32,10 +33,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import javax.annotation.Nonnull;
@@ -246,7 +245,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
 //            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
 //            return checkFluid(block, matcherFluidStack, state, newpos);
 //        }
-            if (matcherItem instanceof BucketItem || matcherItem instanceof UniversalBucket) {
+            if (matcherItem instanceof BucketItem ) { // @todo || matcherItem instanceof UniversalBucket) {
                 matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
                 return checkFluid(block, matcherFluidStack, state, newpos);
             }
@@ -265,12 +264,12 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
             return false;
         }
 
-        Block matcherFluidBlock = matcherFluid.getBlock();
+        BlockState matcherFluidBlock = matcherFluid.getDefaultState().getBlockState();
         if (matcherFluidBlock == null) {
             return false;
         }
 
-        ResourceLocation matcherBlockName = matcherFluidBlock.getRegistryName();
+        ResourceLocation matcherBlockName = matcherFluidBlock.getBlock().getRegistryName(); // @todo 1.14 match on blockstate and not block
         ResourceLocation blockName = block.getRegistryName();
         return blockName.equals(matcherBlockName);
     }
