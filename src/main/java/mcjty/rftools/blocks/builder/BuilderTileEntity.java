@@ -692,7 +692,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void checkStateServerShaped() {
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         for (int i = 0; i < BuilderConfiguration.quarryBaseSpeed.get() + (factor * BuilderConfiguration.quarryInfusionSpeedFactor.get()); i++) {
             if (scan != null) {
                 handleBlockShaped();
@@ -751,7 +751,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         if (mode == MODE_COLLECT) {
             collectItems(world);
         } else {
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             for (int i = 0; i < 2 + (factor * 40); i++) {
                 if (scan != null) {
                     handleBlock(world);
@@ -797,7 +797,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             scan = null;
         }
 
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
 
         if (!energyHandler.map(h -> {
                     long rf = h.getEnergyStored();
@@ -1020,7 +1020,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             }
         }
 
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         rfNeeded = (int) (rfNeeded * (3.0f - factor) / 3.0f);
 
         if (rfNeeded > energyHandler.map(h -> h.getEnergyStored()).orElse(0)) {
@@ -1668,7 +1668,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     private void copyBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos) {
         energyHandler.ifPresent(h -> {
             long rf = h.getEnergy();
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - factor) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
@@ -1737,7 +1737,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
         int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
 
@@ -1758,7 +1758,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
         int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
 
@@ -1824,7 +1824,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
             if (!energyHandler.map(h -> {
                 long rf = h.getEnergy();
-                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
                 int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - factor) / 4.0f);
                 if (rfNeeded > rf) {
                     // Not enough energy.
@@ -1894,7 +1894,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
         if (!energyHandler.map(h -> {
             long rf = h.getEnergy();
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - factor) / 4.0f);
             rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - factor) / 4.0f);
             if (rfNeeded > rf) {

@@ -123,7 +123,7 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
 
                 SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
-                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
                 int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + factor * 2.0));
                 int numblocks = Math.min(maxblocks, itemStack.getCount());
 

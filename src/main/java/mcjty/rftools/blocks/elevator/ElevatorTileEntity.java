@@ -675,7 +675,7 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
 
         // Check if we have enough energy
         controller.energyHandler.ifPresent(h -> {
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - factor) / 3.0f);
             if (h.getEnergyStored() < rfNeeded) {
                 Broadcaster.broadcast(world, getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);

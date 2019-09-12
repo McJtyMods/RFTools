@@ -528,7 +528,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
                 source = DamageSource.causePlayerDamage(fakePlayer);
             }
 
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             rf = (int) (rf * costFactor * (4.0f - factor) / 4.0f);
             if (h.getEnergyStored() < rf) {
                 // Not enough RF to do damage.
@@ -628,7 +628,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
     private int getRfPerTick() {
         int rf = calculateRfPerTick();
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         rf = (int) (rf * (2.0f - factor) / 2.0f);
         return rf;
     }

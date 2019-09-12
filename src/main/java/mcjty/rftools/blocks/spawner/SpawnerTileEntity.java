@@ -244,7 +244,7 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
                 rf = SpawnerConfiguration.defaultMobSpawnRf;
             }
 
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             rf = (int) (rf * (2.0f - factor) / 2.0f);
             if (h.getEnergy() < rf) {
                 return;

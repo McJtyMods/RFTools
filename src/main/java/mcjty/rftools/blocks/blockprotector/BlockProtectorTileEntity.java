@@ -211,7 +211,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         return energyHandler.map(h -> {
             long rf = h.getEnergyStored();
             int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection.get() * (1.0 - distance) * radius / 8.0f) + 1;
-            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
             rfneeded = (int) (rfneeded * (2.0f - factor) / 2.0f);
 
             if (rfneeded > rf) {

@@ -113,7 +113,7 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
             if (cachedModule != null) {
                 energyHandler.ifPresent(h -> {
                     long rf = h.getEnergyStored();
-                    float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+                    float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
                     int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
                     rfNeeded = (int) (rfNeeded * (3.0f - factor) / 3.0f);
                     for (LivingEntity entity : searchEntities()) {

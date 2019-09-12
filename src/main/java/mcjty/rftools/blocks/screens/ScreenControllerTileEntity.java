@@ -339,7 +339,7 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
 
     private void scan() {
         detach();
-        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(0.0f);
         int radius = 32 + (int) (factor * 32);
 
         int xCoord = getPos().getX();
