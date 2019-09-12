@@ -14,7 +14,6 @@ import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
-import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 
 
 
@@ -29,7 +28,6 @@ public final class ModBlocks {
 
 //        CoalGeneratorSetup.init();
 //        ModularStorageSetup.init();
-        TeleporterSetup.init();
         ScreenSetup.init();
         LogicBlockSetup.init();
 //        MachineInfuserSetup.init();

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
-import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +47,8 @@ public abstract class BuffEModule implements EnvironmentModule {
                 double sqdist = (px-pos.getX()) * (px-pos.getX()) + (pz-pos.getZ()) * (pz-pos.getZ());
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isPlayerAffected(player)) {
-                        BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
+                        // @todo 1.14 when env controller is ported
+//                        BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
                     }
                 }
             }

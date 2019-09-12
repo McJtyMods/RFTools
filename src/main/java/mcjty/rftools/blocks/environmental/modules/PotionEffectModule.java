@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
-import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -80,7 +79,8 @@ public abstract class PotionEffectModule implements EnvironmentModule {
 //                        player.addPotionEffect(new Effect(potion, MAXTICKS * 3, amplifier, true, false));
                         PlayerBuff buff = getBuff();
                         if (buff != null) {
-                            BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
+                            // @todo 1.14 when env controller is ported
+//                            BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
                         }
                     }
                 }
@@ -107,14 +107,16 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                             PlayerBuff buff = getBuff();
                             if (buff != null) {
                                 if (entity instanceof PlayerEntity) {
-                                    BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
+                                    // @todo 1.14 when env controller is ported
+//                                    BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
                                 }
                             }
                         }
                     } else if (entity instanceof PlayerEntity) {
                         PlayerBuff buff = getBuff();
                         if (buff != null) {
-                            BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
+                            // @todo 1.14 when env controller is ported
+//                            BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
                         }
                     }
                 }

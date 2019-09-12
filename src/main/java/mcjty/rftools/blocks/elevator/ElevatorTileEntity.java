@@ -11,7 +11,6 @@ import mcjty.lib.varia.Broadcaster;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
-import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -295,7 +294,8 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
                 }
 
                 if (entity instanceof PlayerEntity) {
-                    BuffProperties.disableElevatorMode((PlayerEntity) entity);
+                    // @todo 1.14 use api
+//                    BuffProperties.disableElevatorMode((PlayerEntity) entity);
                 }
             }
         }
@@ -309,11 +309,13 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
             double dy = 1;
             PlayerEntity player = (PlayerEntity) entity;
             if (stop) {
-                BuffProperties.disableElevatorMode(player);
+                // @todo 1.14 use api
+//                BuffProperties.disableElevatorMode(player);
                 entity.posY = movingY + dy;
                 entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
             } else {
-                BuffProperties.enableElevatorMode(player);
+                // @todo 1.14 use api
+//                BuffProperties.enableElevatorMode(player);
                 entity.setPosition(entity.posX, movingY + dy, entity.posZ);
             }
         } else {

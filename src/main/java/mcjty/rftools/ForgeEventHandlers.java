@@ -11,10 +11,6 @@ import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.blocks.teleporter.TeleportDestination;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.rftools.playerprops.PropertiesDispatcher;
 import mcjty.rftools.shapes.ShapeDataManagerServer;
 import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.block.Block;
@@ -23,9 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -37,37 +31,16 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class ForgeEventHandlers {
 
-    // Workaround for the charged porter so that the teleport can be done outside
-    // of the entity tick loop
-    private static List<Pair<TeleportDestination,PlayerEntity>> playersToTeleportHere = new ArrayList<>();
-
-    public static void addPlayerToTeleportHere(TeleportDestination destination, PlayerEntity player) {
-        playersToTeleportHere.add(Pair.of(destination, player));
-    }
-
-    private static void performDelayedTeleports() {
-        if (!playersToTeleportHere.isEmpty()) {
-            // Teleport players here
-            for (Pair<TeleportDestination, PlayerEntity> pair : playersToTeleportHere) {
-                TeleportationTools.performTeleport(pair.getRight(), pair.getLeft(), 0, 10, false);
-            }
-            playersToTeleportHere.clear();
-        }
-    }
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.START && event.world.getDimension().getType().getId() == 0) {
-            performDelayedTeleports();
             ShapeDataManagerServer.handleWork();
         }
     }
@@ -76,18 +49,18 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.getEntityWorld().isRemote) {
-            PlayerExtendedProperties.getBuffProperties(event.player).ifPresent(h -> {
-                h.tickBuffs((ServerPlayerEntity) event.player);
-            });
+//            PlayerExtendedProperties.getBuffProperties(event.player).ifPresent(h -> {
+//                h.tickBuffs((ServerPlayerEntity) event.player);
+//            });
         }
     }
 
     @SubscribeEvent
     public void onEntityConstructing(AttachCapabilitiesEvent<Entity> event){
         if (event.getObject() instanceof PlayerEntity) {
-            if (!event.getObject().getCapability(PlayerExtendedProperties.BUFF_CAPABILITY).isPresent()) {
-                event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
-            }
+//            if (!event.getObject().getCapability(PlayerExtendedProperties.BUFF_CAPABILITY).isPresent()) {
+//                event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
+//            }
         }
     }
 
@@ -203,14 +176,14 @@ public class ForgeEventHandlers {
     public void onLivingFall(LivingFallEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
-                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
-                    event.setDamageMultiplier(event.getDamageMultiplier() / 2);
-                }
-                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
-                    event.setCanceled(true);
-                }
-            });
+//            PlayerExtendedProperties.getBuffProperties(player).ifPresent(h -> {
+//                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
+//                    event.setDamageMultiplier(event.getDamageMultiplier() / 2);
+//                }
+//                if (h.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
+//                    event.setCanceled(true);
+//                }
+//            });
         }
     }
 
@@ -250,11 +223,11 @@ public class ForgeEventHandlers {
     public void onPlayerCloned(PlayerEvent.Clone event) {
         if (event.isWasDeath()) {
             // We need to copyFrom the capabilities
-            event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY).ifPresent(oldFavorites -> {
-                PlayerExtendedProperties.getFavoriteDestinations(event.getPlayer()).ifPresent(h -> {
-                    h.copyFrom(oldFavorites);
-                });
-            });
+//            event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY).ifPresent(oldFavorites -> {
+//                PlayerExtendedProperties.getFavoriteDestinations(event.getPlayer()).ifPresent(h -> {
+//                    h.copyFrom(oldFavorites);
+//                });
+//            });
         }
     }
 

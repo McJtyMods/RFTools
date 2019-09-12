@@ -5,8 +5,6 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class KeyBindings {
 
-    public static KeyBinding porterNextDestination;
-    public static KeyBinding porterPrevDestination;
     public static KeyBinding debugDumpNBTItem;
     public static KeyBinding debugDumpNBTBlock;
 

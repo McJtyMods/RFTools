@@ -13,11 +13,7 @@ public class KeyInputHandler {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (KeyBindings.porterNextDestination.isPressed()) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_CYCLE_DESTINATION, TypedMap.builder().put(CommandHandler.PARAM_NEXT, true));
-        } else if (KeyBindings.porterPrevDestination.isPressed()) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_CYCLE_DESTINATION, TypedMap.builder().put(CommandHandler.PARAM_NEXT, false));
-        } else if (KeyBindings.debugDumpNBTItem.isPressed()) {
+        if (KeyBindings.debugDumpNBTItem.isPressed()) {
             DumpItemNBT.dumpHeldItem(RFToolsMessages.INSTANCE, Minecraft.getInstance().player, false);
         } else if (KeyBindings.debugDumpNBTBlock.isPressed()) {
             DumpBlockNBT.dumpFocusedBlock(RFToolsMessages.INSTANCE, Minecraft.getInstance().player, true, false);

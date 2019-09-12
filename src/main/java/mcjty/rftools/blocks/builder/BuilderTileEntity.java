@@ -15,7 +15,6 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.ShapeCardType;
@@ -1780,9 +1779,10 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void teleportEntity(World world, World destWorld, Entity entity, double newX, double newY, double newZ) {
-        if (!TeleportationTools.allowTeleport(entity, world.getDimension().getType().getId(), entity.getPosition(), destWorld.getDimension().getType().getId(), new BlockPos(newX, newY, newZ))) {
-            return;
-        }
+        // @todo 1.14 use api to check for allow teleportation
+//        if (!TeleportationTools.allowTeleport(entity, world.getDimension().getType().getId(), entity.getPosition(), destWorld.getDimension().getType().getId(), new BlockPos(newX, newY, newZ))) {
+//            return;
+//        }
         mcjty.lib.varia.TeleportationTools.teleportEntity(entity, destWorld, newX, newY, newZ, null);
     }
 

@@ -10,7 +10,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
-import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -37,7 +36,6 @@ public class ConfigSetup {
 //        StorageScannerConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         ElevatorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         BoosterConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
-        TeleportConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ForgeConfigSpec SERVER_CONFIG;

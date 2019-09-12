@@ -3,22 +3,12 @@ package mcjty.rftools.setup;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.setup.DefaultModSetup;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.Achievements;
-import mcjty.rftools.ForgeEventHandlers;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.compat.wheelsupport.WheelSupport;
-import mcjty.rftools.crafting.ModCrafting;
-import mcjty.rftools.items.ModItems;
-import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.playerprops.BuffProperties;
-import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.ModList;
@@ -94,36 +84,6 @@ public class ModSetup extends DefaultModSetup {
     }
 
     private void setupCapabilities() {
-        CapabilityManager.INSTANCE.register(BuffProperties.class, new Capability.IStorage<BuffProperties>() {
-            @Override
-            public INBT writeNBT(Capability<BuffProperties> capability, BuffProperties instance, Direction side) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void readNBT(Capability<BuffProperties> capability, BuffProperties instance, Direction side, INBT nbt) {
-                throw new UnsupportedOperationException();
-            }
-
-        }, () -> {
-            throw new UnsupportedOperationException();
-        });
-
-        CapabilityManager.INSTANCE.register(FavoriteDestinationsProperties.class, new Capability.IStorage<FavoriteDestinationsProperties>() {
-            @Override
-            public INBT writeNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, Direction side) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void readNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, Direction side, INBT nbt) {
-                throw new UnsupportedOperationException();
-            }
-
-        }, () -> {
-            throw new UnsupportedOperationException();
-        });
-
         CapabilityManager.INSTANCE.register(IModuleProvider.class, new Capability.IStorage<IModuleProvider>() {
             @Override
             public INBT writeNBT(Capability<IModuleProvider> capability, IModuleProvider instance, Direction side) {

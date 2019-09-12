@@ -92,8 +92,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity, GenericCon
 
         window.bind(RFToolsMessages.INSTANCE, "bright", tileEntity, ScreenTileEntity.VALUE_BRIGHT.getName());
 
-        // @todo 1.14
-//        Keyboard.enableRepeatEvents(true);
+        minecraft.keyboardListener.enableRepeatEvents(true);
 
         selected = -1;
     }
