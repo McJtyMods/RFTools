@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.Infusable;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.RotationType;
 import mcjty.lib.builder.BlockBuilder;
@@ -32,7 +31,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class ShieldBlock extends BaseBlock implements Infusable, INBTPreservingIngredient
+public class ShieldBlock extends BaseBlock implements INBTPreservingIngredient
         /*, IRedstoneConnectable*/ {
 
     private final int max;

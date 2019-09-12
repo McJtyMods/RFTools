@@ -30,7 +30,6 @@ public class SecuritySetup {
     public static BaseBlock createSecurityManagerBlock() {
         return new BaseBlock(SECURITY_MANAGER_REGNAME, new BlockBuilder()
                 .tileEntitySupplier(SecurityManagerTileEntity::new)
-                .hasGui()
                 .infusable()
                 .info("message.rftoolsbase.shiftmessage")
                 .infoExtended("message.rftools.security_manager"))

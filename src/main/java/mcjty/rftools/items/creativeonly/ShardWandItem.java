@@ -1,8 +1,8 @@
 package mcjty.rftools.items.creativeonly;
 
-import mcjty.lib.api.Infusable;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.base.GeneralConfig;
-import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
@@ -29,19 +29,20 @@ public class ShardWandItem extends Item {
             BlockPos pos = context.getPos();
             PlayerEntity player = context.getPlayer();
             Block block = world.getBlockState(pos).getBlock();
-            if (block instanceof Infusable) {
+            if (block instanceof IInfusable) {
                 TileEntity te = world.getTileEntity(pos);
-                if (te instanceof GenericTileEntity) {
-                    GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-                    int infused = genericTileEntity.getInfused();
-                    if (infused < GeneralConfig.maxInfuse.get()) {
-                        infused = GeneralConfig.maxInfuse.get();
-                        Logging.message(player, "Maximized infusion level!");
-                    } else {
-                        infused = 0;
-                        Logging.message(player, "Cleared infusion level!");
-                    }
-                    genericTileEntity.setInfused(infused);
+                if (te != null) {
+                    te.getCapability(CapabilityInfusable.INFUSABLE_CAPABILITY).ifPresent(inf -> {
+                        int infused = inf.getInfused();
+                        if (infused < GeneralConfig.maxInfuse.get()) {
+                            infused = GeneralConfig.maxInfuse.get();
+                            Logging.message(player, "Maximized infusion level!");
+                        } else {
+                            infused = 0;
+                            Logging.message(player, "Cleared infusion level!");
+                        }
+                        inf.setInfused(infused);
+                    });
                 } else {
                     Logging.message(player, "This block doesn't have the right tile entity!");
                 }

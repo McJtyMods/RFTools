@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.builder;
 
 import com.mojang.authlib.GameProfile;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IAction;
@@ -51,10 +54,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -67,6 +72,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class BuilderTileEntity extends GenericTileEntity implements ITickableTileEntity, IHudSupport {
@@ -179,6 +185,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(
             this, true, BuilderConfiguration.BUILDER_MAXENERGY.get(), BuilderConfiguration.BUILDER_RECEIVEPERTICK.get()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BuilderTileEntity.this));
 
     public BuilderTileEntity() {
         super(BuilderSetup.TYPE_BUILDER);
@@ -685,7 +692,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void checkStateServerShaped() {
-        float factor = getInfusedFactor();
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
         for (int i = 0; i < BuilderConfiguration.quarryBaseSpeed.get() + (factor * BuilderConfiguration.quarryInfusionSpeedFactor.get()); i++) {
             if (scan != null) {
                 handleBlockShaped();
@@ -744,7 +751,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         if (mode == MODE_COLLECT) {
             collectItems(world);
         } else {
-            float factor = getInfusedFactor();
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
             for (int i = 0; i < 2 + (factor * 40); i++) {
                 if (scan != null) {
                     handleBlock(world);
@@ -790,10 +797,12 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             scan = null;
         }
 
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+
         if (!energyHandler.map(h -> {
                     long rf = h.getEnergyStored();
                     float area = (maxBox.getX() - minBox.getX() + 1) * (maxBox.getY() - minBox.getY() + 1) * (maxBox.getZ() - minBox.getZ() + 1);
-                    float infusedFactor = (4.0f - getInfusedFactor()) / 4.0f;
+                    float infusedFactor = (4.0f - factor) / 4.0f;
                     int rfNeeded = (int) (BuilderConfiguration.collectRFPerTickPerArea.get() * area * infusedFactor) * BuilderConfiguration.collectTimer.get();
                     if (rfNeeded > rf) {
                         // Not enough energy.
@@ -809,11 +818,11 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         List<Entity> items = world.getEntitiesWithinAABB(Entity.class, bb);
         for (Entity entity : items) {
             if (entity instanceof ItemEntity) {
-                if (collectItem(world, getInfusedFactor(), (ItemEntity) entity)) {
+                if (collectItem(world, factor, (ItemEntity) entity)) {
                     return;
                 }
             } else if (entity instanceof ExperienceOrbEntity) {
-                if (collectXP(world, getInfusedFactor(), (ExperienceOrbEntity) entity)) {
+                if (collectXP(world, factor, (ExperienceOrbEntity) entity)) {
                     return;
                 }
             }
@@ -1011,7 +1020,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             }
         }
 
-        rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        rfNeeded = (int) (rfNeeded * (3.0f - factor) / 3.0f);
 
         if (rfNeeded > energyHandler.map(h -> h.getEnergyStored()).orElse(0)) {
             // Not enough energy.
@@ -1658,7 +1668,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     private void copyBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos) {
         energyHandler.ifPresent(h -> {
             long rf = h.getEnergy();
-            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - factor) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return;
@@ -1726,8 +1737,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
 
         // Check for entities.
         List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x - .1, y - .1, z - .1, x + 1.1, y + 1.1, z + 1.1));
@@ -1746,8 +1758,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - factor) / 4.0f);
 
         // Check for entities.
         List<Entity> entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
@@ -1811,7 +1824,8 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
             if (!energyHandler.map(h -> {
                 long rf = h.getEnergy();
-                int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+                int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - factor) / 4.0f);
                 if (rfNeeded > rf) {
                     // Not enough energy.
                     return false;
@@ -1880,8 +1894,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
         if (!energyHandler.map(h -> {
             long rf = h.getEnergy();
-            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-            rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - factor) / 4.0f);
+            rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - factor) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return false;
@@ -2381,5 +2396,23 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                 return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

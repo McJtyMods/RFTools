@@ -3,6 +3,9 @@ package mcjty.rftools.blocks.elevator;
 
 import com.mojang.authlib.GameProfile;
 import mcjty.lib.McJtyLib;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -34,12 +37,16 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +86,7 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
     private FakePlayer harvester = null;
 
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ElevatorConfiguration.MAXENERGY.get(), ElevatorConfiguration.RFPERTICK.get()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(ElevatorTileEntity.this));
 
     public ElevatorTileEntity() {
         super(TYPE_ELEVATOR);
@@ -667,7 +675,8 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
 
         // Check if we have enough energy
         controller.energyHandler.ifPresent(h -> {
-            int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - factor) / 3.0f);
             if (h.getEnergyStored() < rfNeeded) {
                 Broadcaster.broadcast(world, getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
                 return;
@@ -895,5 +904,20 @@ public class ElevatorTileEntity extends GenericTileEntity implements ITickableTi
             return isPlatformHere() ? 15 : 0;
         }
         return 0;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

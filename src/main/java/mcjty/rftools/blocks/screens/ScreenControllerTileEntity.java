@@ -1,5 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.IAction;
 import mcjty.lib.container.ContainerFactory;
@@ -9,9 +12,14 @@ import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +52,7 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
     public static final String COMPONENT_NAME = "screen_controller";
 
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScreenConfiguration.CONTROLLER_MAXENERGY.get(), ScreenConfiguration.CONTROLLER_RECEIVEPERTICK.get()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(ScreenControllerTileEntity.this));
 
     private List<BlockPos> connectedScreens = new ArrayList<>();
     private int tickCounter = 20;
@@ -330,7 +339,8 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
 
     private void scan() {
         detach();
-        int radius = 32 + (int) (getInfusedFactor() * 32);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        int radius = 32 + (int) (factor * 32);
 
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -372,5 +382,20 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
 
     public List<BlockPos> getConnectedScreens() {
         return connectedScreens;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

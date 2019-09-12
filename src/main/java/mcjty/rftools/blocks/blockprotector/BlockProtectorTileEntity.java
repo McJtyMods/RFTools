@@ -1,6 +1,11 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import mcjty.lib.api.container.CapabilityContainerProvider;
+import mcjty.lib.api.container.DefaultContainerProvider;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.GenericContainer;
@@ -13,20 +18,22 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.wrapper.EmptyHandler;
+import net.minecraftforge.energy.CapabilityEnergy;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +57,10 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
 
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
             BlockProtectorConfiguration.MAXENERGY.get(), BlockProtectorConfiguration.RECEIVEPERTICK.get()));
+    private LazyOptional<INamedContainerProvider> screenHandler = LazyOptional.of(() -> new DefaultContainerProvider<GenericContainer>("Crafter")
+            .containerSupplier((windowId,player) -> new GenericContainer(BlockProtectorSetup.CONTAINER_PROTECTOR, windowId, BlockProtectorTileEntity.CONTAINER_FACTORY, getPos(), BlockProtectorTileEntity.this))
+            .energyHandler(energyHandler));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BlockProtectorTileEntity.this));
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
@@ -200,7 +211,8 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         return energyHandler.map(h -> {
             long rf = h.getEnergyStored();
             int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection.get() * (1.0 - distance) * radius / 8.0f) + 1;
-            rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            rfneeded = (int) (rfneeded * (2.0f - factor) / 2.0f);
 
             if (rfneeded > rf) {
                 return -1;
@@ -363,12 +375,18 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         return false;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Container createMenu(int windowId, PlayerInventory inventory, PlayerEntity player) {
-        GenericContainer container = new GenericContainer(BlockProtectorSetup.CONTAINER_PROTECTOR, windowId, BlockProtectorTileEntity.CONTAINER_FACTORY, getPos(), this);
-        container.setupInventories(new EmptyHandler(), inventory);
-        energyHandler.ifPresent(e -> e.addIntegerListeners(container));
-        return container;
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+            return screenHandler.cast();
+        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

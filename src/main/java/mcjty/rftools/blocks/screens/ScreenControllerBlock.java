@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.Infusable;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.setup.GuiProxy;
@@ -19,7 +18,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ScreenControllerBlock extends GenericRFToolsBlock implements Infusable {
+public class ScreenControllerBlock extends GenericRFToolsBlock {
 
     public ScreenControllerBlock() {
         super("screen_controller", new BlockBuilder()

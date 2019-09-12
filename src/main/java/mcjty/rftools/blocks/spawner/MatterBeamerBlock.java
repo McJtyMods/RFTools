@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.Infusable;
 import mcjty.lib.blocks.RotationType;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -28,7 +27,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
+public class MatterBeamerBlock extends GenericRFToolsBlock /*, IRedstoneConnectable*/ {
 
     public static final BooleanProperty WORKING = BooleanProperty.create("working");
 

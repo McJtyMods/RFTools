@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.Infusable;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -33,7 +32,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
+public class BlockProtectorBlock extends GenericRFToolsBlock /*, IRedstoneConnectable*/ {
 
     public static final BooleanProperty WORKING = BooleanProperty.create("working");
 

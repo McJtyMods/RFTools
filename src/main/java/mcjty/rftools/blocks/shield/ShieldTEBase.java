@@ -2,6 +2,9 @@ package mcjty.rftools.blocks.shield;
 
 import com.mojang.authlib.GameProfile;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
@@ -40,10 +43,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -135,6 +140,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, getConfigMaxEnergy(), getConfigRfPerTick()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(ShieldTEBase.this));
 
     public ShieldTEBase(TileEntityType<?> type) {
         super(type);
@@ -522,7 +528,8 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
                 source = DamageSource.causePlayerDamage(fakePlayer);
             }
 
-            rf = (int) (rf * costFactor * (4.0f - getInfusedFactor()) / 4.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            rf = (int) (rf * costFactor * (4.0f - factor) / 4.0f);
             if (h.getEnergyStored() < rf) {
                 // Not enough RF to do damage.
                 return;
@@ -531,7 +538,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
             float damage = (float) (double) ShieldConfiguration.damage.get();
             damage *= damageFactor;
-            damage = damage * (1.0f + getInfusedFactor() / 2.0f);
+            damage = damage * (1.0f + factor / 2.0f);
 
             entity.attackEntityFrom(source, damage);
         });
@@ -621,7 +628,8 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
     private int getRfPerTick() {
         int rf = calculateRfPerTick();
-        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+        float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+        rf = (int) (rf * (2.0f - factor) / 2.0f);
         return rf;
     }
 
@@ -1218,4 +1226,21 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
         };
     }
 
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
+    }
 }

@@ -1,5 +1,8 @@
 package mcjty.rftools.blocks.booster;
 
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.container.*;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.tileentity.GenericEnergyStorage;
@@ -14,10 +17,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static mcjty.rftools.blocks.booster.BoosterSetup.TYPE_BOOSTER;
@@ -39,6 +46,7 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
             BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BoosterTileEntity.this));
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULE) {
         @Override
@@ -105,8 +113,9 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
             if (cachedModule != null) {
                 energyHandler.ifPresent(h -> {
                     long rf = h.getEnergyStored();
+                    float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
                     int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
-                    rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
+                    rfNeeded = (int) (rfNeeded * (3.0f - factor) / 3.0f);
                     for (LivingEntity entity : searchEntities()) {
                         if (rfNeeded <= rf) {
                             if (cachedModule.apply(getWorld(), getPos(), entity, 40)) {
@@ -166,5 +175,20 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
             return true;
         }
         return false;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

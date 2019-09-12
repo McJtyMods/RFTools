@@ -1,5 +1,8 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
@@ -21,9 +24,16 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static mcjty.rftools.blocks.spawner.SpawnerSetup.TYPE_MATTER_BEAMER;
 
@@ -43,6 +53,7 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.BEAMER_MAXENERGY, SpawnerConfiguration.BEAMER_RECEIVEPERTICK));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(MatterBeamerTileEntity.this));
 
     public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
 
@@ -112,16 +123,17 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
 
                 SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
-                int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
+                float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+                int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + factor * 2.0));
                 int numblocks = Math.min(maxblocks, itemStack.getCount());
 
-                int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
+                int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - factor) / 4.0f);
                 if (e.getEnergy() < rf) {
                     return;
                 }
                 e.consumeEnergy(rf);
 
-                if (spawnerTileEntity.addMatter(itemStack, numblocks, getInfusedFactor())) {
+                if (spawnerTileEntity.addMatter(itemStack, numblocks, factor)) {
                     h.extractItem(0, numblocks, false);
                     enableBlockGlow();
                 }
@@ -270,5 +282,23 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
 
     private NoDirectionItemHander createItemHandler() {
         return new NoDirectionItemHander(MatterBeamerTileEntity.this, CONTAINER_FACTORY, 1);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

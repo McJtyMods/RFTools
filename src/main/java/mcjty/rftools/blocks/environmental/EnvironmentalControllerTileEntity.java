@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
@@ -26,10 +29,14 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,6 +89,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get()));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EnvironmentalControllerTileEntity.this));
 
     public enum EnvironmentalMode {
         MODE_BLACKLIST,
@@ -288,7 +296,8 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         if (environmentModules == null) {
             getEnvironmentModules();
         }
-        int rfNeeded = (int) (totalRfPerTick * getPowerMultiplier() * (4.0f - getInfusedFactor()) / 4.0f);
+        float defaultRfNeeded = totalRfPerTick * getPowerMultiplier();
+        int rfNeeded = infusableHandler.map(inf -> (int) (totalRfPerTick * getPowerMultiplier() * (4.0f - inf.getInfusedFactor()) / 4.0f)).orElse((int)defaultRfNeeded);
         if (environmentModules.isEmpty()) {
             return rfNeeded;
         }
@@ -613,5 +622,23 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
                 environmentModules = null;
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }

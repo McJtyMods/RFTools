@@ -2,6 +2,9 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.PacketSendClientCommand;
@@ -34,8 +37,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -70,6 +75,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(
             this, false, 5000000, 20000));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EndergenicTileEntity.this));
 
     @Override
     public IValue<?>[] getValues() {
@@ -331,8 +337,8 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
             energyHandler.ifPresent(h -> {
-                long rf = EndergenicConfiguration.rfToHoldPearl.get();
-                rf = (long) (rf * (3.0f - getInfusedFactor()) / 3.0f);
+                long defaultRf = EndergenicConfiguration.rfToHoldPearl.get();
+                long rf = infusableHandler.map(inf -> (long) (defaultRf * (3.0f - inf.getInfusedFactor()) / 3.0f)).orElse(defaultRf);
 
                 long rfStored = h.getEnergy();
                 if (rfStored < rf) {
@@ -562,8 +568,8 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         } else {
             pearlArrivedAt = chargingMode;
             // Otherwise we get RF and this block goes into holding mode.
-            long rf = (long) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor.get());
-            rf = (long) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
+            long defaultRf = (long) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor.get());
+            long rf = infusableHandler.map(inf -> (long) (defaultRf * (inf.getInfusedFactor() + 2.0f) / 2.0f)).orElse(defaultRf);
 
             // Give a bonus for pearls that have been around a bit longer.
             int a = age * 5;
@@ -814,4 +820,18 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 //        }
 //    }
 
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
+    }
 }

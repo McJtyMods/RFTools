@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.api.infusable.CapabilityInfusable;
+import mcjty.lib.api.infusable.DefaultInfusable;
+import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
@@ -33,8 +36,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -69,6 +75,7 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK));
+    private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(SpawnerTileEntity.this));
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_SYRINGE) {
         @Override
@@ -237,7 +244,8 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
                 rf = SpawnerConfiguration.defaultMobSpawnRf;
             }
 
-            rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+            float factor = infusableHandler.map(inf -> inf.getInfusedFactor()).orElse(1.0f);
+            rf = (int) (rf * (2.0f - factor) / 2.0f);
             if (h.getEnergy() < rf) {
                 return;
             }
@@ -482,5 +490,23 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
                 return stack.getItem() == ModItems.syringeItem;
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
+            return infusableHandler.cast();
+        }
+        return super.getCapability(cap, facing);
     }
 }
