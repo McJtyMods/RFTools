@@ -1,9 +1,10 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
+import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
+import mcjty.lib.api.machineinfo.IMachineInformation;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
@@ -49,7 +50,7 @@ import static mcjty.rftools.blocks.spawner.SpawnerSetup.TYPE_SPAWNER;
 
 //import net.minecraft.entity.monster.SkeletonType;
 
-public class SpawnerTileEntity extends GenericTileEntity implements MachineInformation, ITickableTileEntity {
+public class SpawnerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_GET_SPAWNERINFO = "getSpawnerInfo";
     public static final Key<Double> PARAM_MATTER0 = new Key<>("matter0", Type.DOUBLE);
@@ -74,6 +75,7 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(SpawnerTileEntity.this));
+    private LazyOptional<IMachineInformation> infoHandler = LazyOptional.of(() -> createMachineInfo());
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_SYRINGE) {
         @Override
@@ -82,10 +84,6 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
         }
     };
 
-
-    private static final String[] TAGS = new String[]{"matter1", "matter2", "matter3", "mob"};
-    private static final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
-            "The amount of matter in the third slot", "The name of the mob being spawned"};
 
     private float matter[] = new float[]{0, 0, 0};
     private boolean checkSyringe = true;
@@ -96,36 +94,6 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
 
     public SpawnerTileEntity() {
         super(TYPE_SPAWNER);
-    }
-
-    @Override
-    public int getTagCount() {
-        return TAGS.length;
-    }
-
-    @Override
-    public String getTagName(int index) {
-        return TAGS[index];
-    }
-
-    @Override
-    public String getTagDescription(int index) {
-        return TAG_DESCRIPTIONS[index];
-    }
-
-    @Override
-    public String getData(int index, long millis) {
-        switch (index) {
-            case 0:
-                return Float.toString(matter[0]);
-            case 1:
-                return Float.toString(matter[1]);
-            case 2:
-                return Float.toString(matter[2]);
-            case 3:
-                return mobId;
-        }
-        return null;
     }
 
     private void testSyringe() {
@@ -480,6 +448,44 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
         };
     }
 
+    private IMachineInformation createMachineInfo() {
+        return new IMachineInformation() {
+            private final String[] TAGS = new String[]{"matter1", "matter2", "matter3", "mob"};
+            private final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
+                    "The amount of matter in the third slot", "The name of the mob being spawned"};
+
+            @Override
+            public int getTagCount() {
+                return TAGS.length;
+            }
+
+            @Override
+            public String getTagName(int index) {
+                return TAGS[index];
+            }
+
+            @Override
+            public String getTagDescription(int index) {
+                return TAG_DESCRIPTIONS[index];
+            }
+
+            @Override
+            public String getData(int index, long millis) {
+                switch (index) {
+                    case 0:
+                        return Float.toString(matter[0]);
+                    case 1:
+                        return Float.toString(matter[1]);
+                    case 2:
+                        return Float.toString(matter[2]);
+                    case 3:
+                        return mobId;
+                }
+                return null;
+            }
+        };
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -494,6 +500,9 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY) {
+            return infoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

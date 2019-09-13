@@ -1,10 +1,11 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.api.MachineInformation;
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
+import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
+import mcjty.lib.api.machineinfo.IMachineInformation;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.PacketSendClientCommand;
@@ -52,8 +53,8 @@ import java.util.Random;
 
 import static mcjty.rftools.blocks.endergen.EndergenicSetup.TYPE_ENDERGENIC;
 
-public class EndergenicTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation,
-        IHudSupport, IMachineInformation, TickOrderHandler.ICheckStateServer {
+public class EndergenicTileEntity extends GenericTileEntity implements ITickableTileEntity,
+        IHudSupport, IPowerInformation, TickOrderHandler.ICheckStateServer {
 
     private static Random random = new Random();
 
@@ -64,10 +65,6 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     public static Key<Integer> PARAM_STATLAUNCHED = new Key<>("statlaunched", Type.INTEGER);
     public static Key<Integer> PARAM_STATOPPORTUNITIES = new Key<>("statopportunities", Type.INTEGER);
 
-    private static final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
-    private static final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
-            "Amount of pearls that were launched during the last 5 seconds", "Number of opportunities for the last 5 seconds"};
-
     public static final int CHARGE_IDLE = 0;
     public static final int CHARGE_HOLDING = -1;
 
@@ -76,6 +73,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(
             this, false, 5000000, 20000));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EndergenicTileEntity.this));
+    private LazyOptional<IMachineInformation> infoHandler = LazyOptional.of(() -> createMachineInfo());
 
     @Override
     public IValue<?>[] getValues() {
@@ -366,36 +364,6 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     @Override
     public int getDimension() {
         return world.getDimension().getType().getId();
-    }
-
-    @Override
-    public int getTagCount() {
-        return TAGS.length;
-    }
-
-    @Override
-    public String getTagName(int index) {
-        return TAGS[index];
-    }
-
-    @Override
-    public String getTagDescription(int index) {
-        return TAG_DESCRIPTIONS[index];
-    }
-
-    @Override
-    public String getData(int index, long millis) {
-        switch (index) {
-            case 0:
-                return Long.toString(lastRfPerTick);
-            case 1:
-                return Integer.toString(lastPearlsLost);
-            case 2:
-                return Integer.toString(lastPearlsLaunched);
-            case 3:
-                return Integer.toString(lastChargeCounter);
-        }
-        return null;
     }
 
     private void log(String message) {
@@ -788,6 +756,44 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         return true;
     }
 
+    private IMachineInformation createMachineInfo() {
+        return new IMachineInformation() {
+            private final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
+            private final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
+                    "Amount of pearls that were launched during the last 5 seconds", "Number of opportunities for the last 5 seconds"};
+
+            @Override
+            public int getTagCount() {
+                return TAGS.length;
+            }
+
+            @Override
+            public String getTagName(int index) {
+                return TAGS[index];
+            }
+
+            @Override
+            public String getTagDescription(int index) {
+                return TAG_DESCRIPTIONS[index];
+            }
+
+            @Override
+            public String getData(int index, long millis) {
+                switch (index) {
+                    case 0:
+                        return Long.toString(lastRfPerTick);
+                    case 1:
+                        return Integer.toString(lastPearlsLost);
+                    case 2:
+                        return Integer.toString(lastPearlsLaunched);
+                    case 3:
+                        return Integer.toString(lastChargeCounter);
+                }
+                return null;
+            }
+
+        };
+    }
 
 //    @Override
 //    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
@@ -831,6 +837,9 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY) {
+            return infoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

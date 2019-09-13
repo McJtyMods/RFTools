@@ -1,6 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.lib.api.MachineInformation;
+import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -64,13 +64,15 @@ public class MachineInformationModuleItem extends Item implements IModuleProvide
         IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
         if((currentData.contains("monitordim") ? currentData.getInt("monitordim") : currentData.getInt("dim")) == world.getDimension().getType().getId()) {
 	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInt("monitorx"), currentData.getInt("monitory"), currentData.getInt("monitorz")));
-	        if (tileEntity instanceof MachineInformation) {
-	            MachineInformation information = (MachineInformation)tileEntity;
-	            int count = information.getTagCount();
-	            choices = new IModuleGuiBuilder.Choice[count];
-	            for (int i = 0; i < count; ++i) {
-	                choices[i] = new IModuleGuiBuilder.Choice(information.getTagName(i), information.getTagDescription(i));
-	            }
+	        if (tileEntity != null) {
+	            choices = tileEntity.getCapability(CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY).map(h -> {
+                    int count = h.getTagCount();
+                    IModuleGuiBuilder.Choice[] cs = new IModuleGuiBuilder.Choice[count];
+                    for (int i = 0; i < count; ++i) {
+                        cs[i] = new IModuleGuiBuilder.Choice(h.getTagName(i), h.getTagDescription(i));
+                    }
+                    return cs;
+                }).orElse(EMPTY_CHOICES);
 	        }
         }
 
@@ -115,7 +117,7 @@ public class MachineInformationModuleItem extends Item implements IModuleProvide
         if (tagCompound == null) {
             tagCompound = new CompoundNBT();
         }
-        if (te instanceof MachineInformation) {
+        if (te != null && te.getCapability(CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY).isPresent()) {
             tagCompound.putInt("monitordim", world.getDimension().getType().getId());
             tagCompound.putInt("monitorx", pos.getX());
             tagCompound.putInt("monitory", pos.getY());

@@ -1,6 +1,6 @@
 package mcjty.rftools.varia;
 
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
@@ -76,8 +76,8 @@ public class RFToolsTools {
                     if (EnergyTools.isEnergyTE(te, null)) {
                         EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te, null);
                         Long usage = null;
-                        if (te instanceof IMachineInformation) {
-                            usage = ((IMachineInformation) te).getEnergyDiffPerTick();
+                        if (te instanceof IPowerInformation) {
+                            usage = ((IPowerInformation) te).getEnergyDiffPerTick();
                         }
                         result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
                     }

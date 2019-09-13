@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import mcjty.lib.api.MachineInformation;
+import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -30,17 +30,18 @@ public class MachineInformationScreenModule implements IScreenModule<IModuleData
         }
 
         TileEntity te = world.getTileEntity(coordinate);
-        if (!(te instanceof MachineInformation)) {
+        if (te == null) {
             return null;
         }
-        MachineInformation information = (MachineInformation) te;
-        String info;
-        if (tag < 0 || tag >= information.getTagCount()) {
-            info = "[BAD TAG]";
-        } else {
-            info = information.getData(tag, millis);
-        }
-        return helper.createString(info);
+        return te.getCapability(CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY).map(h -> {
+            String info;
+            if (tag < 0 || tag >= h.getTagCount()) {
+                info = "[BAD TAG]";
+            } else {
+                info = h.getData(tag, millis);
+            }
+            return helper.createString(info);
+        }).orElse(null);
     }
 
     @Override

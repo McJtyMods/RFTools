@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import com.mojang.authlib.GameProfile;
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
-        IMachineInformation { // @todo }, IPeripheral {
+        IPowerInformation { // @todo }, IPeripheral {
 
     public static final String CMD_APPLYCAMO = "shield.applyCamo";
     public static final Key<Integer> PARAM_PASS = new Key<>("pass", Type.INTEGER);

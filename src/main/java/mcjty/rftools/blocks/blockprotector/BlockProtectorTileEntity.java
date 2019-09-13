@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.api.container.CapabilityContainerProvider;
 import mcjty.lib.api.container.DefaultContainerProvider;
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
@@ -44,7 +44,7 @@ import static mcjty.rftools.blocks.blockprotector.BlockProtectorSetup.TYPE_PROTE
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
 //})
 public class BlockProtectorTileEntity extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
-        IMachineInformation /*, IPeripheral*/ {
+        IPowerInformation /*, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "protector.setRsMode";
     public static final String COMPONENT_NAME = "block_protector";

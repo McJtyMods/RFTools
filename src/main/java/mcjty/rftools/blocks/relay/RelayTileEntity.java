@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
-import mcjty.lib.api.MachineInformation;
+import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
+import mcjty.lib.api.machineinfo.IMachineInformation;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -26,7 +27,7 @@ import java.util.List;
 
 import static mcjty.rftools.blocks.relay.RelaySetup.TYPE_RELAY;
 
-public class RelayTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation {
+public class RelayTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
@@ -71,11 +72,6 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
 
     public static final BooleanProperty ENABLED = BooleanProperty.create("enabled");
 
-    private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in"};
-    private static final String[] TAG_DESCRIPTIONS = new String[] {
-            "The current RF/t output given by this block (last 2 seconds)",
-            "The current RF/t input received by this block (last 2 seconds)"};
-
     private boolean[] inputModeOn = new boolean[] { false, false, false, false, false, false, false };
     private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false, false };
     private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000, 1000 };
@@ -89,6 +85,7 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
     private long lastTime = 0;
 
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, MAXENERGY, RECEIVEPERTICK));
+    private LazyOptional<IMachineInformation> infoHandler = LazyOptional.of(() -> createMachineInfo());
     private LazyOptional[] facingStorage = new LazyOptional[] {
             LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.DOWN)),
             LazyOptional.of(() -> new RelayEnergyStorage(this, Direction.UP)),
@@ -116,30 +113,6 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
 
     public int getLastRfPerTickOut() {
         return lastRfPerTickOut;
-    }
-
-    @Override
-    public int getTagCount() {
-        return TAGS.length;
-    }
-
-    @Override
-    public String getTagName(int index) {
-        return TAGS[index];
-    }
-
-    @Override
-    public String getTagDescription(int index) {
-        return TAG_DESCRIPTIONS[index];
-    }
-
-    @Override
-    public String getData(int index, long millis) {
-        switch (index) {
-            case 0: return lastRfPerTickOut + "RF/t";
-            case 1: return lastRfPerTickIn + "RF/t";
-        }
-        return null;
     }
 
     public boolean isPowered() {
@@ -295,6 +268,39 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
         return false;
     }
 
+    private IMachineInformation createMachineInfo() {
+        return new IMachineInformation() {
+            private final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in"};
+            private final String[] TAG_DESCRIPTIONS = new String[] {
+                    "The current RF/t output given by this block (last 2 seconds)",
+                    "The current RF/t input received by this block (last 2 seconds)"};
+
+            @Override
+            public int getTagCount() {
+                return TAGS.length;
+            }
+
+            @Override
+            public String getTagName(int index) {
+                return TAGS[index];
+            }
+
+            @Override
+            public String getTagDescription(int index) {
+                return TAG_DESCRIPTIONS[index];
+            }
+
+            @Override
+            public String getData(int index, long millis) {
+                switch (index) {
+                    case 0: return lastRfPerTickOut + "RF/t";
+                    case 1: return lastRfPerTickIn + "RF/t";
+                }
+                return null;
+            }
+        };
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -304,6 +310,9 @@ public class RelayTileEntity extends GenericTileEntity implements ITickableTileE
             } else {
                 return facingStorage[facing.ordinal()].cast();
             }
+        }
+        if (cap == CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY) {
+            return infoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

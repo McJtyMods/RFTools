@@ -1,7 +1,7 @@
 package mcjty.rftools;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.client.BlockOutlineRenderer;
 import mcjty.lib.client.HudRenderHelper;
@@ -186,8 +186,8 @@ public class RenderWorldLastEventHandler {
                 if (info.getEnergyPerTick() != null) {
                     TileEntity te = player.getEntityWorld().getTileEntity(pos);
                     String unit = "";
-                    if (te instanceof IMachineInformation) {
-                        unit = ((IMachineInformation) te).getEnergyUnitName();
+                    if (te instanceof IPowerInformation) {
+                        unit = ((IPowerInformation) te).getEnergyUnitName();
                         if (unit == null) {
                             unit = "";
                         }

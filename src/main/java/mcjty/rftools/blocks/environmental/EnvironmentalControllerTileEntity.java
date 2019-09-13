@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
@@ -47,7 +47,7 @@ import static mcjty.rftools.blocks.environmental.EnvironmentalSetup.TYPE_ENVIRON
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //})
 public class EnvironmentalControllerTileEntity extends GenericTileEntity implements ITickableTileEntity,
-        IMachineInformation /*, IPeripheral*/ {
+        IPowerInformation /*, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "env.setRadius";
     public static final String CMD_RSMODE = "env.setRsMode";
