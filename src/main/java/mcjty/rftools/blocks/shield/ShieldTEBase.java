@@ -6,7 +6,7 @@ import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
-import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.api.smartwrench.ISmartWrenchSelector;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
@@ -56,7 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity { // @todo }, IPeripheral {
+public abstract class ShieldTEBase extends GenericTileEntity implements ISmartWrenchSelector, ITickableTileEntity { // @todo }, IPeripheral {
 
     public static final String CMD_APPLYCAMO = "shield.applyCamo";
     public static final Key<Integer> PARAM_PASS = new Key<>("pass", Type.INTEGER);

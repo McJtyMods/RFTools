@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
-import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
-import mcjty.lib.api.machineinfo.IMachineInformation;
+import mcjty.rftoolsbase.api.machineinfo.CapabilityMachineInformation;
+import mcjty.rftoolsbase.api.machineinfo.IMachineInformation;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;

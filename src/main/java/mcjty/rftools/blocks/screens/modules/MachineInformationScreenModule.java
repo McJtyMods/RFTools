@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
+import mcjty.rftoolsbase.api.machineinfo.CapabilityMachineInformation;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;

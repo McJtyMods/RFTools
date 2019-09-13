@@ -1,6 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
+import mcjty.rftoolsbase.api.machineinfo.CapabilityMachineInformation;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
