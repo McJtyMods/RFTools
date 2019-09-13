@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.client.RenderGlowEffect;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.hud.HudRenderer;
+import mcjty.rftoolsbase.client.HudRenderer;
 import mcjty.rftoolsbase.items.SmartWrenchItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
