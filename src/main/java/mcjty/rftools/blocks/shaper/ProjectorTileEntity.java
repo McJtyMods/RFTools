@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -83,17 +82,15 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     public static final Key<Boolean> PARAM_GRAY = new Key<>("gray", Type.BOOLEAN);
 
     public static final int SLOT_CARD = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_CARD, 15, 7);
-            layoutPlayerInventorySlots(85, 142);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_CONTAINER, SLOT_CARD, 15, 7);
+            playerSlots(85, 142);
         }
     };
 
-//    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
-    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(() -> new NoDirectionItemHander(this, CONTAINER_FACTORY));
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, ScannerConfiguration.PROJECTOR_MAXENERGY.get(), ScannerConfiguration.PROJECTOR_RECEIVEPERTICK.get()));
 
 
@@ -613,15 +610,6 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         }
 
         return power;
-    }
-
-    private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ProjectorTileEntity.this, CONTAINER_FACTORY, 1) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == BuilderSetup.shapeCardItem;
-            }
-        };
     }
 
     @Nonnull

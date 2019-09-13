@@ -34,10 +34,10 @@ public class ScreenControllerTileEntity extends GenericTileEntity implements ITi
     public static final String ACTION_SCAN = "scan";
     public static final String ACTION_DETACH = "detach";
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(0) {
         @Override
         protected void setup() {
-            layoutPlayerInventorySlots(10, 70);
+            playerSlots(10, 70);
         }
     };
 

@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -32,20 +31,17 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
     public static final int SLOT_OUT = 0;
     public static final int SLOT_TABS = 1;
     public static final int SLOT_GHOSTS = SLOT_TABS + SLOT_COUNT;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(SLOT_COUNT*2 + 1) {
         @Override
         protected void setup() {
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_OUT, 18, 200);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                            new ItemStack(BuilderSetup.shapeCardItem)),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TABS, 18, 7, 1, 18, SLOT_COUNT, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_GHOSTS, 36, 7, 1, 18, SLOT_COUNT, 18);
-            layoutPlayerInventorySlots(85, 142);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_CONTAINER, SLOT_OUT, 18, 200);
+            box(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)),
+                    CONTAINER_CONTAINER, SLOT_TABS, 18, 7, 1, SLOT_COUNT);
+            box(SlotDefinition.ghost(), CONTAINER_CONTAINER, SLOT_GHOSTS, 36, 7, 1, SLOT_COUNT);
+            playerSlots(85, 142);
         }
     };
-    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(() -> new NoDirectionItemHander(this, CONTAINER_FACTORY));
     private ShapeModifier modifiers[] = new ShapeModifier[SLOT_COUNT];
 
     public ComposerTileEntity() {
@@ -130,15 +126,6 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
         }
         tagCompound.put("ops", list);
         return tagCompound;
-    }
-
-    private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ComposerTileEntity.this, CONTAINER_FACTORY, SLOT_COUNT*2 + 1) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == BuilderSetup.shapeCardItem;
-            }
-        };
     }
 
     @Nonnull

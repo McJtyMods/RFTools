@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.security;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -36,17 +35,17 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     public static final int SLOT_CARD = 0;
     public static final int SLOT_LINKER = 1;
     public static final int SLOT_BUFFER = 2;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final int BUFFER_SIZE = (3*4);
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(BUFFER_SIZE + 2) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_CARD, 10, 7, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_LINKER, 42, 7, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
-            layoutPlayerInventorySlots(74, 124);
+            slot(SlotDefinition.specific(new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_CONTAINER, SLOT_CARD, 10, 7);
+            slot(SlotDefinition.specific(new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_CONTAINER, SLOT_LINKER, 42, 7);
+            box(SlotDefinition.specific(new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_CONTAINER, SLOT_BUFFER, 10, 124, 3, 4);
+            playerSlots(74, 124);
         }
     };
 
-    public static final int BUFFER_SIZE = (3*4);
     public static final int SLOT_PLAYERINV = SLOT_CARD + BUFFER_SIZE + 2;
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
@@ -175,17 +174,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(SecurityManagerTileEntity.this, CONTAINER_FACTORY, BUFFER_SIZE + 2) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() instanceof SecurityCardItem;
-            }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() instanceof SecurityCardItem;
-            }
-
+        return new NoDirectionItemHander(SecurityManagerTileEntity.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);

@@ -1,12 +1,9 @@
 package mcjty.rftools.blocks.logic.sensor;
 
-import mcjty.lib.api.container.CapabilityContainerProvider;
-import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.LogicTileEntity;
@@ -34,9 +31,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -59,12 +54,11 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
 
     public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_ITEMMATCH = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_ITEMMATCH, 154, 24, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
+            slot(SlotDefinition.ghost(), CONTAINER_CONTAINER, SLOT_ITEMMATCH, 154, 24);
+            playerSlots(10, 70);
         }
     };
 
@@ -506,7 +500,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
 
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(SensorTileEntity.this, CONTAINER_FACTORY, 1) {
+        return new NoDirectionItemHander(SensorTileEntity.this, CONTAINER_FACTORY) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 return false;

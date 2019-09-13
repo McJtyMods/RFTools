@@ -7,7 +7,6 @@ import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -63,11 +62,11 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
     public static float matterReceived2 = -1;
 
     public static final int SLOT_SYRINGE = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.syringeItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SYRINGE, 22, 8, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
+            slot(SlotDefinition.specific(new ItemStack(ModItems.syringeItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SYRINGE, 22, 8);
+            playerSlots(10, 70);
         }
     };
 //    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
@@ -471,18 +470,12 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(SpawnerTileEntity.this, CONTAINER_FACTORY, 1) {
-
+        return new NoDirectionItemHander(SpawnerTileEntity.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);
                 checkSyringe = true;
                 prevMobId = mobId;
-            }
-
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == ModItems.syringeItem;
             }
         };
     }

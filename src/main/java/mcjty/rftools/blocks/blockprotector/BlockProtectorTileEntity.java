@@ -62,10 +62,10 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
             .energyHandler(energyHandler));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BlockProtectorTileEntity.this));
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(0) {
         @Override
         protected void setup() {
-            layoutPlayerInventorySlots(10, 70);
+            playerSlots(10, 70);
         }
     };
 

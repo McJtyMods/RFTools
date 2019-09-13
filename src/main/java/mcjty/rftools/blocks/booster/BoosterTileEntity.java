@@ -3,7 +3,10 @@ package mcjty.rftools.blocks.booster;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -35,15 +38,15 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
 
     public static final int SLOT_MODULE = 0;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, 0, 7, 8, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(27, 102);
+            slot(SlotDefinition.specific(stack -> stack.getItem() instanceof EnvModuleProvider), CONTAINER_CONTAINER, 0, 7, 8);
+            playerSlots(27, 102);
         }
     };
 
-    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(() -> new NoDirectionItemHander(this, CONTAINER_FACTORY));
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
             BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BoosterTileEntity.this));
@@ -138,20 +141,6 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
 //        cachedModule = null;
 //        getInventoryHelper().setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
 //    }
-
-    private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(BoosterTileEntity.this, CONTAINER_FACTORY, 1) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() instanceof EnvModuleProvider;
-            }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() instanceof EnvModuleProvider;
-            }
-        };
-    }
 
     private List<LivingEntity> searchEntities() {
         if (beamBox == null) {

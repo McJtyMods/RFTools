@@ -20,12 +20,12 @@ public class ModifierContainer extends GenericContainer {
 
     private int cardIndex;
 
-    public static final ContainerFactory factory = new ContainerFactory() {
+    public static final ContainerFactory factory = new ContainerFactory(2) {
         @Override
         protected void setup() {
-			addSlot(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_FILTER, 10, 8);
-			addSlot(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_REPLACEMENT, 154, 8);
-            layoutPlayerInventorySlots(10, 146);
+			slot(SlotDefinition.container(), CONTAINER_INVENTORY, SLOT_FILTER, 10, 8);
+			slot(SlotDefinition.container(), CONTAINER_INVENTORY, SLOT_REPLACEMENT, 154, 8);
+            playerSlots(10, 146);
         }
     };
 

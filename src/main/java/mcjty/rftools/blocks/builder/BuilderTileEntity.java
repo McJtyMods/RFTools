@@ -8,7 +8,10 @@ import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IAction;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.NoDirectionItemHander;
+import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
@@ -89,14 +92,14 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(2) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem), new ItemStack(BuilderSetup.spaceChamberCardItem)),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 100, 10, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, ItemStack.EMPTY /* @todo 1.14 should be filter item from rftools storage */, new ItemStack(BuilderSetup.spaceChamberCardItem)),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 84, 46, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem), new ItemStack(BuilderSetup.spaceChamberCardItem)),
+                    CONTAINER_CONTAINER, SLOT_TAB, 100, 10);
+            slot(SlotDefinition.specific(ItemStack.EMPTY /* @todo 1.14 should be filter item from rftools storage */, new ItemStack(BuilderSetup.spaceChamberCardItem)),
+                    CONTAINER_CONTAINER, SLOT_TAB, 84, 46);
+            playerSlots(10, 70);
         }
     };
 
@@ -2369,7 +2372,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 //    }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(BuilderTileEntity.this, CONTAINER_FACTORY, 2) {
+        return new NoDirectionItemHander(BuilderTileEntity.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);
@@ -2384,16 +2387,6 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
                     // @todo 1.14
 //                    filterCache = null;
                 }
-            }
-
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
-            }
-
-            @Override
-            public boolean isItemInsertable(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
             }
         };
     }

@@ -7,7 +7,6 @@ import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -73,18 +72,14 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     public static final int SLOT_OUT = 1;
     public static final int SLOT_FILTER = 2;
     public static final int SLOT_MODIFIER = 3;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(4) {
         @Override
         protected void setup() {
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_IN, 15, 7);
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_OUT, 15, 200);
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModularStorageSetup.storageFilterItem) */), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 35, 7);
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(ModItems.modifierItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODIFIER, 55, 7);
-            layoutPlayerInventorySlots(85, 142);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_CONTAINER, SLOT_IN, 15, 7);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_CONTAINER, SLOT_OUT, 15, 200);
+            slot(SlotDefinition.specific(ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModularStorageSetup.storageFilterItem) */), CONTAINER_CONTAINER, SLOT_FILTER, 35, 7);
+            slot(SlotDefinition.specific(new ItemStack(ModItems.modifierItem)), CONTAINER_CONTAINER, SLOT_MODIFIER, 55, 7);
+            playerSlots(85, 142);
         }
     };
 
@@ -490,12 +485,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 //    }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ScannerTileEntity.this, CONTAINER_FACTORY, 4) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == BuilderSetup.shapeCardItem;
-            }
-
+        return new NoDirectionItemHander(ScannerTileEntity.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);

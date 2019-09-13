@@ -7,7 +7,6 @@ import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.ScrollableLabel;
 import mcjty.lib.tileentity.GenericEnergyStorage;
@@ -71,11 +70,11 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     public static final int ENV_MODULES = 7;
     public static final int SLOT_MODULES = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(ENV_MODULES) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, 18, ENV_MODULES, 18);
-            layoutPlayerInventorySlots(27, 142);
+            box(SlotDefinition.input(), CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, ENV_MODULES);
+            playerSlots(27, 142);
         }
     };
 
@@ -610,8 +609,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(EnvironmentalControllerTileEntity.this, CONTAINER_FACTORY, ENV_MODULES) {
-
+        return new NoDirectionItemHander(EnvironmentalControllerTileEntity.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);

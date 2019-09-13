@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.itemfilter;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -13,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -36,15 +34,15 @@ public class ItemFilterTileEntity extends GenericTileEntity {
     public static final int SLOT_PLAYERINV = GHOST_SIZE + BUFFER_SIZE;
     public static final int SLOT_BUFFER = 9;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(GHOST_SIZE + BUFFER_SIZE) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), ContainerFactory.CONTAINER_CONTAINER, SLOT_GHOST, 24, 105, 9, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 24, 87, 9, 18, 1, 18);
-            layoutPlayerInventorySlots(24, 130);
+            box(SlotDefinition.ghost(), CONTAINER_CONTAINER, SLOT_GHOST, 24, 105, 9, 1);
+            box(SlotDefinition.input(), CONTAINER_CONTAINER, SLOT_BUFFER, 24, 87, 9, 1);
+            playerSlots(24, 130);
         }
     };
-    private NoDirectionItemHander itemHandler = createInternalHandler();
+    private NoDirectionItemHander itemHandler = new NoDirectionItemHander(this, CONTAINER_FACTORY);
     private LazyOptional<ItemFilterInvWrapper> invHandlerN = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.NORTH));
     private LazyOptional<ItemFilterInvWrapper> invHandlerS = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.SOUTH));
     private LazyOptional<ItemFilterInvWrapper> invHandlerW = LazyOptional.of(() -> new ItemFilterInvWrapper(this, Direction.WEST));
@@ -180,10 +178,6 @@ public class ItemFilterTileEntity extends GenericTileEntity {
             return false;
         }
         return isOutputMode(direction, index - SLOT_BUFFER);
-    }
-
-    private NoDirectionItemHander createInternalHandler() {
-        return new NoDirectionItemHander(ItemFilterTileEntity.this, CONTAINER_FACTORY, GHOST_SIZE + BUFFER_SIZE);
     }
 
     NoDirectionItemHander getItemHandler() {

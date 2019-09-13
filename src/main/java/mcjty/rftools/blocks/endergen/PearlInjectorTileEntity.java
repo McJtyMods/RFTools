@@ -1,11 +1,8 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.api.container.CapabilityContainerProvider;
-import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.TickOrderHandler;
@@ -19,7 +16,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -33,14 +29,14 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
     public static final int SLOT_BUFFER = 0;
     public static final int SLOT_PLAYERINV = SLOT_BUFFER + BUFFER_SIZE;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(BUFFER_SIZE) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ENDER_PEARL)), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 10, 25, 9, 18, 2, 18);
-            layoutPlayerInventorySlots(10, 70);
+            box(SlotDefinition.specific(new ItemStack(Items.ENDER_PEARL)), CONTAINER_CONTAINER, SLOT_BUFFER, 10, 25, 9, 2);
+            playerSlots(10, 70);
         }
     };
-    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(() -> new NoDirectionItemHander(this, CONTAINER_FACTORY));
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -134,15 +130,6 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
         super.write(tagCompound);
         tagCompound.putBoolean("prevIn", prevIn);
         return tagCompound;
-    }
-
-    private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(PearlInjectorTileEntity.this, CONTAINER_FACTORY, BUFFER_SIZE) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() == Items.ENDER_PEARL;
-            }
-        };
     }
 
     @Nonnull

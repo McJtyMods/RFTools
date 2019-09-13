@@ -1,13 +1,10 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.api.container.CapabilityContainerProvider;
-import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.network.PacketServerCommandTyped;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -30,9 +27,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -70,11 +65,11 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
     public static final int SLOT_MODULES = 0;
     public static final int SCREEN_MODULES = 11;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(SCREEN_MODULES) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, 18, SCREEN_MODULES, 18);
-            layoutPlayerInventorySlots(85, 142);
+            box(SlotDefinition.input(), CONTAINER_CONTAINER, SLOT_MODULES, 7, 8, 1, SCREEN_MODULES);
+            playerSlots(85, 142);
         }
     };
 
@@ -812,17 +807,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ScreenTileEntity.this, CONTAINER_FACTORY, SCREEN_MODULES) {
+        return new NoDirectionItemHander(ScreenTileEntity.this, CONTAINER_FACTORY) {
 
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);
                 resetModules();
-            }
-
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return true;
             }
         };
     }

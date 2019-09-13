@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.LogicTileEntity;
@@ -31,11 +30,11 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickableTi
 
     public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_ITEMMATCH = 0;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), ContainerFactory.CONTAINER_CONTAINER, SLOT_ITEMMATCH, 154, 24, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
+            slot(SlotDefinition.ghost(), CONTAINER_CONTAINER, SLOT_ITEMMATCH, 154, 24);
+            playerSlots(10, 70);
         }
     };
 

@@ -11,7 +11,6 @@ import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -127,16 +126,16 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
     public static final int SLOT_BUFFER = 0;
     public static final int SLOT_SHAPE = 1;
     public static final int SLOT_SHARD = 2;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final int BUFFER_SIZE = 3;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(BUFFER_SIZE) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 26, 142, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SHAPE, 26, 200, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModItems.dimensionalShardItem) */), ContainerFactory.CONTAINER_CONTAINER, SLOT_SHARD, 229, 118, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(85, 142);
+            slot(SlotDefinition.input(), CONTAINER_CONTAINER, SLOT_BUFFER, 26, 142);
+            slot(SlotDefinition.specific(new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_CONTAINER, SLOT_SHAPE, 26, 200);
+            slot(SlotDefinition.specific(ItemStack.EMPTY /* @todo 1.14 new ItemStack(ModItems.dimensionalShardItem) */), CONTAINER_CONTAINER, SLOT_SHARD, 229, 118);
+            playerSlots(85, 142);
         }
     };
-    public static final int BUFFER_SIZE = 3;
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, getConfigMaxEnergy(), getConfigRfPerTick()));
@@ -1204,12 +1203,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
     }
 
     private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(ShieldTEBase.this, CONTAINER_FACTORY, BUFFER_SIZE) {
-            @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return true;    // @todo right?
-            }
-
+        return new NoDirectionItemHander(ShieldTEBase.this, CONTAINER_FACTORY) {
             @Override
             protected void onUpdate(int index) {
                 super.onUpdate(index);

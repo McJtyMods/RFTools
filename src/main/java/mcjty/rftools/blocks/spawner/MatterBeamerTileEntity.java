@@ -8,7 +8,6 @@ import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
-import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
@@ -42,15 +41,15 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
     public static final int TICKTIME = 20;
     public static final int SLOT_MATERIAL = 0;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(1) {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MATERIAL, 28, 8, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
+            slot(SlotDefinition.input(), CONTAINER_CONTAINER, SLOT_MATERIAL, 28, 8);
+            playerSlots(10, 70);
         }
     };
 
-    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
+    private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(() -> new NoDirectionItemHander(this, CONTAINER_FACTORY));
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.BEAMER_MAXENERGY, SpawnerConfiguration.BEAMER_RECEIVEPERTICK));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(MatterBeamerTileEntity.this));
 
@@ -262,10 +261,6 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         BlockPosTools.write(tagCompound, "dest", destination);
         tagCompound.putBoolean("glowing", glowing);
         return tagCompound;
-    }
-
-    private NoDirectionItemHander createItemHandler() {
-        return new NoDirectionItemHander(MatterBeamerTileEntity.this, CONTAINER_FACTORY, 1);
     }
 
     @Nonnull
