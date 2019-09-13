@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import com.mojang.authlib.GameProfile;
+import mcjty.lib.api.information.CapabilityPowerInformation;
 import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
@@ -55,8 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
-        IPowerInformation { // @todo }, IPeripheral {
+public abstract class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity { // @todo }, IPeripheral {
 
     public static final String CMD_APPLYCAMO = "shield.applyCamo";
     public static final Key<Integer> PARAM_PASS = new Key<>("pass", Type.INTEGER);
@@ -140,6 +140,7 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, getConfigMaxEnergy(), getConfigRfPerTick()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(ShieldTEBase.this));
+    private LazyOptional<IPowerInformation> powerInfoHandler = LazyOptional.of(() -> createPowerInfo());
 
     public ShieldTEBase(TileEntityType<?> type) {
         super(type);
@@ -541,33 +542,6 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
             entity.attackEntityFrom(source, damage);
         });
-    }
-
-    @Override
-    public long getEnergyDiffPerTick() {
-        return shieldActive ? getRfPerTick() : 0;
-    }
-
-    @Nullable
-    @Override
-    public String getEnergyUnitName() {
-        return "RF";
-    }
-
-    @Override
-    public boolean isMachineActive() {
-        return shieldActive;
-    }
-
-    @Override
-    public boolean isMachineRunning() {
-        return shieldActive;
-    }
-
-    @Nullable
-    @Override
-    public String getMachineStatus() {
-        return shieldActive ? "active" : "idle";
     }
 
     @Override
@@ -1215,6 +1189,37 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
         };
     }
 
+    private IPowerInformation createPowerInfo() {
+        return new IPowerInformation() {
+            @Override
+            public long getEnergyDiffPerTick() {
+                return shieldActive ? getRfPerTick() : 0;
+            }
+
+            @Nullable
+            @Override
+            public String getEnergyUnitName() {
+                return "RF";
+            }
+
+            @Override
+            public boolean isMachineActive() {
+                return shieldActive;
+            }
+
+            @Override
+            public boolean isMachineRunning() {
+                return shieldActive;
+            }
+
+            @Nullable
+            @Override
+            public String getMachineStatus() {
+                return shieldActive ? "active" : "idle";
+            }
+        };
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -1229,6 +1234,9 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY) {
+            return powerInfoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

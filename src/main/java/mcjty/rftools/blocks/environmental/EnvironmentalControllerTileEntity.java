@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.api.information.CapabilityPowerInformation;
 import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
@@ -46,8 +47,7 @@ import static mcjty.rftools.blocks.environmental.EnvironmentalSetup.TYPE_ENVIRON
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //})
-public class EnvironmentalControllerTileEntity extends GenericTileEntity implements ITickableTileEntity,
-        IPowerInformation /*, IPeripheral*/ {
+public class EnvironmentalControllerTileEntity extends GenericTileEntity implements ITickableTileEntity/*, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "env.setRadius";
     public static final String CMD_RSMODE = "env.setRsMode";
@@ -89,6 +89,7 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EnvironmentalControllerTileEntity.this));
+    private LazyOptional<IPowerInformation> powerInfoHandler = LazyOptional.of(() -> createPowerInfo());
 
     public enum EnvironmentalMode {
         MODE_BLACKLIST,
@@ -114,33 +115,6 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     public EnvironmentalControllerTileEntity() {
         super(TYPE_ENVIRONMENTAL_CONTROLLER);
-    }
-
-    @Override
-    public long getEnergyDiffPerTick() {
-        return isActive() ? -getTotalRfPerTick() : 0;
-    }
-
-    @Nullable
-    @Override
-    public String getEnergyUnitName() {
-        return "RF";
-    }
-
-    @Override
-    public boolean isMachineActive() {
-        return isActive();
-    }
-
-    @Override
-    public boolean isMachineRunning() {
-        return isActive();
-    }
-
-    @Nullable
-    @Override
-    public String getMachineStatus() {
-        return isActive() ? "active" : "idle";
     }
 
     @Override
@@ -618,6 +592,38 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         };
     }
 
+    private IPowerInformation createPowerInfo() {
+        return new IPowerInformation() {
+            @Override
+            public long getEnergyDiffPerTick() {
+                return isActive() ? -getTotalRfPerTick() : 0;
+            }
+
+            @Nullable
+            @Override
+            public String getEnergyUnitName() {
+                return "RF";
+            }
+
+            @Override
+            public boolean isMachineActive() {
+                return isActive();
+            }
+
+            @Override
+            public boolean isMachineRunning() {
+                return isActive();
+            }
+
+            @Nullable
+            @Override
+            public String getMachineStatus() {
+                return isActive() ? "active" : "idle";
+            }
+        };
+    }
+
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -632,6 +638,9 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY) {
+            return powerInfoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

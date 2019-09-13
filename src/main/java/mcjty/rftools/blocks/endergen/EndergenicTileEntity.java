@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.api.information.CapabilityPowerInformation;
 import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
@@ -54,7 +55,7 @@ import java.util.Random;
 import static mcjty.rftools.blocks.endergen.EndergenicSetup.TYPE_ENDERGENIC;
 
 public class EndergenicTileEntity extends GenericTileEntity implements ITickableTileEntity,
-        IHudSupport, IPowerInformation, TickOrderHandler.ICheckStateServer {
+        IHudSupport, TickOrderHandler.ICheckStateServer {
 
     private static Random random = new Random();
 
@@ -74,6 +75,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
             this, false, 5000000, 20000));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EndergenicTileEntity.this));
     private LazyOptional<IMachineInformation> infoHandler = LazyOptional.of(() -> createMachineInfo());
+    private LazyOptional<IPowerInformation> powerInfoHandler = LazyOptional.of(() -> createPowerInfo());
 
     @Override
     public IValue<?>[] getValues() {
@@ -137,33 +139,6 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     private static long rfPerHit[] = new long[]{0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100};
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
-
-    @Override
-    public long getEnergyDiffPerTick() {
-        return rfGained - rfLost;
-    }
-
-    @Nullable
-    @Override
-    public String getEnergyUnitName() {
-        return "RF";
-    }
-
-    @Override
-    public boolean isMachineActive() {
-        return true;
-    }
-
-    @Override
-    public boolean isMachineRunning() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public String getMachineStatus() {
-        return null;
-    }
 
     public EndergenicTileEntity() {
         super(TYPE_ENDERGENIC);
@@ -826,6 +801,37 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 //        }
 //    }
 
+    private IPowerInformation createPowerInfo() {
+        return new IPowerInformation() {
+            @Override
+            public long getEnergyDiffPerTick() {
+                return rfGained - rfLost;
+            }
+
+            @Nullable
+            @Override
+            public String getEnergyUnitName() {
+                return "RF";
+            }
+
+            @Override
+            public boolean isMachineActive() {
+                return true;
+            }
+
+            @Override
+            public boolean isMachineRunning() {
+                return true;
+            }
+
+            @Nullable
+            @Override
+            public String getMachineStatus() {
+                return null;
+            }
+        };
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -840,6 +846,9 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
         }
         if (cap == CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY) {
             return infoHandler.cast();
+        }
+        if (cap == CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY) {
+            return powerInfoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

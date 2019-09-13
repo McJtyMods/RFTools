@@ -1,6 +1,6 @@
 package mcjty.rftools.varia;
 
-import mcjty.lib.api.information.IPowerInformation;
+import mcjty.lib.api.information.CapabilityPowerInformation;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
@@ -75,10 +75,7 @@ public class RFToolsTools {
                     TileEntity te = world.getTileEntity(p);
                     if (EnergyTools.isEnergyTE(te, null)) {
                         EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te, null);
-                        Long usage = null;
-                        if (te instanceof IPowerInformation) {
-                            usage = ((IPowerInformation) te).getEnergyDiffPerTick();
-                        }
+                        Long usage = te.getCapability(CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY).map(h -> h.getEnergyDiffPerTick()).orElse(0L);
                         result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
                     }
                 }

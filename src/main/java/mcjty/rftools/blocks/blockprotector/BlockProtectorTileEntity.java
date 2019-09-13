@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.api.container.CapabilityContainerProvider;
 import mcjty.lib.api.container.DefaultContainerProvider;
+import mcjty.lib.api.information.CapabilityPowerInformation;
 import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
@@ -43,8 +44,8 @@ import static mcjty.rftools.blocks.blockprotector.BlockProtectorSetup.TYPE_PROTE
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
 //})
-public class BlockProtectorTileEntity extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
-        IPowerInformation /*, IPeripheral*/ {
+public class BlockProtectorTileEntity extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity
+         /*, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "protector.setRsMode";
     public static final String COMPONENT_NAME = "block_protector";
@@ -61,6 +62,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
             .containerSupplier((windowId,player) -> new GenericContainer(BlockProtectorSetup.CONTAINER_PROTECTOR, windowId, BlockProtectorTileEntity.CONTAINER_FACTORY, getPos(), BlockProtectorTileEntity.this))
             .energyHandler(energyHandler));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BlockProtectorTileEntity.this));
+    private LazyOptional<IPowerInformation> powerInfoHandler = LazyOptional.of(() -> createPowerInfo());
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(0) {
         @Override
@@ -98,33 +100,6 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
 
     public BlockProtectorTileEntity() {
         super(TYPE_PROTECTOR);
-    }
-
-    @Override
-    public long getEnergyDiffPerTick() {
-        return active ? -getRfPerTick() : 0;
-    }
-
-    @Nullable
-    @Override
-    public String getEnergyUnitName() {
-        return "RF";
-    }
-
-    @Override
-    public boolean isMachineActive() {
-        return active;
-    }
-
-    @Override
-    public boolean isMachineRunning() {
-        return active;
-    }
-
-    @Nullable
-    @Override
-    public String getMachineStatus() {
-        return active ? "protecting blocks" : "idle";
     }
 
     @Override
@@ -375,6 +350,38 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         return false;
     }
 
+    private IPowerInformation createPowerInfo() {
+        return new IPowerInformation() {
+            @Override
+            public long getEnergyDiffPerTick() {
+                return active ? -getRfPerTick() : 0;
+            }
+
+            @Nullable
+            @Override
+            public String getEnergyUnitName() {
+                return "RF";
+            }
+
+            @Override
+            public boolean isMachineActive() {
+                return active;
+            }
+
+            @Override
+            public boolean isMachineRunning() {
+                return active;
+            }
+
+            @Nullable
+            @Override
+            public String getMachineStatus() {
+                return active ? "protecting blocks" : "idle";
+            }
+
+        };
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
@@ -386,6 +393,9 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements Smart
         }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY) {
+            return powerInfoHandler.cast();
         }
         return super.getCapability(cap, facing);
     }
