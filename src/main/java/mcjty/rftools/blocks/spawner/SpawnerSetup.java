@@ -19,7 +19,6 @@ public class SpawnerSetup {
         spawnerBlock = new BaseBlock("spawner", new BlockBuilder()
                 .tileEntitySupplier(SpawnerTileEntity::new)
                 .infusable()
-//                .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)  // @todo 1.14
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.spawner")
         );

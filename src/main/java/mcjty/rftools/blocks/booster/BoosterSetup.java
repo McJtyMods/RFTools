@@ -19,7 +19,6 @@ public class BoosterSetup {
 //                .container(BoosterTileEntity.CONTAINER_FACTORY)
 //                .flags(BlockFlags.REDSTONE_CHECK)
                 .infusable()
-//                .moduleSupport(BoosterTileEntity.MODULE_SUPPORT)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.booster")) {
             @Override

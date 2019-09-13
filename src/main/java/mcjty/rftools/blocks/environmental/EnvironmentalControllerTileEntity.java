@@ -5,6 +5,9 @@ import mcjty.lib.api.information.IPowerInformation;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
+import mcjty.lib.api.module.CapabilityModuleSupport;
+import mcjty.lib.api.module.IModuleSupport;
+import mcjty.lib.api.module.DefaultModuleSupport;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
@@ -16,7 +19,6 @@ import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import net.minecraft.block.BlockState;
@@ -78,18 +80,18 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         }
     };
 
-    public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULES, SLOT_MODULES + ENV_MODULES - 1) {
-        @Override
-        public boolean isModule(ItemStack itemStack) {
-            return itemStack.getItem() instanceof EnvModuleProvider;
-        }
-    };
     public static final String CONTAINER_INVENTORY = "container";
 
     private LazyOptional<NoDirectionItemHander> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(EnvironmentalControllerTileEntity.this));
     private LazyOptional<IPowerInformation> powerInfoHandler = LazyOptional.of(() -> createPowerInfo());
+    private LazyOptional<IModuleSupport> moduleSupportHandler = LazyOptional.of(() -> new DefaultModuleSupport(SLOT_MODULES, SLOT_MODULES + ENV_MODULES - 1) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return itemStack.getItem() instanceof EnvModuleProvider;
+        }
+    });
 
     public enum EnvironmentalMode {
         MODE_BLACKLIST,
@@ -641,6 +643,9 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
         }
         if (cap == CapabilityPowerInformation.POWER_INFORMATION_CAPABILITY) {
             return powerInfoHandler.cast();
+        }
+        if (cap == CapabilityModuleSupport.MODULE_CAPABILITY) {
+            return moduleSupportHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

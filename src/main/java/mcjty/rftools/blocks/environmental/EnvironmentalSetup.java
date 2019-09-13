@@ -57,7 +57,6 @@ public class EnvironmentalSetup {
 //                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_TRANSLUCENT)
 //                .lightValue(13)
                 .infusable()
-//                .moduleSupport(EnvironmentalControllerTileEntity.MODULE_SUPPORT)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.environmental_controller")
                 .infoExtendedParameter(ItemStackTools.intGetter("radius", 0))

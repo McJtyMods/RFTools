@@ -67,7 +67,6 @@ public class BuilderSetup {
         builderBlock = new BaseBlock("builder", new BlockBuilder()
                 .tileEntitySupplier(BuilderTileEntity::new)
 //                .flags(BlockFlags.REDSTONE_CHECK)
-//                .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
                 .infusable()
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.builder")) {

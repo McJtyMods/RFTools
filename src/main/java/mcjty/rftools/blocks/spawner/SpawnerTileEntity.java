@@ -5,6 +5,9 @@ import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
 import mcjty.lib.api.machineinfo.CapabilityMachineInformation;
 import mcjty.lib.api.machineinfo.IMachineInformation;
+import mcjty.lib.api.module.CapabilityModuleSupport;
+import mcjty.lib.api.module.IModuleSupport;
+import mcjty.lib.api.module.DefaultModuleSupport;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
 import mcjty.lib.container.SlotDefinition;
@@ -15,7 +18,6 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.config.GeneralConfiguration;
@@ -76,13 +78,12 @@ public class SpawnerTileEntity extends GenericTileEntity implements ITickableTil
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true, SpawnerConfiguration.SPAWNER_MAXENERGY, SpawnerConfiguration.SPAWNER_RECEIVEPERTICK));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(SpawnerTileEntity.this));
     private LazyOptional<IMachineInformation> infoHandler = LazyOptional.of(() -> createMachineInfo());
-
-    static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_SYRINGE) {
+    private LazyOptional<IModuleSupport> moduleSupportHandler = LazyOptional.of(() -> new DefaultModuleSupport(SLOT_SYRINGE) {
         @Override
         public boolean isModule(ItemStack itemStack) {
             return itemStack.getItem() == ModItems.syringeItem;
         }
-    };
+    });
 
 
     private float matter[] = new float[]{0, 0, 0};
@@ -503,6 +504,9 @@ public class SpawnerTileEntity extends GenericTileEntity implements ITickableTil
         }
         if (cap == CapabilityMachineInformation.MACHINE_INFORMATION_CAPABILITY) {
             return infoHandler.cast();
+        }
+        if (cap == CapabilityModuleSupport.MODULE_CAPABILITY) {
+            return moduleSupportHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

@@ -3,6 +3,9 @@ package mcjty.rftools.blocks.booster;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
+import mcjty.lib.api.module.CapabilityModuleSupport;
+import mcjty.lib.api.module.DefaultModuleSupport;
+import mcjty.lib.api.module.IModuleSupport;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.NoDirectionItemHander;
@@ -11,7 +14,6 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
-import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -50,13 +52,12 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
             BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BoosterTileEntity.this));
-
-    static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULE) {
+    private LazyOptional<IModuleSupport> moduleSupportHandler = LazyOptional.of(() -> new DefaultModuleSupport(SLOT_MODULE) {
         @Override
         public boolean isModule(ItemStack itemStack) {
             return itemStack.getItem() instanceof EnvModuleProvider;
         }
-    };
+    });
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
 
@@ -177,6 +178,9 @@ public class BoosterTileEntity extends GenericTileEntity implements ITickableTil
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityModuleSupport.MODULE_CAPABILITY) {
+            return moduleSupportHandler.cast();
         }
         return super.getCapability(cap, facing);
     }

@@ -4,6 +4,9 @@ import com.mojang.authlib.GameProfile;
 import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.api.infusable.DefaultInfusable;
 import mcjty.lib.api.infusable.IInfusable;
+import mcjty.lib.api.module.CapabilityModuleSupport;
+import mcjty.lib.api.module.DefaultModuleSupport;
+import mcjty.lib.api.module.IModuleSupport;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IAction;
@@ -103,13 +106,6 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
         }
     };
 
-    public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_TAB) {
-        @Override
-        public boolean isModule(ItemStack itemStack) {
-            return (itemStack.getItem() == BuilderSetup.shapeCardItem || itemStack.getItem() == BuilderSetup.spaceChamberCardItem);
-        }
-    };
-
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
     public static final int MODE_COPY = 0;
@@ -189,6 +185,12 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(
             this, true, BuilderConfiguration.BUILDER_MAXENERGY.get(), BuilderConfiguration.BUILDER_RECEIVEPERTICK.get()));
     private LazyOptional<IInfusable> infusableHandler = LazyOptional.of(() -> new DefaultInfusable(BuilderTileEntity.this));
+    private LazyOptional<IModuleSupport> moduleSupportHandler = LazyOptional.of(() -> new DefaultModuleSupport(SLOT_TAB) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return (itemStack.getItem() == BuilderSetup.shapeCardItem || itemStack.getItem() == BuilderSetup.spaceChamberCardItem);
+        }
+    });
 
     public BuilderTileEntity() {
         super(BuilderSetup.TYPE_BUILDER);
@@ -2405,6 +2407,9 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 //        }
         if (cap == CapabilityInfusable.INFUSABLE_CAPABILITY) {
             return infusableHandler.cast();
+        }
+        if (cap == CapabilityModuleSupport.MODULE_CAPABILITY) {
+            return moduleSupportHandler.cast();
         }
         return super.getCapability(cap, facing);
     }
