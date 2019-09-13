@@ -37,7 +37,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -364,8 +363,6 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         matter[0] = tagCompound.getFloat("matter0");
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
@@ -385,8 +382,6 @@ public class SpawnerTileEntity extends GenericTileEntity implements MachineInfor
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putFloat("matter0", matter[0]);
         tagCompound.putFloat("matter1", matter[1]);
         tagCompound.putFloat("matter2", matter[2]);

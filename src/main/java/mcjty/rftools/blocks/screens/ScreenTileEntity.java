@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.api.container.CapabilityContainerProvider;
+import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.ContainerFactory;
@@ -27,10 +29,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static mcjty.rftools.blocks.screens.ScreenSetup.TYPE_SCREEN;
@@ -415,7 +421,6 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
         resetModules();
         if (tagCompound.contains("large")) {
             size = tagCompound.getBoolean("large") ? 1 : 0;
@@ -441,7 +446,6 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
         tagCompound.putInt("size", size);
         tagCompound.putBoolean("transparent", transparent);
         tagCompound.putInt("color", color);
@@ -823,4 +827,15 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
         };
     }
 
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
+    }
 }

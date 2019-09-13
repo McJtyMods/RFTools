@@ -31,13 +31,17 @@ import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,8 +172,6 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
     @Override
     public void read(CompoundNBT tagCompound) {
         super.read(tagCompound);
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         if (tagCompound.contains("render")) {
             renderStack = ItemStack.read(tagCompound.getCompound("render"));
         } else {
@@ -185,8 +187,6 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
 
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         if (!renderStack.isEmpty()) {
             CompoundNBT tc = new CompoundNBT();
             renderStack.write(tc);
@@ -523,5 +523,20 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
                 }
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
     }
 }

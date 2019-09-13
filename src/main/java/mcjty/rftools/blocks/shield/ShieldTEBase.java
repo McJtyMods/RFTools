@@ -1062,9 +1062,6 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
-
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("visMode")];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInt("camoRenderPass");
@@ -1126,8 +1123,6 @@ public abstract class ShieldTEBase extends GenericTileEntity implements SmartWre
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putInt("visMode", shieldRenderingMode.ordinal());
         tagCompound.putByte("damageMode", (byte) damageMode.ordinal());
 

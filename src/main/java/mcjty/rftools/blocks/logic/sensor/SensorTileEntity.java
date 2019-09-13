@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.logic.sensor;
 
+import mcjty.lib.api.container.CapabilityContainerProvider;
+import mcjty.lib.api.infusable.CapabilityInfusable;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.NoDirectionItemHander;
@@ -31,13 +33,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -411,7 +417,6 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
         number = tagCompound.getInt("number");
         sensorType = SensorType.values()[tagCompound.getByte("sensor")];
         areaType = AreaType.values()[tagCompound.getByte("area")];
@@ -428,7 +433,6 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
         tagCompound.putInt("number", number);
         tagCompound.putByte("sensor", (byte) sensorType.ordinal());
         tagCompound.putByte("area", (byte) areaType.ordinal());
@@ -508,5 +512,17 @@ public class SensorTileEntity extends LogicTileEntity implements ITickableTileEn
                 return false;
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
     }
 }

@@ -76,7 +76,6 @@ public class ItemFilterTileEntity extends GenericTileEntity {
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND));
         inputMode = tagCompound.getIntArray("inputs");
         outputMode = tagCompound.getIntArray("outputs");
     }
@@ -90,7 +89,6 @@ public class ItemFilterTileEntity extends GenericTileEntity {
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        tagCompound.put("Items", itemHandler.serializeNBT());
         tagCompound.putIntArray("inputs", inputMode);
         tagCompound.putIntArray("outputs", outputMode);
     }

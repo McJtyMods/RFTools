@@ -454,8 +454,6 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         radius = tagCompound.getInt("radius");
         miny = tagCompound.getInt("miny");
         maxy = tagCompound.getInt("maxy");
@@ -491,8 +489,6 @@ public class EnvironmentalControllerTileEntity extends GenericTileEntity impleme
 
     // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putInt("radius", radius);
         tagCompound.putInt("miny", miny);
         tagCompound.putInt("maxy", maxy);

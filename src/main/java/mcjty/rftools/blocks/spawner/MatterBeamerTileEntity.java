@@ -27,7 +27,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -255,29 +254,14 @@ public class MatterBeamerTileEntity extends GenericTileEntity implements ITickab
         super.read(tagCompound);
         destination = BlockPosTools.read(tagCompound, "dest");
         glowing = tagCompound.getBoolean("glowing");
-        readRestorableFromNBT(tagCompound);
     }
-
-    // @todo 1.14 loot tables
-    public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
-    }
-
 
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
         super.write(tagCompound);
         BlockPosTools.write(tagCompound, "dest", destination);
         tagCompound.putBoolean("glowing", glowing);
-        writeRestorableToNBT(tagCompound);
         return tagCompound;
-    }
-
-    // @todo 1.14 loot tables
-    public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
     }
 
     private NoDirectionItemHander createItemHandler() {

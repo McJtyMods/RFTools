@@ -15,10 +15,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_COMPOSER;
 
@@ -93,7 +97,6 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
     @Override
     public void read(CompoundNBT tagCompound) {
         super.read(tagCompound);
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
         ListNBT list = tagCompound.getList("ops", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.size() ; i++) {
             CompoundNBT tag = list.getCompound(i);
@@ -116,7 +119,6 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
         super.write(tagCompound);
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
         ListNBT list = new ListNBT();
         for (int i = 0; i < SLOT_COUNT ; i++) {
             CompoundNBT tc = new CompoundNBT();
@@ -137,5 +139,17 @@ public class ComposerTileEntity extends GenericTileEntity implements ITickableTi
                 return stack.getItem() == BuilderSetup.shapeCardItem;
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
     }
 }

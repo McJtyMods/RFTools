@@ -29,10 +29,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -306,8 +308,6 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     @Override
     public void read(CompoundNBT tagCompound) {
         super.read(tagCompound);
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-        energyHandler.ifPresent(h -> h.setEnergy(tagCompound.getLong("Energy")));
         verticalOffset = tagCompound.contains("offs") ? tagCompound.getFloat("offs") : .2f;
         scale = tagCompound.contains("scale") ? tagCompound.getFloat("scale") : .01f;
         angle = tagCompound.contains("angle") ? tagCompound.getFloat("angle") : .0f;
@@ -349,8 +349,6 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
         super.write(tagCompound);
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        energyHandler.ifPresent(h -> tagCompound.putLong("Energy", h.getEnergy()));
         tagCompound.putFloat("offs", verticalOffset);
         tagCompound.putFloat("scale", scale);
         tagCompound.putFloat("angle", angle);
@@ -626,4 +624,18 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         };
     }
 
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+        if (cap == CapabilityEnergy.ENERGY) {
+            return energyHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
+    }
 }

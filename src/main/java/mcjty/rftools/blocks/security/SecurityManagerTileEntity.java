@@ -11,10 +11,13 @@ import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static mcjty.rftools.blocks.security.SecuritySetup.TYPE_SECURITY_MANAGER;
 
@@ -149,21 +152,6 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
         return itemHandler.map(h -> h.getStackInSlot(SLOT_CARD)).filter(s -> !s.isEmpty()).map(s -> s.getOrCreateTag());
     }
 
-    // @todo 1.14 loot tables
-    @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
-        itemHandler.ifPresent(h -> h.deserializeNBT(tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND)));
-    }
-
-    // @todo 1.14 loot tables
-    @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
-        super.write(tagCompound);
-        itemHandler.ifPresent(h -> tagCompound.put("Items", h.serializeNBT()));
-        return tagCompound;
-    }
-
     @Override
     public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
@@ -209,5 +197,17 @@ public class SecurityManagerTileEntity extends GenericTileEntity {
                 }
             }
         };
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
+//        if (cap == CapabilityContainerProvider.CONTAINER_PROVIDER_CAPABILITY) {
+//            return screenHandler.cast();
+//        }
+        return super.getCapability(cap, facing);
     }
 }
