@@ -22,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
@@ -190,7 +191,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onEntityTeleport(EnderTeleportEvent event) {
         World world = event.getEntity().getEntityWorld();
-        int id = world.getDimension().getType().getId();
+        DimensionType id = world.getDimension().getType();
 
         Entity entity = event.getEntity();
         BlockPos coordinate = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
@@ -208,7 +209,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
         World world = event.getWorld().getWorld();
-        int id = world.getDimension().getType().getId();
+        DimensionType id = world.getDimension().getType();
 
         Entity entity = event.getEntity();
         if (entity instanceof IMob) {
@@ -234,7 +235,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPostWorldTick(TickEvent.WorldTickEvent event) {
         if (!event.world.isRemote) {
-            TickOrderHandler.postWorldTick(event.world.getDimension().getType().getId());
+            TickOrderHandler.postWorldTick(event.world.getDimension().getType());
         }
     }
 }

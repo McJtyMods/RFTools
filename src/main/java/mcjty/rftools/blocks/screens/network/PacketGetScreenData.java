@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -24,7 +25,7 @@ public class PacketGetScreenData {
     public void toBytes(PacketBuffer buf) {
         NetworkTools.writeString(buf, modid);
         NetworkTools.writePos(buf, pos.getCoordinate());
-        buf.writeInt(pos.getDimension());
+        buf.writeInt(pos.getDimension().getId());
         buf.writeLong(millis);
     }
 
@@ -33,7 +34,7 @@ public class PacketGetScreenData {
 
     public PacketGetScreenData(PacketBuffer buf) {
         modid = NetworkTools.readString(buf);
-        pos = new GlobalCoordinate(NetworkTools.readPos(buf), buf.readInt());
+        pos = new GlobalCoordinate(NetworkTools.readPos(buf), DimensionType.getById(buf.readInt()));
         millis = buf.readLong();
     }
 
@@ -47,7 +48,7 @@ public class PacketGetScreenData {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             World world = ctx.getSender().getEntityWorld();
-            if (pos.getDimension() != world.getDimension().getType().getId()) {
+            if (!pos.getDimension().equals(world.getDimension().getType())) {
                 return;
             }
             TileEntity te = world.getTileEntity(pos.getCoordinate());

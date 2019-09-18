@@ -24,12 +24,12 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftoolsbase.api.client.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.ShapeCardType;
-import mcjty.rftoolsbase.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.Shape;
+import mcjty.rftoolsbase.api.client.IHudSupport;
+import mcjty.rftoolsbase.network.PacketGetHudLog;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -57,6 +57,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
@@ -345,7 +346,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel != null) {
-            int dimension = chamberChannel.getDimension();
+            DimensionType dimension = chamberChannel.getDimension();
             World world = WorldTools.getWorld(dimension);
             if (world == null) {
                 return;
@@ -411,7 +412,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
 
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = calculateBox();
         if (chamberChannel != null) {
-            int dimension = chamberChannel.getDimension();
+            DimensionType dimension = chamberChannel.getDimension();
             World world = WorldTools.getWorld(dimension);
 
             BlockPos.MutableBlockPos src = new BlockPos.MutableBlockPos();
@@ -746,7 +747,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             return;
         }
 
-        int dimension = chamberChannel.getDimension();
+        DimensionType dimension = chamberChannel.getDimension();
         World world = WorldTools.getWorld(dimension);
         if (world == null) {
             // The other location must be loaded.
@@ -778,7 +779,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             int z = scan.getZ();
             double sqradius = 30 * 30;
             for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (player.dimension.equals(world.getDimension())) {
+                if (player.dimension.equals(world.getDimension().getType())) {
                     double d0 = x - player.posX;
                     double d1 = y - player.posY;
                     double d2 = z - player.posZ;

@@ -188,9 +188,9 @@ public class ProjectorTileEntity extends GenericTileEntity implements ITickableT
         int scanId = ShapeCardItem.getScanId(getRenderStack());
         boolean isSolid = ShapeCardItem.isSolid(getRenderStack());
         if (scanId == 0) {
-            return new ShapeID(world.getDimension().getType().getId(), getPos(), scanId, isGrayscale(), isSolid);
+            return new ShapeID(world.getDimension().getType(), getPos(), scanId, isGrayscale(), isSolid);
         } else {
-            return new ShapeID(0, null, scanId, isGrayscale(), isSolid);
+            return new ShapeID(DimensionType.OVERWORLD, null, scanId, isGrayscale(), isSolid);
         }
     }
 

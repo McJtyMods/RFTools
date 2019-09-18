@@ -10,10 +10,12 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 public class DumpScreenModule implements IScreenModule<IModuleData> {
 
@@ -21,7 +23,7 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
     public static int ROWS = 4;
 
     private ItemStackList stacks = ItemStackList.create(COLS*ROWS);
-    protected int dim = 0;
+    protected DimensionType dim = DimensionType.OVERWORLD;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     private boolean oredict = false;
 
@@ -31,7 +33,7 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
     }
 
     @Override
-    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, DimensionType dim, BlockPos pos) {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.size(); i++) {
@@ -42,17 +44,17 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
         }
     }
 
-    protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
+    protected void setupCoordinateFromNBT(CompoundNBT tagCompound, DimensionType dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         oredict = tagCompound.getBoolean("oredict");
         if (tagCompound.contains("monitorx")) {
             if (tagCompound.contains("monitordim")) {
-                this.dim = tagCompound.getInt("monitordim");
+                this.dim = DimensionType.byName(new ResourceLocation(tagCompound.getString("monitordim")));
             } else {
                 // Compatibility reasons
-                this.dim = tagCompound.getInt("dim");
+                this.dim = DimensionType.byName(new ResourceLocation(tagCompound.getString("dim")));
             }
-            if (dim == this.dim) {
+            if (dim.equals(this.dim)) {
                 BlockPos c = new BlockPos(tagCompound.getInt("monitorx"), tagCompound.getInt("monitory"), tagCompound.getInt("monitorz"));
                 int dx = Math.abs(c.getX() - pos.getX());
                 int dy = Math.abs(c.getY() - pos.getY());

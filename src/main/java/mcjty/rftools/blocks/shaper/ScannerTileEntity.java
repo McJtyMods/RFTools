@@ -33,6 +33,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -263,7 +264,7 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         startScanArea(getScanCenter(), getScanDimension(), dimX, dimY, dimZ);
     }
 
-    public World getScanWorld(int dimension) {
+    public World getScanWorld(DimensionType dimension) {
         return WorldTools.loadWorld(dimension);
     }
 
@@ -271,8 +272,8 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         return getPos();
     }
 
-    public int getScanDimension() {
-        return world.getDimension().getType().getId();
+    public DimensionType getScanDimension() {
+        return world.getDimension().getType();
     }
 
     public BlockPos getScanCenter() {
@@ -391,10 +392,10 @@ public class ScannerTileEntity extends GenericTileEntity implements ITickableTil
         int dimY;
         int dimZ;
         int x;
-        int dimension;
+        DimensionType dimension;
     }
 
-    private void startScanArea(BlockPos center, int dimension, int dimX, int dimY, int dimZ) {
+    private void startScanArea(BlockPos center, DimensionType dimension, int dimX, int dimY, int dimZ) {
         progress = new ScanProgress();
         progress.modifiers = ModifierItem.getModifiers(itemHandler.map(h -> h.getStackInSlot(SLOT_MODIFIER)).orElse(ItemStack.EMPTY));
         progress.modifierMapping = new HashMap<>();

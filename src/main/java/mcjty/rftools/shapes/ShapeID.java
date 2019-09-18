@@ -3,18 +3,19 @@ package mcjty.rftools.shapes;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 
 import javax.annotation.Nullable;
 
 /// ID to identify a shape for a player/projector/scanner/...
 public final class ShapeID {
-    private final int dimension;
+    private final DimensionType dimension;
     @Nullable private final BlockPos pos;     // null if there is a scanId (shapecard in hand or projector)
     private final int scanId;
     private final boolean grayscale;
     private final boolean solid;
 
-    public ShapeID(int dimension, BlockPos pos, int scanId, boolean grayscale, boolean solid) {
+    public ShapeID(DimensionType dimension, BlockPos pos, int scanId, boolean grayscale, boolean solid) {
         this.dimension = dimension;
         this.pos = pos;
         this.scanId = scanId;
@@ -32,7 +33,7 @@ public final class ShapeID {
         scanId = buf.readInt();
         grayscale = buf.readBoolean();
         solid = buf.readBoolean();
-        dimension = dim;
+        dimension = DimensionType.getById(dim);
         pos = p;
     }
 
@@ -41,7 +42,7 @@ public final class ShapeID {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeInt(getDimension());
+            buf.writeInt(getDimension().getId());
             NetworkTools.writePos(buf, getPos());
         }
         buf.writeInt(scanId);
@@ -49,7 +50,7 @@ public final class ShapeID {
         buf.writeBoolean(solid);
     }
 
-    public int getDimension() {
+    public DimensionType getDimension() {
         return dimension;
     }
 
@@ -77,7 +78,7 @@ public final class ShapeID {
 
         ShapeID shapeID = (ShapeID) o;
 
-        if (dimension != shapeID.dimension) return false;
+        if (!dimension.equals(shapeID.dimension)) return false;
         if (scanId != shapeID.scanId) return false;
         if (grayscale != shapeID.grayscale) return false;
         if (solid != shapeID.solid) return false;
@@ -87,7 +88,7 @@ public final class ShapeID {
 
     @Override
     public int hashCode() {
-        int result = dimension;
+        int result = dimension.getId();
         result = 31 * result + (pos != null ? pos.hashCode() : 0);
         result = 31 * result + scanId;
         result = 31 * result + (grayscale ? 1 : 0);

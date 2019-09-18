@@ -3,6 +3,7 @@ package mcjty.rftools.api.teleportation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Get a reference to an implementation of this interface by calling:
@@ -27,7 +28,7 @@ public interface ITeleportationManager {
     /**
      * Teleport a player to a dimension at the given spot.
      */
-    void teleportPlayer(PlayerEntity player, int dimension, BlockPos location);
+    void teleportPlayer(PlayerEntity player, DimensionType dimension, BlockPos location);
 
     /**
      * Remove all destinations in a dimension.

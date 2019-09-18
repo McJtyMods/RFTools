@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shaper;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 
 public class RemoteScannerTileEntity extends ScannerTileEntity {
 
@@ -34,7 +35,7 @@ public class RemoteScannerTileEntity extends ScannerTileEntity {
 //    }
 
     @Override
-    public int getScanDimension() {
+    public DimensionType getScanDimension() {
         // @todo 1.14 use api
 //        TileEntity te = getWorld().getTileEntity(getPos().up());
 //        if (te instanceof MatterTransmitterTileEntity) {
@@ -44,7 +45,7 @@ public class RemoteScannerTileEntity extends ScannerTileEntity {
 //        if (te instanceof MatterTransmitterTileEntity) {
 //            return getScanDimension((MatterTransmitterTileEntity)te);
 //        }
-        return 0;
+        return DimensionType.OVERWORLD;
     }
 
 //    private int getScanDimension(MatterTransmitterTileEntity te) {

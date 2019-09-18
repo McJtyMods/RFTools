@@ -225,7 +225,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements ISmar
 
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.
     public void toggleCoordinate(GlobalCoordinate c) {
-        if (c.getDimension() != getWorld().getDimension().getType().getId()) {
+        if (!c.getDimension().equals(getWorld().getDimension().getType())) {
             // Wrong dimension. Don't do anything.
             return;
         }
@@ -250,14 +250,14 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements ISmar
             Logging.message(player, TextFormatting.RED + "Block out of range of the block protector!");
             return;
         }
-        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().getDimension().getType().getId());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().getDimension().getType());
         toggleCoordinate(gc);
     }
 
     public int getOrCalculateID() {
         if (id == -1) {
             BlockProtectors protectors = BlockProtectors.get();
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType());
             id = protectors.getNewId(gc);
             protectors.save();
             setId(id);
@@ -281,7 +281,7 @@ public class BlockProtectorTileEntity extends GenericTileEntity implements ISmar
     public void updateDestination() {
         BlockProtectors protectors = BlockProtectors.get();
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType());
 
         if (id == -1) {
             id = protectors.getNewId(gc);

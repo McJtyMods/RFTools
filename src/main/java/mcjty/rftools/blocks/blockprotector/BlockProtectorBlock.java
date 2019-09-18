@@ -97,7 +97,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock /*, IRedstoneConnec
         if (!world.isRemote) {
             GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(Hand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.getDimension().getType().getId()));
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.getDimension().getType()));
                 Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
                 SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), null);
@@ -118,7 +118,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock /*, IRedstoneConnec
         BlockProtectors protectors = BlockProtectors.get();
 
         BlockPos pos = context.getPos();
-        GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType().getId());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType());
 
         protectors.getNewId(gc);
         protectors.save();
@@ -150,7 +150,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock /*, IRedstoneConnec
             return;
         }
         BlockProtectors protectors = BlockProtectors.get();
-        protectors.removeDestination(pos, world.getDimension().getType().getId());
+        protectors.removeDestination(pos, world.getDimension().getType());
         protectors.save();
     }
 

@@ -32,6 +32,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +82,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             if (mode == MODE_NONE) {
                 if (player.isSneaking()) {
                     if (world.getTileEntity(pos) instanceof BuilderTileEntity) {
-                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.getDimension().getType().getId()));
+                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.getDimension().getType()));
                         Logging.message(player, TextFormatting.GREEN + "Now select the first corner");
                         setMode(stack, MODE_CORNER1);
                         setCorner1(stack, null);
@@ -93,7 +94,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                 }
             } else if (mode == MODE_CORNER1) {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.getDimension().getType().getId()) {
+                if (!currentBlock.getDimension().equals(world.getDimension().getType())) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -105,7 +106,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                 }
             } else {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.getDimension().getType().getId()) {
+                if (!currentBlock.getDimension().equals(world.getDimension().getType())) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -242,7 +243,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             tagCompound.putInt("selectedX", c.getCoordinate().getX());
             tagCompound.putInt("selectedY", c.getCoordinate().getY());
             tagCompound.putInt("selectedZ", c.getCoordinate().getZ());
-            tagCompound.putInt("selectedDim", c.getDimension());
+            tagCompound.putString("selectedDim", c.getDimension().getRegistryName().toString());
         }
     }
 
@@ -252,8 +253,8 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             int x = tagCompound.getInt("selectedX");
             int y = tagCompound.getInt("selectedY");
             int z = tagCompound.getInt("selectedZ");
-            int dim = tagCompound.getInt("selectedDim");
-            return new GlobalCoordinate(new BlockPos(x, y, z), dim);
+            String dim = tagCompound.getString("selectedDim");
+            return new GlobalCoordinate(new BlockPos(x, y, z), DimensionType.byName(new ResourceLocation(dim)));
         }
         return null;
     }

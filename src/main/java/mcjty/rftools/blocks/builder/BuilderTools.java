@@ -40,8 +40,8 @@ public class BuilderTools {
             return;
         }
 
-        int dimension = chamberChannel.getDimension();
-        World world = player.getEntityWorld().getServer().getWorld(DimensionType.getById(dimension));
+        DimensionType dimension = chamberChannel.getDimension();
+        World world = player.getEntityWorld().getServer().getWorld(dimension);
         if (world == null) {
             return;
         }

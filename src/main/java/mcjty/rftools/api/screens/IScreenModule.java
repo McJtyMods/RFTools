@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 /**
  * This is the server side implementation of your module. This will be called
@@ -25,12 +26,11 @@ public interface IScreenModule<T extends IModuleData> {
      * This is called when your module is being instantiated from a saved world
      * so you can setup your data. The tags that are given to the tagCompound
      * depend on how you set up your GUI in the IClientScreenModule.
-     *
-     * @param tagCompound
+     *  @param tagCompound
      * @param dim the dimension for the screen this module is in
      * @param pos the position of the screen
      */
-    void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos);
+    void setupFromNBT(CompoundNBT tagCompound, DimensionType dim, BlockPos pos);
 
     /**
      * How much RF/tick this module consumes

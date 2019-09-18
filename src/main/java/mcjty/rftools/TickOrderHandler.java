@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
 import mcjty.rftools.blocks.logic.sequencer.SequencerTileEntity;
 import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class TickOrderHandler {
         return remainingTes;
     }
 
-    static void postWorldTick(int dimension) {
+    static void postWorldTick(DimensionType type) {
         /*
             There is *no* pearl delay between:
             * Pearl Injector -> Endergenic (connected)
@@ -103,6 +104,7 @@ public class TickOrderHandler {
             * Sequencer -> Sequencer
             * Timer -> Timer
          */
+        int dimension = type.getId();
         pearlInjectors = checkStateServer(dimension, pearlInjectors);
 
         endergenics.removeAll(connectedEndergenics);

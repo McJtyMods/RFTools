@@ -5,9 +5,11 @@ import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -29,7 +31,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
             return Collections.emptyList();
         }
         BlockProtectors blockProtectors = get();
-        return blockProtectors.findProtectors(x, y, z, world.getDimension().getType().getId(), 2);
+        return blockProtectors.findProtectors(x, y, z, world.getDimension().getType(), 2);
     }
 
     public static boolean checkHarvestProtection(int x, int y, int z, IBlockReader world, Collection<GlobalCoordinate> protectors) {
@@ -81,7 +83,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
         return protectorById.get(id);
     }
 
-    public void removeDestination(BlockPos coordinate, int dimension) {
+    public void removeDestination(BlockPos coordinate, DimensionType dimension) {
         GlobalCoordinate key = new GlobalCoordinate(coordinate, dimension);
         Integer id = protectorIdByCoordinate.get(key);
         if (id != null) {
@@ -90,10 +92,10 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
         }
     }
 
-    public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension, int radius) {
+    public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, DimensionType dimension, int radius) {
         List<GlobalCoordinate> protectors = new ArrayList<>();
         for (GlobalCoordinate coordinate : protectorIdByCoordinate.keySet()) {
-            if (coordinate.getDimension() == dimension) {
+            if (coordinate.getDimension().equals(dimension)) {
                 BlockPos c = coordinate.getCoordinate();
                 if (Math.abs(x-c.getX()) <= (16+radius+1) && Math.abs(y-c.getY()) <= (16+radius+1) && Math.abs(z-c.getZ()) <= (16+radius+1)) {
                     protectors.add(coordinate);
@@ -117,9 +119,9 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
         for (int i = 0 ; i < lst.size() ; i++) {
             CompoundNBT tc = lst.getCompound(i);
             BlockPos c = new BlockPos(tc.getInt("x"), tc.getInt("y"), tc.getInt("z"));
-            int dim = tc.getInt("dim");
+            String dim = tc.getString("dim");
 
-            GlobalCoordinate gc = new GlobalCoordinate(c, dim);
+            GlobalCoordinate gc = new GlobalCoordinate(c, DimensionType.byName(new ResourceLocation(dim)));
             int id = tc.getInt("id");
             protectorById.put(id, gc);
             protectorIdByCoordinate.put(gc, id);
@@ -135,7 +137,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
             tc.putInt("x", c.getX());
             tc.putInt("y", c.getY());
             tc.putInt("z", c.getZ());
-            tc.putInt("dim", destination.getDimension());
+            tc.putString("dim", destination.getDimension().getRegistryName().toString());
             Integer id = protectorIdByCoordinate.get(new GlobalCoordinate(c, destination.getDimension()));
             tc.putInt("id", id);
             lst.add(tc);

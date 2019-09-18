@@ -6,9 +6,9 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.BlockPosTools;
@@ -24,6 +24,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.awt.*;
@@ -74,7 +75,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity, GenericCo
 
     private ShapeID getShapeID() {
         ItemStack renderStack = tileEntity.getRenderStack();
-        return new ShapeID(0, null, ShapeCardItem.getScanId(renderStack), false, ShapeCardItem.isSolid(renderStack));
+        return new ShapeID(DimensionType.OVERWORLD, null, ShapeCardItem.getScanId(renderStack), false, ShapeCardItem.isSolid(renderStack));
     }
 
 

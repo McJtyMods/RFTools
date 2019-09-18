@@ -4,7 +4,9 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -57,7 +59,7 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
             int channel = tc.getInt("channel");
 
             SpaceChamberChannel value = new SpaceChamberChannel();
-            value.setDimension(tc.getInt("dimension"));
+            value.setDimension(DimensionType.byName(new ResourceLocation(tc.getString("dimension"))));
             value.setMinCorner(BlockPosTools.read(tc, "minCorner"));
             value.setMaxCorner(BlockPosTools.read(tc, "maxCorner"));
             channels.put(channel, value);
@@ -71,7 +73,7 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
         for (Map.Entry<Integer, SpaceChamberChannel> entry : channels.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
             tc.putInt("channel", entry.getKey());
-            tc.putInt("dimension", entry.getValue().getDimension());
+            tc.putString("dimension", entry.getValue().getDimension().getRegistryName().toString());
             BlockPosTools.write(tc, "minCorner", entry.getValue().getMinCorner());
             BlockPosTools.write(tc, "maxCorner", entry.getValue().getMaxCorner());
             lst.add(tc);
@@ -82,15 +84,15 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
     }
 
     public static class SpaceChamberChannel {
-        private int dimension;
+        private DimensionType dimension;
         private BlockPos minCorner = null;
         private BlockPos maxCorner = null;
 
-        public int getDimension() {
+        public DimensionType getDimension() {
             return dimension;
         }
 
-        public void setDimension(int dimension) {
+        public void setDimension(DimensionType dimension) {
             this.dimension = dimension;
         }
 

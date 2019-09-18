@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.dimension.DimensionType;
 
 public class CmdTeleport extends AbstractRfToolsCommand {
     @Override
@@ -46,7 +47,8 @@ public class CmdTeleport extends AbstractRfToolsCommand {
             return;
         }
 
-        int dim = fetchInt(sender, args, 1, 0);
+        int dimI = fetchInt(sender, args, 1, 0);
+        DimensionType dim = DimensionType.getById(dimI);// @todo use string too?
         int x = fetchInt(sender, args, 2, 0);
         int y = fetchInt(sender, args, 3, 100);
         int z = fetchInt(sender, args, 4, 0);
@@ -54,8 +56,8 @@ public class CmdTeleport extends AbstractRfToolsCommand {
         if (sender instanceof PlayerEntity) {
             PlayerEntity player = sender;
 
-            int currentId = player.getEntityWorld().getDimension().getType().getId();
-            if (currentId != dim) {
+            DimensionType currentId = player.getEntityWorld().getDimension().getType();
+            if (!currentId.equals(dim)) {
                 mcjty.lib.varia.TeleportationTools.teleportToDimension(player, dim, x, y, z);
             } else {
                 player.setPositionAndUpdate(x, y, z);

@@ -13,11 +13,12 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import static mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScr
 import static mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScreenModule.SMALLSIZE;
 
 public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonScreenModule.ModuleElevatorInfo> {
-    protected int dim = 0;
+    protected DimensionType dim = DimensionType.OVERWORLD;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
     private boolean vertical = false;
@@ -119,15 +120,15 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     }
 
     @Override
-    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, DimensionType dim, BlockPos pos) {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.contains("elevatorx")) {
                 if (tagCompound.contains("elevatordim")) {
-                    this.dim = tagCompound.getInt("elevatordim");
+                    this.dim = DimensionType.byName(new ResourceLocation(tagCompound.getString("elevatordim")));
                 } else {
                     // Compatibility reasons
-                    this.dim = tagCompound.getInt("dim");
+                    this.dim = DimensionType.byName(new ResourceLocation(tagCompound.getString("dim")));
                 }
                 if (dim == this.dim) {
                     BlockPos c = new BlockPos(tagCompound.getInt("elevatorx"), tagCompound.getInt("elevatory"), tagCompound.getInt("elevatorz"));

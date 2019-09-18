@@ -15,7 +15,9 @@ import mcjty.rftools.blocks.shaper.ShaperTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 
 public class CommandHandler {
@@ -32,7 +34,7 @@ public class CommandHandler {
     public static final Key<String> PARAM_SEARCH_TEXT = new Key<>("text", Type.STRING);
 
     public static final String CMD_REQUEST_STORAGE_INFO = "requestStorageInfo";
-    public static final Key<Integer> PARAM_DIMENSION = new Key<>("dimension", Type.INTEGER);
+    public static final Key<String> PARAM_DIMENSION = new Key<>("dimension", Type.STRING);
 
     public static final String CMD_GET_RF_IN_RANGE = "getRfInRange";
     public static final String CMD_REQUEST_SHAPE_DATA = "requestShapeData";
@@ -120,7 +122,7 @@ public class CommandHandler {
 //            return true;
 //        });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_COUNTER_INFO, (player, arguments) -> {
-            ServerWorld world = WorldTools.getWorld(arguments.get(PARAM_DIMENSION));
+            ServerWorld world = WorldTools.getWorld(DimensionType.byName(new ResourceLocation(arguments.get(PARAM_DIMENSION))));
             if (world != null) {
                 TileEntity te = world.getTileEntity(arguments.get(PARAM_POS));
                 if (te instanceof CounterTileEntity) {
