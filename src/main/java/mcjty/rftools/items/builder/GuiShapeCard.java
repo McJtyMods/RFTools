@@ -325,7 +325,7 @@ public class GuiShapeCard extends Screen implements IShapeParentGui {
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
                     TypedMap.builder()
-                            .put(new Key<>("shapenew", Type.STRING), getCurrentShape().getDescription())
+                            .put(new Key<>("shape", Type.STRING), getCurrentShape().getDescription())
                             .put(new Key<>("solid", Type.BOOLEAN), isSolid())
                             .put(new Key<>("dimX", Type.INTEGER), dx)
                             .put(new Key<>("dimY", Type.INTEGER), dy)

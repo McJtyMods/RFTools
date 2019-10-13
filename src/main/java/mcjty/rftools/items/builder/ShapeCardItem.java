@@ -384,18 +384,11 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return Shape.SHAPE_BOX;
         }
-        if (!tagCompound.contains("shape") && !tagCompound.contains("shapenew")) {
+        if (!tagCompound.contains("shape")) {
             return Shape.SHAPE_BOX;
         }
-        Shape shape;
-        if (tagCompound.contains("shapenew")) {
-            String sn = tagCompound.getString("shapenew");
-            shape = Shape.getShape(sn);
-        } else {
-            int shapedeprecated = tagCompound.getInt("shape");
-            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
-            shape = sd.getNewshape();
-        }
+        String sn = tagCompound.getString("shape");
+        Shape shape = Shape.getShape(sn);
 
         if (shape == null) {
             return Shape.SHAPE_BOX;
@@ -415,16 +408,10 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         if (tagCompound == null) {
             return true;
         }
-        if (!tagCompound.contains("shape") && !tagCompound.contains("shapenew")) {
+        if (!tagCompound.contains("shape")) {
             return true;
         }
-        if (tagCompound.contains("shapenew")) {
-            return tagCompound.getBoolean("solid");
-        } else {
-            int shapedeprecated = tagCompound.getInt("shape");
-            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
-            return sd.isSolid();
-        }
+        return tagCompound.getBoolean("solid");
     }
 
     public static IFormula createCorrectFormula(CompoundNBT tagCompound) {
@@ -505,7 +492,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             // Nothing happens
             return;
         }
-        tagCompound.putString("shapenew", shape.getDescription());
+        tagCompound.putString("shape", shape.getDescription());
         tagCompound.putBoolean("solid", solid);
     }
 
