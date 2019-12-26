@@ -262,7 +262,7 @@ message.rftools.remote_scanner=\
     @fto shape cards for the Builder or Shield.\n\
     @fThe resulting shape card can also be used\n\
     @fin the Composer\n\
-    @6This version can scan scan through a\n\
+    @6This version can scan through a\n\
     @6dialed matter transmitter which should be\n\
     @6located above it
 message.rftools.spawner=\
