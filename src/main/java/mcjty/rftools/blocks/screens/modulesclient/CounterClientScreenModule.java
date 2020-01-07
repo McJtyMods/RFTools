@@ -84,7 +84,8 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
                 labelCache.align(TextAlign.ALIGN_LEFT);
             }
 
-            format = FormatStyle.values()[tagCompound.getInteger("format")];
+//            format = FormatStyle.values()[tagCompound.getInteger("format")];
+            format = FormatStyle.getStyle(tagCompound.getString("format"));
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }

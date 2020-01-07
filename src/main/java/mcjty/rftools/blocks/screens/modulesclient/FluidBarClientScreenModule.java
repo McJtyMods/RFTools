@@ -88,7 +88,8 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
             boolean showpct = tagCompound.getBoolean("showpct");
             mbRenderer.settings(hidebar, hidetext, showpct, showdiff);
 
-            mbRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
+//            mbRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
+            mbRenderer.format(FormatStyle.getStyle(tagCompound.getString("format")));
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }
