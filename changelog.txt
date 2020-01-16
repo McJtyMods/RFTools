@@ -1,3 +1,6 @@
+7.73:
+- Joseph fixed #2017: make fluid and counter screen modules handle format correctly
+
 7.72:
 - Fixed modular storage so it works nicely with the new selection feature in McJtyLib
 - Fixed the scanner so that it doesn't cause server-side crashes for client-siude code
