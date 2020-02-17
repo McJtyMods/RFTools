@@ -48,6 +48,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storagescanner.png");
     private static final ResourceLocation guielements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
+    private static final ItemSorter[] itemSorters = {new CountItemSorter(), new NameItemSorter()};
+
     private WidgetList storageList;
     private WidgetList itemList;
     private ToggleButton openViewButton;
@@ -161,7 +163,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         });
         sortMode = new ImageChoiceLabel(mc, this)
             .setTooltips("Control how items are sorted", "in the view")
+            .setDesiredWidth(16)
+            .setDesiredHeight(16)
             .addChoiceEvent((parent, newChoice) -> updateSortMode());
+        for (ItemSorter sorter : itemSorters) {
+            sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guielements, sorter.getU(), sorter.getV());
+        }
         Panel searchPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256 - 11, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
@@ -447,8 +454,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         String sortName = sortMode.getCurrentChoice();
         sortMode.clear();
         
-        ItemSorter[] sorters = {new CountItemSorter(), new NameItemSorter()};
-        for (ItemSorter sorter : sorters) {
+        for (ItemSorter sorter : itemSorters) {
             sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guielements, sorter.getU(), sorter.getV());
         }
         
@@ -457,7 +463,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             sort = 0;
         }
         sortMode.setCurrentChoice(sort);
-        return sorters[sort];
+        return itemSorters[sort];
     }
 
     private Pair<Panel, Integer> addItemToList(ItemStack item, WidgetList itemList, Pair<Panel, Integer> currentPos, int numcolumns, int spacing) {
