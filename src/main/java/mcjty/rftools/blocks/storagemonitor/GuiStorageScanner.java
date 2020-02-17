@@ -17,6 +17,9 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
+import mcjty.rftools.blocks.storage.sorters.ItemSorter;
+import mcjty.rftools.blocks.storage.sorters.NameItemSorter;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
@@ -55,6 +58,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button bottomButton;
     private Button removeButton;
     private TextField searchField;
+    private ImageChoiceLabel sortMode;
     private ImageChoiceLabel exportToStarred;
     private Panel storagePanel;
     private Panel itemPanel;
@@ -155,11 +159,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             fromServer_foundInventories.clear();
             startSearch(newText);
         });
+        sortMode = new ImageChoiceLabel(mc, this)
+            .setTooltips("Control how items are sorted", "in the view")
+            .addChoiceEvent((parent, newChoice) -> updateSortMode());
         Panel searchPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256 - 11, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
                 .addChild(new Label(mc, this).setText("Search:"))
-                .addChild(searchField);
+                .addChild(searchField)
+                .addChild(sortMode);
 
         Slider radiusSlider = new Slider(mc, this)
                 .setHorizontal()
@@ -270,6 +278,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_SETVIEW,
                 TypedMap.builder()
                         .put(PARAM_VIEW, openViewButton.isPressed())
+                        .build());
+    }
+    
+    private void updateSortMode() {
+        tileEntity.setSortMode(sortMode.getCurrentChoice());
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_UPDATESORTMODE,
+                TypedMap.builder()
+                        .put(PARAM_SORTMODE, sortMode.getCurrentChoice())
                         .build());
     }
 
@@ -412,8 +428,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int numcolumns = openViewButton.isPressed() ? 5 : 9;
         int spacing = 3;
 
-//        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
-        Collections.sort(fromServer_inventory, Comparator.comparing(ItemStack::getDisplayName));
+        ItemSorter sorter = getCurrentSorter();
+        Comparator<Pair<ItemStack, Integer>> comparator = sorter.getComparator();
+        Collections.sort(fromServer_inventory, (l, r) -> comparator.compare(Pair.of(l, 0), Pair.of(r, 0)));
 
         String filterText = searchField.getText().toLowerCase();
         Predicate<ItemStack> matcher = StorageScannerTileEntity.getMatcher(filterText);
@@ -424,6 +441,23 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
             }
         }
+    }
+    
+    private ItemSorter getCurrentSorter() {
+        String sortName = sortMode.getCurrentChoice();
+        sortMode.clear();
+        
+        ItemSorter[] sorters = {new CountItemSorter(), new NameItemSorter()};
+        for (ItemSorter sorter : sorters) {
+            sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guielements, sorter.getU(), sorter.getV());
+        }
+        
+        int sort = sortMode.findChoice(sortName);
+        if (sort == -1) {
+            sort = 0;
+        }
+        sortMode.setCurrentChoice(sort);
+        return sorters[sort];
     }
 
     private Pair<Panel, Integer> addItemToList(ItemStack item, WidgetList itemList, Pair<Panel, Integer> currentPos, int numcolumns, int spacing) {
