@@ -60,7 +60,7 @@ public class OrphaningCardItem extends Item {
                     }
                 }
             } else {
-                Logging.message(player, EnumChatFormatting.RED + "Onwership is not supported on this block!");
+                Logging.message(player, EnumChatFormatting.RED + "Ownership is not supported on this block!");
             }
             return true;
         }
