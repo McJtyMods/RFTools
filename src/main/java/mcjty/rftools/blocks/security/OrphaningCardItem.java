@@ -66,7 +66,7 @@ public class OrphaningCardItem extends Item {
                     }
                 }
             } else {
-                Logging.message(player, TextFormatting.RED + "Onwership is not supported on this block!");
+                Logging.message(player, TextFormatting.RED + "Ownership is not supported on this block!");
             }
             return ActionResultType.SUCCESS;
         }
