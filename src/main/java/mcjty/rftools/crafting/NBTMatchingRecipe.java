@@ -2,6 +2,7 @@ package mcjty.rftools.crafting;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.crafting.IngredientNBT;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTBase;
@@ -21,7 +22,7 @@ public class NBTMatchingRecipe extends ShapedRecipes {
     private static NonNullList<Ingredient> getIngredients(ItemStack[] input) {
         NonNullList<Ingredient> inputList = NonNullList.withSize(input.length, Ingredient.EMPTY);
         for (int i = 0 ; i < input.length ; i++) {
-            inputList.set(i, Ingredient.fromStacks(input[i]));
+            inputList.set(i, new IngredientNBT(input[i]));
         }
         return inputList;
     }
