@@ -22,7 +22,7 @@
         bind('entities','entities')
         bind('wait','wait')
         bind('loop','loop')
-        bind('hilight','hilight')
+        bind('highlight','highlight')
         bind('support','support')
 
         panel('','positional') {
@@ -157,22 +157,22 @@
                     }
                 }
             }
-            imagechoicelabel('hilight') {
-                channel('hilight')
+            imagechoicelabel('highlight') {
+                channel('highlight')
                 hint(40,37,17,17)
-                tooltips('Hilight mode')
+                tooltips('Highlight mode')
                 border(true)
                 image('rftools:textures/gui/guielements.png')
                 dim(144,80,256,256)
                 choices {
                     choice('off') {
                         uv(144,80)
-                        tooltips('No hilighting')
+                        tooltips('No highlighting')
                         image('rftools:textures/gui/guielements.png')
                     }
                     choice('on') {
                         uv(128,80)
-                        tooltips('Visually hilight the position','the Builder is working on')
+                        tooltips('Visually highlight the position','the Builder is working on')
                         image('rftools:textures/gui/guielements.png')
                     }
                 }
